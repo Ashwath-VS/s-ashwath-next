@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Nav from '@/components/Nav';
 import PageWrapper from '@/components/PageWrapper';
+import Cursor from '@/components/Cursor';
 
 export const metadata: Metadata = {
   title: 'S. Ashwath · Multi-Domain AI Systems Builder',
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <Cursor />
         <Nav />
         <PageWrapper>
           <main style={{ position: 'relative', zIndex: 2 }}>
