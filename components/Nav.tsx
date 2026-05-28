@@ -12,6 +12,7 @@ const links = [
   { href: '/traveltech',  label: 'TravelTech' },
   { href: '/scenarios',   label: 'Macro Engine' },
   { href: '/experience',  label: 'Experience' },
+  { href: '/docs',        label: 'Docs' },
 ];
 
 export default function Nav() {

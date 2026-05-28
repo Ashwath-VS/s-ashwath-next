@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const PERSONA_PROMPTS: Record<string, string> = {
   logistics:    'You are briefing a CFO of a logistics and freight company. Focus on: fuel cost exposure, freight rate impact, inventory carrying cost, route disruption risk, and working capital pressure. Be specific about timelines and magnitude.',
@@ -18,9 +17,9 @@ const PERSONA_PROMPTS: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey || apiKey === 'your_groq_api_key_here') {
-    return NextResponse.json({ error: 'GROQ_API_KEY not configured' }, { status: 503 });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+    return NextResponse.json({ error: 'GEMINI_API_KEY not configured — add it in Netlify environment variables' }, { status: 503 });
   }
 
   const body = await req.json();
@@ -43,7 +42,7 @@ Current live market conditions:
 - Data source: ${liveData.source}
 ` : '';
 
-  const systemPrompt = `You are a plain-English macro analyst. Your job is to translate complex economic cascade effects into clear, actionable intelligence for non-economists. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
+  const systemInstruction = `You are a plain-English macro analyst. Your job is to translate complex economic cascade effects into clear, actionable intelligence for non-economists. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
 
 ${personaPrompt}
 
@@ -67,30 +66,21 @@ ${liveContext}
 Write the strategic brief for this persona.`;
 
   try {
-    const res = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user',   content: userPrompt },
-        ],
-        temperature: 0.4,
-        max_tokens: 600,
-      }),
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash',
+      systemInstruction,
     });
 
-    if (!res.ok) {
-      const err = await res.text();
-      return NextResponse.json({ error: err }, { status: res.status });
-    }
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 700,
+      },
+    });
 
-    const data = await res.json();
-    const text = data.choices?.[0]?.message?.content ?? '';
+    const text = result.response.text();
     return NextResponse.json({ text });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

@@ -73,7 +73,7 @@ export default function ScenariosPage() {
       if (data.error) setLlmError(data.error);
       else setLlmText(data.text ?? '');
     } catch {
-      setLlmError('Could not reach LLM. Check GROQ_API_KEY in .env.local.');
+      setLlmError('Could not reach LLM. Check GEMINI_API_KEY in Netlify environment variables.');
     }
     setLlmLoading(false);
   }, [selectedTriggers, intensity, context, region, persona, marketData]);
@@ -450,7 +450,7 @@ function LlmBrief({ text, persona }: { text: string; persona?: { label: string; 
           <div style={{ fontSize: 15, fontWeight: 700 }}>{persona?.label}</div>
         </div>
         <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '10px', color: 'rgba(0,230,118,0.7)', border: '1px solid rgba(0,230,118,0.2)', padding: '3px 10px', borderRadius: 2, letterSpacing: '0.08em' }}>
-          AI · LLAMA 3.3
+          AI · GEMINI 2.0
         </span>
       </div>
 
