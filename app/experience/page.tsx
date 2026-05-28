@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -98,6 +99,7 @@ const chips = [
 ]
 
 export default function ExperiencePage() {
+  const isMobile = useIsMobile();
   return (
     <main style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 96 }}>
       {/* Header */}
@@ -109,8 +111,8 @@ export default function ExperiencePage() {
             variants={stagger}
             style={{
               display: 'grid',
-              gridTemplateColumns: '150px 1fr',
-              gap: 40,
+              gridTemplateColumns: isMobile ? '1fr' : '150px 1fr',
+              gap: isMobile ? 24 : 40,
               alignItems: 'start',
             }}
           >
@@ -118,8 +120,8 @@ export default function ExperiencePage() {
             <motion.div
               variants={fadeUp}
               style={{
-                width: 150,
-                height: 150,
+                width: isMobile ? 80 : 150,
+                height: isMobile ? 80 : 150,
                 borderRadius: 5,
                 border: '1px dashed var(--border)',
                 background: 'var(--surface)',
@@ -224,8 +226,8 @@ export default function ExperiencePage() {
                 variants={fadeUp}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '130px 1fr',
-                  gap: 30,
+                  gridTemplateColumns: isMobile ? '1fr' : '130px 1fr',
+                  gap: isMobile ? 8 : 30,
                   padding: '24px 0',
                   borderTop: '1px solid var(--border)',
                   ...(i === timeline.length - 1 ? { borderBottom: '1px solid var(--border)' } : {}),
@@ -268,7 +270,7 @@ export default function ExperiencePage() {
             variants={stagger}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
               gap: 16,
             }}
           >

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
@@ -32,6 +33,7 @@ export default function ScenariosPage() {
   const [llmText,     setLlmText]     = useState('');
   const [llmLoading,  setLlmLoading]  = useState(false);
   const [llmError,    setLlmError]    = useState('');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetch('/api/market').then(r => r.json()).then((d: MarketData) => {
@@ -83,7 +85,7 @@ export default function ScenariosPage() {
 
       {/* ── LIVE MARKET STRIP ─────────────────────── */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
-        style={{ background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '10px 48px', display: 'flex', gap: 28, alignItems: 'center', flexWrap: 'wrap', backdropFilter: 'blur(8px)' }}>
+        style={{ background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '10px clamp(16px,4vw,48px)', display: 'flex', gap: 28, alignItems: 'center', flexWrap: 'wrap', backdropFilter: 'blur(8px)' }}>
 
         <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', display: 'flex', alignItems: 'center', gap: 6, color: marketData?.source === 'live' ? '#00e676' : '#ffb020' }}>
           <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 2, repeat: Infinity }}
@@ -112,7 +114,7 @@ export default function ScenariosPage() {
       </motion.div>
 
       {/* ── HEADER ────────────────────────────────── */}
-      <div style={{ padding: '52px 48px 40px', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ padding: '52px clamp(16px,4vw,48px) 40px', maxWidth: 1200, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
           <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: '#ff9100', letterSpacing: '0.18em', marginBottom: 14 }}>
             MACRO_ENGINE · DOMAIN_05 · LIVE SIMULATION
@@ -128,7 +130,7 @@ export default function ScenariosPage() {
 
       {/* ── CONTROLS ──────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
-        style={{ maxWidth: 1200, margin: '0 auto', padding: '0 48px 36px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px) 36px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
 
         {/* Trigger cards */}
         <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 12 }}>
@@ -227,8 +229,8 @@ export default function ScenariosPage() {
       </motion.div>
 
       {/* ── NETWORK + DETAIL ──────────────────────── */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 48px', display: 'grid', gridTemplateColumns: '1fr 300px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: 28, paddingTop: 28, paddingBottom: 28, position: 'relative' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 300px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: isMobile ? 0 : 28, paddingTop: 28, paddingBottom: 28, position: 'relative' }}>
           <AnimatePresence>
             {running && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -253,7 +255,7 @@ export default function ScenariosPage() {
         {impacts && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
-            style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 48px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            style={{ maxWidth: 1200, margin: '0 auto', padding: '32px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 18 }}>
               // SECTOR IMPACT MATRIX
             </div>
@@ -301,7 +303,7 @@ export default function ScenariosPage() {
       </AnimatePresence>
 
       {/* ── LLM BRIEF ─────────────────────────────── */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 48px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 20 }}>
           // STRATEGIC INTELLIGENCE BRIEF · AI-GENERATED · PLAIN ENGLISH
         </div>
@@ -346,7 +348,7 @@ export default function ScenariosPage() {
       {/* ── HISTORICAL ANCHORS ────────────────────── */}
       {selectedTriggers.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-          style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 48px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          style={{ maxWidth: 1200, margin: '0 auto', padding: '28px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 16 }}>
             // HISTORICAL CALIBRATION
           </div>
@@ -368,7 +370,7 @@ export default function ScenariosPage() {
         </motion.div>
       )}
 
-      <footer style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+      <footer style={{ maxWidth: 1200, margin: '0 auto', padding: '24px clamp(16px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)' }}>MACRO_ENGINE · BFS propagation, historically calibrated · Not financial advice</span>
         <button onClick={() => window.print()}
           style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 4, padding: '6px 14px', cursor: 'pointer' }}>

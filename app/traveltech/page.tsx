@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import {
   IATA, analyseFare, buildFareFlags, buildFareNarrative, findOptions, irropDelayStr,
   type FareResult, type IrropResult,
@@ -208,6 +209,7 @@ export default function TravelTechPage() {
   const fld = (id: keyof typeof fare, val: string) => setFare(f => ({ ...f, [id]: val }));
   const ifd = (id: keyof typeof irrop, val: string) => setIrrop(f => ({ ...f, [id]: val }));
 
+  const isMobile = useIsMobile();
   const todayStr = new Date().toISOString().slice(0, 10);
   const maxDate = new Date(); maxDate.setDate(maxDate.getDate() + 400);
   const maxStr = maxDate.toISOString().slice(0, 10);
@@ -256,7 +258,7 @@ export default function TravelTechPage() {
     <div style={{ paddingTop: 52 }}>
 
       {/* ── HEADER ── */}
-      <header style={{ padding: '120px 48px 64px', maxWidth: 1080, margin: '0 auto' }}>
+      <header style={{ padding: 'clamp(72px,10vw,120px) clamp(16px,4vw,48px) 64px', maxWidth: 1080, margin: '0 auto' }}>
         <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible"
           style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--txt-faint)', marginBottom: 24 }}>
           S-ASHWATH / DOMAIN_04 / <span style={{ color: TRV }}>TRAVEL-TECH</span>
@@ -283,7 +285,7 @@ export default function TravelTechPage() {
       </header>
 
       {/* ── PROBLEM ── */}
-      <section style={{ padding: '60px 48px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px)', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="01" title="The Problem" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
           {[
@@ -303,7 +305,7 @@ export default function TravelTechPage() {
       </section>
 
       {/* ── MONITORING WINDOW TIMELINE ── */}
-      <section style={{ padding: '60px 48px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px)', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="02" title="The Monitoring Window" />
         <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ fontSize: 15, color: 'var(--txt-dim)', marginBottom: 36, maxWidth: '62ch' }}>
@@ -345,10 +347,10 @@ export default function TravelTechPage() {
       </section>
 
       {/* ── FARE MONITOR AGENT ── */}
-      <section style={{ padding: '60px 48px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px)', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="03" title="Fare Monitor · Subscribe for Alerts" />
         <AgentShell title="FARE MONITOR · ALERT AGENT" badge="$1 / BOOKING" id="TRAVEL_A3 · DOMAIN_04">
-          <div style={{ padding: '26px 28px', borderRight: '1px solid var(--border)' }}>
+          <div style={{ padding: '26px 28px', borderRight: isMobile ? 'none' : '1px solid var(--border)', borderBottom: isMobile ? '1px solid var(--border)' : 'none' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--txt-faint)', marginBottom: 20 }}>// Booking + Alert Details</div>
             <form onSubmit={handleFareSubmit} noValidate>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
@@ -409,14 +411,14 @@ export default function TravelTechPage() {
       </section>
 
       {/* ── IRROP AGENT ── */}
-      <section style={{ padding: '60px 48px 90px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px) 90px', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="04" title="Disruption Rebooking Agent · IRROP" />
         <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ fontSize: 15, color: 'var(--txt-dim)', marginBottom: 28, maxWidth: '62ch' }}>
           Flight cancelled or severely delayed. The average passenger waits 47 minutes on hold for a rebooking. An NDC-connected agent surfaces alternatives proactively — before you reach the queue.
         </motion.p>
         <AgentShell title="IRROP REBOOKING AGENT" badge="NDC · PROACTIVE" id="TRAVEL_A4 · DOMAIN_04">
-          <div style={{ padding: '26px 28px', borderRight: '1px solid var(--border)' }}>
+          <div style={{ padding: '26px 28px', borderRight: isMobile ? 'none' : '1px solid var(--border)', borderBottom: isMobile ? '1px solid var(--border)' : 'none' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--txt-faint)', marginBottom: 20 }}>// Disruption Details</div>
             <form onSubmit={handleIrropSubmit} noValidate>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
@@ -483,7 +485,7 @@ export default function TravelTechPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '36px 48px' }}>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '36px clamp(16px,4vw,48px)' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ fontFamily: 'var(--mono)', fontWeight: 800, fontSize: 13 }}>S<span style={{ color: 'var(--acc)' }}>-</span>ASHWATH</div>
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
@@ -500,10 +502,11 @@ export default function TravelTechPage() {
 }
 
 function AgentShell({ title, badge, id, children }: { title: string; badge: string; id: string; children: React.ReactNode }) {
+  const isMobileShell = useIsMobile();
   return (
     <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
       style={{ border: `1px solid rgba(0,172,193,0.22)`, borderRadius: 6, overflow: 'hidden', background: 'var(--bg2)' }}>
-      <div style={{ padding: '15px 28px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg3)' }}>
+      <div style={{ padding: '15px 28px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg3)', flexWrap: 'wrap', gap: 8 }}>
         <div style={{ fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.1em', color: 'var(--txt-dim)', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: TRV, boxShadow: `0 0 8px ${TRV}`, display: 'inline-block', animation: 'pulse 2s infinite' }} />
           {title}
@@ -513,7 +516,7 @@ function AgentShell({ title, badge, id, children }: { title: string; badge: stri
           <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', letterSpacing: '0.08em' }}>// {id}</span>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobileShell ? '1fr' : '360px 1fr' }}>
         {children}
       </div>
     </motion.div>

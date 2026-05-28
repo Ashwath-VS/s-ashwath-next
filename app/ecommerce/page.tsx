@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -93,6 +94,7 @@ const stats = [
 ]
 
 export default function EcommercePage() {
+  const isMobile = useIsMobile();
   return (
     <main style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 96 }}>
       {/* Header */}
@@ -187,8 +189,8 @@ export default function EcommercePage() {
               variants={fadeUp}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '0.5fr 1.5fr',
-                gap: 36,
+                gridTemplateColumns: isMobile ? '1fr' : '0.5fr 1.5fr',
+                gap: isMobile ? 12 : 36,
                 padding: '26px 0',
                 borderTop: '1px solid var(--border)',
                 alignItems: 'baseline',
@@ -311,7 +313,7 @@ export default function EcommercePage() {
           variants={stagger}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
             gap: 1,
             background: 'var(--border)',
             border: '1px solid var(--border)',
@@ -383,19 +385,20 @@ export default function EcommercePage() {
               whileHover={{ background: 'rgba(255,59,48,0.04)' }}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '200px 1fr',
+                gridTemplateColumns: isMobile ? '1fr' : '200px 1fr',
                 borderBottom: i < archLayers.length - 1 ? '1px solid var(--border)' : 'none',
                 transition: 'background 0.25s',
               }}
             >
               <div style={{
-                padding: '22px 24px',
+                padding: isMobile ? '18px 24px 6px' : '22px 24px',
                 fontFamily: 'var(--mono)',
                 fontSize: 12,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 color: 'var(--acc)',
-                borderRight: '1px solid var(--border)',
+                borderRight: isMobile ? 'none' : '1px solid var(--border)',
+                borderBottom: isMobile ? 'none' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 10,

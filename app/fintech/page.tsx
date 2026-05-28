@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const FIN = '#2979ff';
 
@@ -92,6 +93,7 @@ export default function FintechPage() {
   const [loading, setLoading] = useState(false);
   const [brief, setBrief] = useState<CreditBrief | null>(null);
   const [err, setErr] = useState('');
+  const isMobile = useIsMobile();
 
   const field = (id: keyof typeof form, val: string) => setForm(f => ({ ...f, [id]: val }));
 
@@ -112,7 +114,7 @@ export default function FintechPage() {
     <div style={{ paddingTop: 52 }}>
 
       {/* ── HEADER ── */}
-      <header style={{ padding: '120px 48px 64px', maxWidth: 1080, margin: '0 auto' }}>
+      <header style={{ padding: 'clamp(72px,10vw,120px) clamp(16px,4vw,48px) 64px', maxWidth: 1080, margin: '0 auto' }}>
         <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible"
           style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.1em', color: 'var(--txt-faint)', marginBottom: 24 }}>
           S-ASHWATH / DOMAIN_02 / <span style={{ color: FIN }}>FIN-TECH</span>
@@ -139,7 +141,7 @@ export default function FintechPage() {
       </header>
 
       {/* ── PROBLEM ── */}
-      <section style={{ padding: '60px 48px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px)', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="01" title="The Problem" color={FIN} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
           {[
@@ -159,10 +161,10 @@ export default function FintechPage() {
       </section>
 
       {/* ── TRIANGULATION ── */}
-      <section style={{ padding: '60px 48px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px)', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="02" title="The Triangulation Logic" color={FIN} />
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
-          style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 14, maxWidth: 680, margin: '0 auto', alignItems: 'center' }}>
+          style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr', gap: 14, maxWidth: 680, margin: '0 auto', alignItems: 'center' }}>
           <TriCard code="GST" title="Annual Turnover" desc="Government-verified revenue. The primary benchmark — hard to falsify, easy to cross-reference against banking behaviour." color={FIN} />
           <div style={{ textAlign: 'center', fontSize: 22, color: 'var(--txt-faint)' }}>⟷</div>
           <TriCard code="BANK" title="Credits (12m)" desc="Actual cash flow. Should track GST turnover within ±20%. Larger divergence reveals cash business or fund diversion." color={FIN} />
@@ -176,7 +178,7 @@ export default function FintechPage() {
       </section>
 
       {/* ── AGENT ── */}
-      <section style={{ padding: '60px 48px 90px', maxWidth: 1080, margin: '0 auto' }}>
+      <section style={{ padding: '60px clamp(16px,4vw,48px) 90px', maxWidth: 1080, margin: '0 auto' }}>
         <SectionHead idx="03" title="SME Credit Analyst · Live Agent" color={FIN} />
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ border: `1px solid rgba(41,121,255,0.22)`, borderRadius: 6, overflow: 'hidden', background: 'var(--bg2)' }}>
@@ -190,9 +192,9 @@ export default function FintechPage() {
             <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', letterSpacing: '0.08em' }}>// FINTECH_A4 · DOMAIN_02</span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '360px 1fr' }}>
             {/* Input panel */}
-            <div style={{ padding: '26px 28px', borderRight: '1px solid var(--border)' }}>
+            <div style={{ padding: '26px 28px', borderRight: isMobile ? 'none' : '1px solid var(--border)', borderBottom: isMobile ? '1px solid var(--border)' : 'none' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--txt-faint)', marginBottom: 20 }}>// Business Profile</div>
               <form onSubmit={handleSubmit} noValidate>
                 <FieldGroup label="Business type">
@@ -292,7 +294,7 @@ export default function FintechPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '36px 48px' }}>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '36px clamp(16px,4vw,48px)' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ fontFamily: 'var(--mono)', fontWeight: 800, fontSize: 13 }}>S<span style={{ color: 'var(--acc)' }}>-</span>ASHWATH</div>
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
