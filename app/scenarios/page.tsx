@@ -450,7 +450,7 @@ function LlmBrief({ text, persona }: { text: string; persona?: { label: string; 
           <div style={{ fontSize: 15, fontWeight: 700 }}>{persona?.label}</div>
         </div>
         <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '10px', color: 'rgba(0,230,118,0.7)', border: '1px solid rgba(0,230,118,0.2)', padding: '3px 10px', borderRadius: 2, letterSpacing: '0.08em' }}>
-          AI · GEMINI 2.0
+          AI · GEMINI 2.5
         </span>
       </div>
 

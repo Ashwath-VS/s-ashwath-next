@@ -71,7 +71,7 @@ const domains = [
     problem: 'A rate hike hits equity markets, propagates to credit, flows into employment — but that chain is invisible to most decision-makers. Most briefings tell you what happened, not what to do about it.',
     agents: [
       { name: 'BFS Cascade Propagation Engine', desc: 'Breadth-first search across 13 sectors and 31 weighted directional edges. Each trigger propagates with sector-specific lag, confidence, and circuit-breaker thresholds. Seeded with live Yahoo Finance market data.', stack: 'TypeScript · custom BFS engine · 13 sectors · 31 edges · historical calibration' },
-      { name: 'Strategic Intelligence Brief · Gemini', desc: 'Reads the full cascade output plus live market conditions, then generates a plain-English brief for one of 12 personas across 4 structured sections. Under 400 words. Actionable.', stack: 'Gemini 2.0 Flash · 12 personas · Yahoo Finance live data · persona-tailored prompts' },
+      { name: 'Strategic Intelligence Brief · Gemini', desc: 'Reads the full cascade output plus live market conditions, then generates a plain-English brief for one of 12 personas across 4 structured sections. Under 400 words. Actionable.', stack: 'Gemini 2.5 Flash · 12 personas · Yahoo Finance live data · persona-tailored prompts' },
     ],
     metrics: [{ v: '13', l: 'Sectors modelled' }, { v: '31', l: 'Directional edges' }, { v: '12', l: 'Briefing personas' }, { v: 'Live', l: 'Market data seeding' }],
   },
@@ -97,7 +97,7 @@ const platformStack = [
   { layer: 'Animation', detail: 'Framer Motion 12 · GSAP 3.15 + @gsap/react', note: 'Page transitions, scroll animations, marquee ticker, scramble text, section dividers' },
   { layer: 'Visualisation', detail: 'D3 7.9', note: 'Macro network force-directed graph — 13 nodes, 31 edges, BFS cascade overlay' },
   { layer: 'Styling', detail: 'CSS Custom Properties · Inline styles · Zero CSS frameworks', note: 'Design tokens in globals.css — all spacing, color, and typography via CSS vars' },
-  { layer: 'LLM', detail: 'Google Gemini 2.0 Flash · @google/generative-ai', note: 'Persona-tailored macro cascade briefs — 12 roles, 4 structured sections, <400 words' },
+  { layer: 'LLM', detail: 'Google Gemini 2.5 Flash · @google/generative-ai', note: 'Persona-tailored macro cascade briefs — 12 roles, 4 structured sections, <400 words' },
   { layer: 'Market Data', detail: 'Yahoo Finance API · FX rate feeds', note: '5-minute server-side cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST' },
   { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
   { layer: 'Hosting', detail: 'Netlify · GitHub', note: 'CI/CD via GitHub → Netlify. Env vars managed in Netlify dashboard.' },
