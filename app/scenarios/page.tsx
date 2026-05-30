@@ -459,8 +459,12 @@ function LlmBrief({ text, persona }: { text: string; persona?: { label: string; 
         {sections.map((section, i) => {
           const lines   = section.replace(/^[\n]+/, '').split('\n');
           const heading = lines[0].replace(/^#+\s*/, '').trim();
-          const body    = lines.slice(1).join('\n').trim();
-          if (!heading && !body) return null;
+          // Split body into paragraphs so newlines render correctly
+          const bodyParas = lines.slice(1).join('\n').trim()
+            .split(/\n\n+/)
+            .map(p => p.replace(/\n/g, ' ').trim())
+            .filter(Boolean);
+          if (!heading && !bodyParas.length) return null;
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.08 }}>
               {heading && (
@@ -469,9 +473,9 @@ function LlmBrief({ text, persona }: { text: string; persona?: { label: string; 
                   {heading.toUpperCase()}
                 </div>
               )}
-              {body && (
-                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', lineHeight: 1.78 }}>{body}</div>
-              )}
+              {bodyParas.map((para, pi) => (
+                <p key={pi} style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', lineHeight: 1.78, marginBottom: pi < bodyParas.length - 1 ? 10 : 0 }}>{para}</p>
+              ))}
             </motion.div>
           );
         })}

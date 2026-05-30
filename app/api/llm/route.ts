@@ -74,10 +74,14 @@ Write the strategic brief for this persona.`;
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 700,
-      },
+        temperature: 0.5,
+        maxOutputTokens: 8192,
+        // Gemini 2.5 thinking tokens eat into the output budget;
+        // set budget to 0 so the full 8192 tokens go to the visible response.
+        thinkingConfig: { thinkingBudget: 0 },
+      } as any,
     });
 
     const text = result.response.text();
