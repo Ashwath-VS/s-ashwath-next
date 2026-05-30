@@ -18,6 +18,17 @@ interface MarketData {
   autoContext?: string; source?: string;
 }
 
+interface TriggerSignal {
+  headlines: string[];
+  signal: number; // 0–1
+}
+
+interface TriggerLiveData {
+  triggers: Record<string, TriggerSignal>;
+  live: boolean;
+  total: number;
+}
+
 const REGIONS = ['GLOBAL', 'APAC', 'EU', 'MENA', 'NA'];
 
 export default function ScenariosPage() {
@@ -30,6 +41,7 @@ export default function ScenariosPage() {
   const [selectedNode,setSelectedNode] = useState<string | null>(null);
   const [running,     setRunning]     = useState(false);
   const [marketData,  setMarketData]  = useState<MarketData | null>(null);
+  const [triggerLiveData, setTriggerLiveData] = useState<TriggerLiveData | null>(null);
   const [llmText,     setLlmText]     = useState('');
   const [llmLoading,  setLlmLoading]  = useState(false);
   const [llmError,    setLlmError]    = useState('');
@@ -39,6 +51,10 @@ export default function ScenariosPage() {
     fetch('/api/market').then(r => r.json()).then((d: MarketData) => {
       setMarketData(d);
       if (d.autoContext) setContext(d.autoContext);
+    }).catch(() => {});
+
+    fetch('/api/triggers').then(r => r.json()).then((d: TriggerLiveData) => {
+      setTriggerLiveData(d);
     }).catch(() => {});
   }, []);
 
@@ -133,29 +149,91 @@ export default function ScenariosPage() {
         style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px) 36px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
 
         {/* Trigger cards */}
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 12 }}>
-          SELECT SHOCK TRIGGER(S)
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em' }}>
+            SELECT SHOCK TRIGGER(S)
+          </div>
+          {triggerLiveData && (
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: triggerLiveData.live ? 'rgba(0,230,118,0.7)' : 'rgba(255,176,32,0.6)', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <motion.span
+                animate={{ opacity: [1, 0.25, 1] }}
+                transition={{ duration: 2.4, repeat: Infinity }}
+                style={{ width: 4, height: 4, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}
+              />
+              {triggerLiveData.live
+                ? `LIVE · ${triggerLiveData.total} headlines scanned`
+                : 'FALLBACK · RSS unavailable'}
+            </span>
+          )}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
           {Object.entries(TRIGGERS).map(([key, t]) => {
             const active = selectedTriggers.includes(key);
+            const live = triggerLiveData?.triggers?.[key];
+            const signalDots = live ? Math.round(live.signal * 3) : 0;
+            const isHot = signalDots >= 2;
+            const headline = live?.headlines?.[0];
             return (
               <motion.button key={key} onClick={() => toggleTrigger(key)}
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '12px 16px',
                   background: active ? `${t.color}18` : 'rgba(255,255,255,0.02)',
-                  border: `1.5px solid ${active ? t.color : 'rgba(255,255,255,0.07)'}`,
-                  borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit',
-                  boxShadow: active ? `0 0 20px ${t.color}22` : 'none',
+                  border: `1.5px solid ${active ? t.color : isHot ? `${t.color}50` : 'rgba(255,255,255,0.07)'}`,
+                  borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+                  boxShadow: active ? `0 0 20px ${t.color}22` : isHot ? `0 0 10px ${t.color}14` : 'none',
                   transition: 'border-color 0.18s, background 0.18s, box-shadow 0.18s',
+                  maxWidth: isMobile ? '100%' : 220,
                 }}>
-                <span style={{ fontSize: 20 }}>{t.icon}</span>
-                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: active ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.7)' }}>{t.label}</span>
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 1 }}>{t.sub}</span>
+                <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{t.icon}</span>
+                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+
+                  {/* Label + ACTIVE badge */}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: active ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.7)' }}>
+                      {t.label}
+                    </span>
+                    {isHot && (
+                      <span style={{
+                        fontFamily: 'var(--mono)', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em',
+                        color: t.color, border: `1px solid ${t.color}66`,
+                        padding: '1px 5px', borderRadius: 2, flexShrink: 0,
+                      }}>
+                        ACTIVE
+                      </span>
+                    )}
+                  </span>
+
+                  {/* Signal dots + label */}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 5 }}>
+                    {[0, 1, 2].map(i => (
+                      <span key={i} style={{
+                        width: 4, height: 4, borderRadius: '50%',
+                        background: i < signalDots ? t.color : 'rgba(255,255,255,0.12)',
+                        transition: 'background 0.4s',
+                      }} />
+                    ))}
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,255,255,0.28)', marginLeft: 4 }}>
+                      {triggerLiveData
+                        ? (signalDots === 0 ? 'no signal' : `${signalDots} signal${signalDots > 1 ? 's' : ''}`)
+                        : t.sub}
+                    </span>
+                  </span>
+
+                  {/* Live headline */}
+                  {headline && (
+                    <span style={{
+                      fontFamily: 'var(--mono)', fontSize: 9.5,
+                      color: active ? `${t.color}cc` : 'rgba(255,255,255,0.35)',
+                      marginTop: 6, display: 'block',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      maxWidth: 172,
+                    }}>
+                      {headline.length > 58 ? headline.slice(0, 55) + '…' : headline}
+                    </span>
+                  )}
                 </span>
               </motion.button>
             );
