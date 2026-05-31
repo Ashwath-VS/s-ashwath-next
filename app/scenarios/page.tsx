@@ -79,6 +79,7 @@ export default function ScenariosPage() {
     intensity: string;
     context: string;
     region: string;
+    persona: string;
     llmText: string;
   } | null>(null);
   const [activeBrief, setActiveBrief] = useState<'current' | 'locked'>('current');
@@ -136,9 +137,9 @@ export default function ScenariosPage() {
 
   const handleLock = useCallback(() => {
     if (!impacts) return;
-    setLockedRun({ impacts, triggers: selectedTriggers, intensity, context, region, llmText });
+    setLockedRun({ impacts, triggers: selectedTriggers, intensity, context, region, persona, llmText });
     setActiveBrief('current');
-  }, [impacts, selectedTriggers, intensity, context, region, llmText]);
+  }, [impacts, selectedTriggers, intensity, context, region, persona, llmText]);
 
   const contextColor = context === 'CRISIS' ? '#ff3b30' : context === 'STRESSED' ? '#ffb020' : '#00e676';
 
@@ -323,7 +324,7 @@ export default function ScenariosPage() {
           <div style={{ marginBottom: 16, padding: '10px 16px', background: 'rgba(255,145,0,0.05)', border: '1px solid rgba(255,145,0,0.28)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 900, color: '#fff', background: '#ff9100', padding: '2px 7px', borderRadius: 3, letterSpacing: '0.1em' }}>A</span>
             <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(255,145,0,0.8)', letterSpacing: '0.04em' }}>
-              SCENARIO A LOCKED — {lockedRun.triggers.map(t => TRIGGERS[t]?.label ?? t).join(' + ')} · {lockedRun.intensity} · {lockedRun.context}
+              SCENARIO A LOCKED — {lockedRun.triggers.map(t => TRIGGERS[t]?.label ?? t).join(' + ')} · {lockedRun.intensity} · {lockedRun.context} · {PERSONAS.find(p => p.id === lockedRun.persona)?.label ?? lockedRun.persona}
             </span>
             <button onClick={() => { setLockedRun(null); setActiveBrief('current'); }}
               style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.35)', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, padding: '4px 12px', cursor: 'pointer', letterSpacing: '0.08em' }}>
@@ -462,26 +463,48 @@ export default function ScenariosPage() {
 
           {/* Persona */}
           <div>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.12em', marginBottom: 7 }}>BRIEF FOR</div>
-            <select value={persona} onChange={e => setPersona(e.target.value)}
-              style={{
-                fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 600,
-                background: 'rgba(255,255,255,0.05)', color: '#fff',
-                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 6,
-                padding: '8px 14px', cursor: 'pointer', outline: 'none',
-                height: '100%',
-              }}>
-              <optgroup label="Business Roles" style={{ background: '#0c0f14' }}>
-                {PERSONAS.filter(p => !p.jobSeeker).map(p => (
-                  <option key={p.id} value={p.id} style={{ background: '#0c0f14' }}>{p.icon} {p.label}</option>
-                ))}
-              </optgroup>
-              <optgroup label="Job Seekers" style={{ background: '#0c0f14' }}>
-                {PERSONAS.filter(p => p.jobSeeker).map(p => (
-                  <option key={p.id} value={p.id} style={{ background: '#0c0f14' }}>{p.icon} {p.label}</option>
-                ))}
-              </optgroup>
-            </select>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', marginBottom: 7, display: 'flex', alignItems: 'center', gap: 7, color: lockedRun ? 'rgba(255,145,0,0.7)' : 'var(--txt-faint)' }}>
+              BRIEF FOR
+              {lockedRun && (
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 8, fontWeight: 700, color: '#ff9100', background: 'rgba(255,145,0,0.12)', border: '1px solid rgba(255,145,0,0.35)', padding: '1px 5px', borderRadius: 2, letterSpacing: '0.1em' }}>
+                  LOCKED
+                </span>
+              )}
+            </div>
+            <div style={{ position: 'relative' }}>
+              <select value={persona} onChange={e => !lockedRun && setPersona(e.target.value)}
+                disabled={!!lockedRun}
+                style={{
+                  fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 600,
+                  background: lockedRun ? 'rgba(255,145,0,0.06)' : 'rgba(255,255,255,0.05)',
+                  color: lockedRun ? 'rgba(255,145,0,0.8)' : '#fff',
+                  border: lockedRun ? '1px solid rgba(255,145,0,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 6,
+                  padding: '8px 14px',
+                  cursor: lockedRun ? 'not-allowed' : 'pointer',
+                  outline: 'none',
+                  height: '100%',
+                  opacity: lockedRun ? 0.85 : 1,
+                }}>
+                <optgroup label="Business Roles" style={{ background: '#0c0f14' }}>
+                  {PERSONAS.filter(p => !p.jobSeeker).map(p => (
+                    <option key={p.id} value={p.id} style={{ background: '#0c0f14' }}>{p.icon} {p.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Job Seekers" style={{ background: '#0c0f14' }}>
+                  {PERSONAS.filter(p => p.jobSeeker).map(p => (
+                    <option key={p.id} value={p.id} style={{ background: '#0c0f14' }}>{p.icon} {p.label}</option>
+                  ))}
+                </optgroup>
+              </select>
+              {lockedRun && (
+                <div style={{
+                  position: 'absolute', inset: 0, borderRadius: 6,
+                  pointerEvents: 'none',
+                  border: '1px solid rgba(255,145,0,0.25)',
+                }} />
+              )}
+            </div>
           </div>
 
           <motion.button onClick={handleRun} disabled={running || !selectedTriggers.length}
