@@ -211,7 +211,8 @@ export default function ScenariosPage() {
                   borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
                   boxShadow: active ? `0 0 20px ${t.color}22` : isHot ? `0 0 10px ${t.color}14` : 'none',
                   transition: 'border-color 0.18s, background 0.18s, box-shadow 0.18s',
-                  maxWidth: isMobile ? '100%' : 220,
+                  width: isMobile ? '100%' : 210,
+                  minWidth: 0, overflow: 'hidden',
                 }}>
                 <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{t.icon}</span>
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
@@ -255,9 +256,9 @@ export default function ScenariosPage() {
                       color: active ? `${t.color}cc` : 'rgba(255,255,255,0.35)',
                       marginTop: 6, display: 'block',
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                      maxWidth: 172,
+                      width: '100%',
                     }}>
-                      {headline.length > 58 ? headline.slice(0, 55) + '…' : headline}
+                      {headline.length > 52 ? headline.slice(0, 49) + '…' : headline}
                     </span>
                   )}
                 </span>

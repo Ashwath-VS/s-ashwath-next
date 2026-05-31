@@ -8,12 +8,11 @@ const PERSONA_PROMPTS: Record<string, string> = {
   retail:       'You are briefing a CEO of a retail or e-commerce business. Focus on: consumer discretionary spend trajectory, supply chain cost pass-through, credit availability for customers, and inventory risk.',
   startup:      'You are briefing a Series B/C startup founder. Focus on: VC sentiment and fundraising climate, hiring market tightening or loosening, B2B customer budget freeze risk, and burn rate implications.',
   risk:         'You are briefing a Chief Risk Officer or underwriter. Focus on: claims exposure increases, reserve adequacy, reinsurance cost impact, and specific lines of business most affected.',
+  cfo:          'You are briefing a CFO or Finance Director at a mid-to-large enterprise. Focus on: FX exposure and hedging, cost base pressure, debt refinancing risk under changing rates, working capital impact, and board-level narrative for the next earnings cycle.',
   jobseeker_it:        'You are briefing a technology professional (software engineer, data scientist, product manager) who is job searching. Focus on: tech sector hiring freezes vs growth areas, how the macro shock shifts budget toward or away from tech investment, which tech sub-sectors are counter-cyclical, and how AI adoption accelerates or decelerates in this environment. Be honest about layoff risk.',
   jobseeker_banking:   'You are briefing a banking or financial services professional who is job searching. Focus on: front-office vs back-office hiring dynamics under this scenario, which desks or divisions expand (e.g. fixed income in rate hikes), M&A activity signals, and how AI is reshaping analyst and associate roles specifically.',
   jobseeker_logistics: 'You are briefing a logistics, supply chain, or operations professional who is job searching. Focus on: hiring demand for supply chain talent under this shock, which roles are in demand (procurement, planning, last-mile), and how automation is changing the logistics workforce.',
   jobseeker_retail:    'You are briefing a retail, e-commerce, or consumer goods professional who is job searching. Focus on: retail sector employment signals, which functions are being cut vs invested in, and how AI-driven personalisation and automation is restructuring retail teams.',
-  jobseeker_healthcare:'You are briefing a healthcare professional who is job searching. Focus on: healthcare sector resilience or exposure to this macro shock, government spending signals, and how AI diagnostics and automation are affecting clinical and administrative hiring.',
-  jobseeker_realestate:'You are briefing a real estate professional (agent, developer, analyst) who is job searching. Focus on: transaction volume signals under this scenario, which real estate segments hold up, and how proptech and AI are affecting headcount in the sector.',
 };
 
 export async function POST(req: NextRequest) {
@@ -42,9 +41,11 @@ Current live market conditions:
 - Data source: ${liveData.source}
 ` : '';
 
-  const systemInstruction = `You are a plain-English macro analyst. Your job is to translate complex economic cascade effects into clear, actionable intelligence for non-economists. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
+  const systemInstruction = `You are a plain-English macro analyst with access to Google Search. Your job is to translate complex economic cascade effects into clear, actionable intelligence for non-economists. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
 
 ${personaPrompt}
+
+IMPORTANT: Use Google Search to ground your brief in CURRENT, real-world events happening RIGHT NOW that are relevant to the trigger scenario. Reference specific recent news, data points, company names, or policy decisions by name — not generic statements. If there are relevant breaking developments in the last 7 days, lead with them.
 
 Format your response in exactly 4 sections with these headers:
 ## What just happened
@@ -52,7 +53,7 @@ Format your response in exactly 4 sections with these headers:
 ## What most people will miss
 ## What to watch — your 3 signals
 
-Keep each section to 3–5 sentences max. Total response under 400 words. Plain English. Specific and actionable.`;
+Keep each section to 3–5 sentences max. Total response under 450 words. Plain English. Specific and actionable. Ground every claim in something real and current.`;
 
   const userPrompt = `Macro shock scenario: ${triggers.join(' + ')}
 Intensity: ${intensity}
@@ -63,7 +64,7 @@ ${impactSummary}
 
 ${liveContext}
 
-Write the strategic brief for this persona.`;
+Search for what is happening RIGHT NOW related to these triggers, then write the strategic brief for this persona.`;
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -75,13 +76,11 @@ Write the strategic brief for this persona.`;
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      tools: [{ googleSearch: {} }] as any,
       generationConfig: {
-        temperature: 0.5,
+        temperature: 0.4,
         maxOutputTokens: 8192,
-        // Gemini 2.5 thinking tokens eat into the output budget;
-        // set budget to 0 so the full 8192 tokens go to the visible response.
-        thinkingConfig: { thinkingBudget: 0 },
-      } as any,
+      },
     });
 
     const text = result.response.text();

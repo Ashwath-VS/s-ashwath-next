@@ -191,12 +191,11 @@ export const PERSONAS = [
   { id: 'retail',             label: 'Retail / E-Commerce',      icon: '🛍' },
   { id: 'startup',            label: 'Startup Founder',           icon: '🚀' },
   { id: 'risk',               label: 'Risk / Insurance',          icon: '🛡' },
+  { id: 'cfo',                label: 'CFO / Finance Director',    icon: '💼' },
   { id: 'jobseeker_it',       label: 'Job Seeker · Tech',         icon: '💻', jobSeeker: true },
   { id: 'jobseeker_banking',  label: 'Job Seeker · Banking',      icon: '🏦', jobSeeker: true },
   { id: 'jobseeker_logistics',label: 'Job Seeker · Logistics',    icon: '📦', jobSeeker: true },
   { id: 'jobseeker_retail',   label: 'Job Seeker · Retail',       icon: '🏪', jobSeeker: true },
-  { id: 'jobseeker_healthcare',label:'Job Seeker · Healthcare',   icon: '🏥', jobSeeker: true },
-  { id: 'jobseeker_realestate',label:'Job Seeker · Real Estate',  icon: '🏠', jobSeeker: true },
 ];
 
 export function runSimulation(
