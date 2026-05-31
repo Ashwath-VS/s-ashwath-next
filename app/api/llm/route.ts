@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
 
   const personaPrompt = PERSONA_PROMPTS[persona] ?? PERSONA_PROMPTS.investment;
 
+  // All 13 sectors, sorted by magnitude — brief must cite these specific numbers
   const impactSummary = Object.entries(impacts as Record<string, { impact: number; lag: number; conf: number; mechanism: string }>)
     .sort((a, b) => Math.abs(b[1].impact) - Math.abs(a[1].impact))
-    .slice(0, 8)
-    .map(([sector, d]) => `${sector}: ${d.impact > 0 ? '+' : ''}${(d.impact * 100).toFixed(0)}% impact, T+${d.lag} days, ${(d.conf * 100).toFixed(0)}% confidence`)
+    .map(([sector, d]) => `  ${sector}: ${d.impact > 0 ? '+' : ''}${(d.impact * 100).toFixed(0)}% at T+${d.lag}d (${(d.conf * 100).toFixed(0)}% conf) — ${d.mechanism}`)
     .join('\n');
 
   const liveContext = liveData ? `
@@ -41,30 +41,36 @@ Current live market conditions:
 - Data source: ${liveData.source}
 ` : '';
 
-  const systemInstruction = `You are a plain-English macro analyst with access to Google Search. Your job is to translate complex economic cascade effects into clear, actionable intelligence for non-economists. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
+  const systemInstruction = `You are a macro intelligence analyst with access to Google Search. You have two inputs — a quantitative cascade model and current real-world events — and your job is to weave them into a single actionable brief. No jargon. No bullet-point walls. Write like you're briefing a smart, busy person who needs to act, not study.
 
 ${personaPrompt}
 
-IMPORTANT: Use Google Search to ground your brief in CURRENT, real-world events happening RIGHT NOW that are relevant to the trigger scenario. Reference specific recent news, data points, company names, or policy decisions by name — not generic statements. If there are relevant breaking developments in the last 7 days, lead with them.
+THE CASCADE MODEL:
+The BFS propagation numbers in the user message were computed by a sector-network model calibrated against major historical shocks: Gulf War 1990, Asian Crisis 1997, Lehman 2008, Euro crisis 2011, COVID-19 2020, Ukraine invasion 2022. VIX is applied as a real-time multiplier — so the numbers reflect market stress TODAY, not generic estimates. These numbers are specific to this scenario. Treat them as your quantitative anchor.
 
-Format your response in exactly 4 sections with these headers:
+YOUR TASK — two things at once:
+1. Use Google Search to find what is happening RIGHT NOW related to these triggers. Reference specific recent news, company names, policy decisions, or data points — not generics.
+2. Connect the cascade numbers to those current events. When the model says "ENERGY +92% at T+0d", that should correspond to something real you found. Show the link explicitly.
+
+The brief is WRONG if it ignores the cascade numbers and just cites news. It is ALSO wrong if it only reads the model without real-world grounding. It is RIGHT when each section weaves a specific model output together with a specific current event.
+
+FORMAT — exactly 4 sections with these headers:
 ## What just happened
 ## What this means for you in the next 90 days
 ## What most people will miss
 ## What to watch — your 3 signals
 
-Keep each section to 3–5 sentences max. Total response under 450 words. Plain English. Specific and actionable. Ground every claim in something real and current.`;
+Rules: cite at least 2 specific sectors from the cascade by name and percentage. Keep each section to 3–5 sentences. Total under 500 words. Plain English. Specific and actionable.`;
 
   const userPrompt = `Macro shock scenario: ${triggers.join(' + ')}
 Intensity: ${intensity}
 Market context: ${context}
 
-Cascade model output (top impacted sectors):
+VIX-adjusted cascade model — all 13 sectors (cite at least 2 in your brief):
 ${impactSummary}
 
 ${liveContext}
-
-Search for what is happening RIGHT NOW related to these triggers, then write the strategic brief for this persona.`;
+Search for what is happening RIGHT NOW related to ${triggers.join(' + ')}, then write the brief — anchoring each section to both specific cascade numbers above AND specific current events you find.`;
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);

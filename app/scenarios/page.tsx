@@ -179,6 +179,64 @@ export default function ScenariosPage() {
           <p style={{ fontSize: 15, color: 'var(--txt-dim)', maxWidth: 560, lineHeight: 1.65 }}>
             Select a macro shock. The engine traces impact through 13 sectors using live market data — then translates the cascade into a plain-English brief for your specific role. No jargon. No generics. Just what this means for you, grounded in what&apos;s happening right now.
           </p>
+
+          {/* ── DIFFERENTIATION TABLE ── */}
+          <div style={{ marginTop: 28, maxWidth: 700 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.16em', color: 'rgba(255,145,0,0.55)', marginBottom: 10 }}>
+              // HOW THIS DIFFERS FROM EXISTING TOOLS
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <div style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6, overflow: 'hidden', minWidth: 580 }}>
+                {/* Header row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1fr 1fr 1fr 1.2fr', background: 'rgba(0,0,0,0.4)' }}>
+                  {['CAPABILITY', 'BLOOMBERG', 'OXFORD ECON', 'CHATGPT', 'THIS PLATFORM'].map((h, i) => (
+                    <div key={i} style={{
+                      padding: '7px 10px', fontFamily: 'var(--mono)', fontSize: 8.5, letterSpacing: '0.1em',
+                      color: i === 4 ? '#ff9100' : 'rgba(255,255,255,0.22)',
+                      fontWeight: i === 4 ? 700 : 400,
+                      borderRight: i < 4 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                      background: i === 4 ? 'rgba(255,145,0,0.05)' : 'transparent',
+                    }}>{h}</div>
+                  ))}
+                </div>
+                {/* Data rows */}
+                {([
+                  ['Live news trigger detection',          '—',             '—',             '—',        '✓'],
+                  ['BFS sector cascade / propagation',     'partial',       '✓',             '—',        '✓'],
+                  ['VIX-calibrated live market seeding',   '✓',             '—',             '—',        '✓'],
+                  ['Role-specific plain-English brief',    '—',             '—',             'manual',   '✓'],
+                  ['Grounded in today\'s real events',     '—',             '—',             'sometimes','✓'],
+                  ['Access cost',                          '$25K / yr',     'institutional', 'free',     'free'],
+                ] as [string, string, string, string, string][]).map((row, ri) => (
+                  <div key={ri} style={{
+                    display: 'grid', gridTemplateColumns: '2.2fr 1fr 1fr 1fr 1.2fr',
+                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    background: ri % 2 ? 'transparent' : 'rgba(255,255,255,0.01)',
+                  }}>
+                    <div style={{ padding: '8px 10px', fontSize: 11.5, color: 'rgba(255,255,255,0.5)', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+                      {row[0]}
+                    </div>
+                    {row.slice(1).map((v, ci) => {
+                      const isHere = ci === 3;
+                      const color = v === '✓' ? (isHere ? '#00e676' : 'rgba(255,255,255,0.25)')
+                                  : v === '—' ? 'rgba(255,255,255,0.1)'
+                                  : (v === 'partial' || v === 'manual' || v === 'sometimes') ? '#ffb020'
+                                  : isHere ? '#ff9100' : 'rgba(255,255,255,0.3)';
+                      return (
+                        <div key={ci} style={{
+                          padding: '8px 10px', fontFamily: 'var(--mono)', fontSize: 9.5,
+                          textAlign: 'center', color, fontWeight: isHere ? 600 : 400,
+                          borderRight: ci < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                          background: isHere ? 'rgba(255,145,0,0.04)' : 'transparent',
+                        }}>{v}</div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </motion.div>
       </div>
 
