@@ -536,33 +536,61 @@ export default function ScenariosPage() {
               {Object.entries(SECTORS).map(([key, sec], i) => {
                 const imp = impacts[key];
                 const showMobileTooltip = mobileTooltip === key;
+
+                // ── Delta pre-computation ──────────────────────────────────
+                const lockedImp = lockedRun?.impacts[key];
+                const rawDelta  = (imp && lockedImp) ? (imp.impact - lockedImp.impact) * 100 : null;
+                const hasDelta  = rawDelta !== null && Math.abs(rawDelta) >= 0.15;
+                const isFlipped = hasDelta && imp && lockedImp
+                  ? (imp.impact > 0) !== (lockedImp.impact > 0) : false;
+                const isAmplified = hasDelta && !isFlipped && imp && lockedImp
+                  ? Math.abs(imp.impact) > Math.abs(lockedImp.impact) : false;
+                const deltaColor  = isFlipped ? '#b388ff' : isAmplified ? '#ff9100' : '#00e676';
+                const deltaBg     = isFlipped ? 'rgba(124,77,255,0.11)' : isAmplified ? 'rgba(255,145,0,0.11)' : 'rgba(0,230,118,0.08)';
+                const deltaBorder = isFlipped ? 'rgba(124,77,255,0.40)' : isAmplified ? 'rgba(255,145,0,0.45)' : 'rgba(0,230,118,0.30)';
+                const deltaTag    = isFlipped ? 'FLIP ↕' : isAmplified ? 'AMP ▲' : 'MIT ▼';
+
                 return (
                   <motion.div key={key}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: imp ? 1 : 0.3, scale: 1 }}
                     transition={{ duration: 0.4, delay: i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
-                    whileHover={imp ? { y: -3, boxShadow: `0 10px 30px ${sec.color}18` } : {}}
+                    whileHover={imp ? { y: -3, boxShadow: hasDelta ? `0 12px 36px ${deltaColor}28` : `0 10px 30px ${sec.color}18` } : {}}
                     onClick={() => { if (!imp) return; if (isMobile) { setMobileTooltip(showMobileTooltip ? null : key); } else { setSelectedNode(key); } }}
                     onMouseEnter={(e) => {
                       if (isMobile || !imp) return;
                       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
                       const tipW = 288;
                       const tx = rect.right + 12 + tipW > window.innerWidth ? rect.left - tipW - 12 : rect.right + 12;
-                      const ty = Math.max(8, Math.min(rect.top, window.innerHeight - 340));
+                      const ty = Math.max(8, Math.min(rect.top, window.innerHeight - 380));
                       setTooltipPos({ x: tx, y: ty });
                       setHoveredImpact(key);
                     }}
                     onMouseLeave={() => setHoveredImpact(null)}
                     style={{
-                      background: 'rgba(255,255,255,0.025)', border: `1px solid ${imp ? sec.color + '30' : 'rgba(255,255,255,0.06)'}`,
+                      background: hasDelta ? deltaBg : 'rgba(255,255,255,0.025)',
+                      border: `1.5px solid ${hasDelta ? deltaColor + '55' : imp ? sec.color + '30' : 'rgba(255,255,255,0.06)'}`,
+                      boxShadow: hasDelta ? `0 0 0 1px ${deltaBorder}, 0 4px 20px ${deltaColor}14` : 'none',
                       borderRadius: 8, padding: '14px', cursor: imp ? 'pointer' : 'default',
-                      transition: 'border-color 0.2s', position: 'relative',
+                      transition: 'border-color 0.2s, background 0.3s, box-shadow 0.3s', position: 'relative',
                     }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 9 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: sec.color, boxShadow: imp ? `0 0 8px ${sec.color}` : 'none', marginTop: 2 }} />
-                      {imp && isMobile && (
-                        <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: showMobileTooltip ? sec.color : 'rgba(255,255,255,0.25)', cursor: 'pointer', lineHeight: 1 }}>ⓘ</span>
-                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        {hasDelta && (
+                          <span style={{
+                            fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 800, letterSpacing: '0.07em',
+                            color: deltaColor, background: deltaBg,
+                            border: `1px solid ${deltaBorder}`,
+                            padding: '2px 6px', borderRadius: 3, lineHeight: 1.5,
+                          }}>
+                            {deltaTag}
+                          </span>
+                        )}
+                        {imp && isMobile && (
+                          <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: showMobileTooltip ? sec.color : 'rgba(255,255,255,0.25)', cursor: 'pointer', lineHeight: 1 }}>ⓘ</span>
+                        )}
+                      </div>
                     </div>
                     <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 7, color: 'rgba(255,255,255,0.85)' }}>{sec.label}</div>
                     {imp ? (
@@ -570,18 +598,22 @@ export default function ScenariosPage() {
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 800, color: imp.impact > 0 ? '#ff5252' : '#00e676', lineHeight: 1 }}>
                           {imp.impact > 0 ? '+' : ''}{(imp.impact * 100).toFixed(1)}%
                         </div>
-                        {/* Delta vs locked scenario A */}
-                        {lockedRun && (() => {
-                          const lockedImp = lockedRun.impacts[key];
-                          const delta = lockedImp ? (imp.impact - lockedImp.impact) * 100 : null;
-                          if (delta === null || Math.abs(delta) < 0.15) return null;
-                          const isAmplified = Math.abs(imp.impact) > Math.abs(lockedImp!.impact);
-                          return (
-                            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, marginTop: 3, color: isAmplified ? '#ff9100' : 'rgba(255,255,255,0.35)' }}>
-                              Δ {delta > 0 ? '+' : ''}{delta.toFixed(1)}% vs A
-                            </div>
-                          );
-                        })()}
+                        {/* Delta vs Scenario A — prominent pill */}
+                        {hasDelta && rawDelta !== null && (
+                          <div style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            gap: 6, marginTop: 5,
+                            padding: '5px 8px',
+                            background: deltaBg, border: `1px solid ${deltaBorder}`, borderRadius: 5,
+                          }}>
+                            <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 800, color: deltaColor, letterSpacing: '-0.01em' }}>
+                              Δ {rawDelta > 0 ? '+' : ''}{rawDelta.toFixed(1)}%
+                            </span>
+                            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: deltaColor, opacity: 0.65 }}>
+                              vs A
+                            </span>
+                          </div>
+                        )}
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--txt-faint)', marginTop: 5 }}>
                           T+{imp.lag}d · {(imp.conf * 100).toFixed(0)}% conf
                           {imp.circuitBreaker && <span style={{ color: '#ff3b30', marginLeft: 6 }}>⚠</span>}
@@ -604,6 +636,27 @@ export default function ScenariosPage() {
                               <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>⏱ {lagLabel(imp.lag)}</div>
                               <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>🎯 {(imp.conf * 100).toFixed(0)}% historical confidence</div>
                               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.42)', lineHeight: 1.55 }}>{imp.mechanism}</div>
+                              {/* Mobile delta comparison */}
+                              {hasDelta && rawDelta !== null && lockedImp && (
+                                <div style={{ marginTop: 10, padding: '8px 10px', background: deltaBg, border: `1px solid ${deltaBorder}`, borderRadius: 6 }}>
+                                  <div style={{ fontFamily: 'var(--mono)', fontSize: 8.5, fontWeight: 700, color: deltaColor, letterSpacing: '0.1em', marginBottom: 6 }}>⇄ SCENARIO DELTA</div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)' }}>A (locked)</span>
+                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+                                      {lockedImp.impact > 0 ? '+' : ''}{(lockedImp.impact * 100).toFixed(1)}%
+                                    </span>
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)' }}>B (current)</span>
+                                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, color: imp.impact > 0 ? '#ff5252' : '#00e676' }}>
+                                      {imp.impact > 0 ? '+' : ''}{(imp.impact * 100).toFixed(1)}%
+                                    </span>
+                                  </div>
+                                  <div style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 800, color: deltaColor, textAlign: 'center', paddingTop: 5, borderTop: `1px solid ${deltaBorder}` }}>
+                                    Δ {rawDelta > 0 ? '+' : ''}{rawDelta.toFixed(1)}% · {isFlipped ? 'Direction reversed' : isAmplified ? 'Amplified in B' : 'Mitigated in B'}
+                                  </div>
+                                </div>
+                              )}
                               {imp.circuitBreaker && (
                                 <div style={{ marginTop: 8, fontSize: 11, color: '#ff5252' }}>⚠ Extreme — may trigger emergency policy intervention</div>
                               )}
@@ -809,6 +862,15 @@ export default function ScenariosPage() {
           const imp  = impacts[hoveredImpact]!;
           const sec  = SECTORS[hoveredImpact];
           const mag  = (Math.abs(imp.impact) * 100).toFixed(1);
+          // Delta computation for tooltip
+          const tipLockedImp  = lockedRun?.impacts[hoveredImpact];
+          const tipRawDelta   = tipLockedImp ? (imp.impact - tipLockedImp.impact) * 100 : null;
+          const tipHasDelta   = tipRawDelta !== null && Math.abs(tipRawDelta) >= 0.15;
+          const tipIsFlipped  = tipHasDelta && tipLockedImp ? (imp.impact > 0) !== (tipLockedImp.impact > 0) : false;
+          const tipIsAmp      = tipHasDelta && !tipIsFlipped && tipLockedImp ? Math.abs(imp.impact) > Math.abs(tipLockedImp.impact) : false;
+          const tipDeltaColor  = tipIsFlipped ? '#b388ff' : tipIsAmp ? '#ff9100' : '#00e676';
+          const tipDeltaBg     = tipIsFlipped ? 'rgba(124,77,255,0.10)' : tipIsAmp ? 'rgba(255,145,0,0.10)' : 'rgba(0,230,118,0.07)';
+          const tipDeltaBorder = tipIsFlipped ? 'rgba(124,77,255,0.38)' : tipIsAmp ? 'rgba(255,145,0,0.42)' : 'rgba(0,230,118,0.28)';
           return (
             <motion.div
               key={hoveredImpact}
@@ -864,6 +926,37 @@ export default function ScenariosPage() {
               {imp.circuitBreaker && (
                 <div style={{ marginTop: 12, padding: '8px 10px', background: 'rgba(255,59,48,0.1)', border: '1px solid rgba(255,59,48,0.25)', borderRadius: 6 }}>
                   <div style={{ fontSize: 11, color: '#ff5252', lineHeight: 1.55 }}>⚠ Circuit Breaker — impact is extreme enough to likely trigger emergency intervention (central bank, government). Actual outcome may deviate significantly from the model.</div>
+                </div>
+              )}
+
+              {/* Scenario delta comparison */}
+              {tipHasDelta && tipRawDelta !== null && tipLockedImp && (
+                <div style={{ marginTop: 12, padding: '10px 12px', background: tipDeltaBg, border: `1px solid ${tipDeltaBorder}`, borderRadius: 8 }}>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: tipDeltaColor, letterSpacing: '0.12em', marginBottom: 8 }}>
+                    ⇄ SCENARIO DELTA
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.35)' }}>A — locked</span>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.55)' }}>
+                      {tipLockedImp.impact > 0 ? '+' : ''}{(tipLockedImp.impact * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.35)' }}>B — current</span>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: imp.impact > 0 ? '#ff5252' : '#00e676' }}>
+                      {imp.impact > 0 ? '+' : ''}{(imp.impact * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div style={{
+                    fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 900, color: tipDeltaColor,
+                    textAlign: 'center', padding: '6px 0 2px',
+                    borderTop: `1px solid ${tipDeltaBorder}`,
+                  }}>
+                    Δ {tipRawDelta > 0 ? '+' : ''}{tipRawDelta.toFixed(1)}%
+                  </div>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: tipDeltaColor, opacity: 0.7, textAlign: 'center', marginTop: 3 }}>
+                    {tipIsFlipped ? 'Direction reversed A → B' : tipIsAmp ? 'Amplified in Scenario B' : 'Mitigated in Scenario B'}
+                  </div>
                 </div>
               )}
             </motion.div>
