@@ -31,6 +31,29 @@ interface TriggerLiveData {
 
 const REGIONS = ['GLOBAL', 'APAC', 'EU', 'MENA', 'NA'];
 
+// ── Plain-English helpers for the impact tooltip ─────────────────────────────
+function lagLabel(lag: number): string {
+  if (lag === 0) return 'Immediate — reprices on the day of the shock';
+  if (lag <= 3)  return `~${lag} day${lag > 1 ? 's' : ''} — within the same trading week`;
+  if (lag <= 14) return `~${lag} days — expect this within 2 weeks as contracts reprice`;
+  if (lag <= 30) return `~${lag} days — transmits over the following month`;
+  return `~${lag} days — slow-moving effect, takes ~${Math.round(lag / 30)} month${lag > 45 ? 's' : ''} to fully show`;
+}
+
+function impactSentence(sector: string, impact: number): string {
+  const mag = (Math.abs(impact) * 100).toFixed(1);
+  const up = impact > 0;
+  if (Math.abs(impact) < 0.05) return `${sector} sees a marginal move — below noise threshold in most models.`;
+  if (up) {
+    if (impact > 1.0) return `${sector} costs / prices are projected to more than double (+${mag}%) — a once-in-a-decade stress level.`;
+    if (impact > 0.5) return `${sector} faces severe upward pressure of +${mag}% vs. today's baseline. Budgets and contracts written at current prices will be materially wrong.`;
+    return `${sector} is projected to rise ${mag}% above today's baseline. Factor this into forward pricing and cost assumptions.`;
+  } else {
+    if (impact < -0.5) return `${sector} faces severe contraction of ${mag}% — equivalent to losing roughly half of current activity or revenue base.`;
+    return `${sector} is projected to fall ${mag}% below today's baseline. Demand, volumes, or asset values decline by that magnitude.`;
+  }
+}
+
 export default function ScenariosPage() {
   const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
   const [intensity,   setIntensity]   = useState('SEVERE');
@@ -40,6 +63,9 @@ export default function ScenariosPage() {
   const [impacts,     setImpacts]     = useState<Record<string, ImpactResult> | null>(null);
   const [selectedNode,setSelectedNode] = useState<string | null>(null);
   const [running,     setRunning]     = useState(false);
+  const [hoveredImpact, setHoveredImpact] = useState<string | null>(null);
+  const [tooltipPos,    setTooltipPos]    = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [mobileTooltip, setMobileTooltip] = useState<string | null>(null);
   const [marketData,  setMarketData]  = useState<MarketData | null>(null);
   const [triggerLiveData, setTriggerLiveData] = useState<TriggerLiveData | null>(null);
   const [llmText,     setLlmText]     = useState('');
@@ -340,19 +366,35 @@ export default function ScenariosPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(172px,1fr))', gap: 10 }}>
               {Object.entries(SECTORS).map(([key, sec], i) => {
                 const imp = impacts[key];
+                const showMobileTooltip = mobileTooltip === key;
                 return (
                   <motion.div key={key}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: imp ? 1 : 0.3, scale: 1 }}
                     transition={{ duration: 0.4, delay: i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
                     whileHover={imp ? { y: -3, boxShadow: `0 10px 30px ${sec.color}18` } : {}}
-                    onClick={() => imp && setSelectedNode(key)}
+                    onClick={() => { if (!imp) return; if (isMobile) { setMobileTooltip(showMobileTooltip ? null : key); } else { setSelectedNode(key); } }}
+                    onMouseEnter={(e) => {
+                      if (isMobile || !imp) return;
+                      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      const tipW = 288;
+                      const tx = rect.right + 12 + tipW > window.innerWidth ? rect.left - tipW - 12 : rect.right + 12;
+                      const ty = Math.max(8, Math.min(rect.top, window.innerHeight - 340));
+                      setTooltipPos({ x: tx, y: ty });
+                      setHoveredImpact(key);
+                    }}
+                    onMouseLeave={() => setHoveredImpact(null)}
                     style={{
                       background: 'rgba(255,255,255,0.025)', border: `1px solid ${imp ? sec.color + '30' : 'rgba(255,255,255,0.06)'}`,
                       borderRadius: 8, padding: '14px', cursor: imp ? 'pointer' : 'default',
-                      transition: 'border-color 0.2s',
+                      transition: 'border-color 0.2s', position: 'relative',
                     }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: sec.color, marginBottom: 9, boxShadow: imp ? `0 0 8px ${sec.color}` : 'none' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 9 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: sec.color, boxShadow: imp ? `0 0 8px ${sec.color}` : 'none', marginTop: 2 }} />
+                      {imp && isMobile && (
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: showMobileTooltip ? sec.color : 'rgba(255,255,255,0.25)', cursor: 'pointer', lineHeight: 1 }}>ⓘ</span>
+                      )}
+                    </div>
                     <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 7, color: 'rgba(255,255,255,0.85)' }}>{sec.label}</div>
                     {imp ? (
                       <>
@@ -368,6 +410,25 @@ export default function ScenariosPage() {
                             transition={{ duration: 0.8, delay: i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
                             style={{ height: '100%', background: sec.color, borderRadius: 2 }} />
                         </div>
+                        {/* Mobile inline tooltip */}
+                        <AnimatePresence>
+                          {showMobileTooltip && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.22 }}
+                              style={{ overflow: 'hidden', marginTop: 12, paddingTop: 12, borderTop: `1px solid ${sec.color}30` }}>
+                              <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: 8 }}>
+                                {impactSentence(sec.label, imp.impact)}
+                              </div>
+                              <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>⏱ {lagLabel(imp.lag)}</div>
+                              <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>🎯 {(imp.conf * 100).toFixed(0)}% historical confidence</div>
+                              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.42)', lineHeight: 1.55 }}>{imp.mechanism}</div>
+                              {imp.circuitBreaker && (
+                                <div style={{ marginTop: 8, fontSize: 11, color: '#ff5252' }}>⚠ Extreme — may trigger emergency policy intervention</div>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </>
                     ) : (
                       <div style={{ fontFamily: 'var(--mono)', fontSize: 16, color: 'rgba(255,255,255,0.15)' }}>—</div>
@@ -447,6 +508,74 @@ export default function ScenariosPage() {
           </div>
         </motion.div>
       )}
+
+      {/* ── DESKTOP HOVER TOOLTIP ─────────────────── */}
+      <AnimatePresence>
+        {hoveredImpact && !isMobile && impacts?.[hoveredImpact] && (() => {
+          const imp  = impacts[hoveredImpact]!;
+          const sec  = SECTORS[hoveredImpact];
+          const mag  = (Math.abs(imp.impact) * 100).toFixed(1);
+          return (
+            <motion.div
+              key={hoveredImpact}
+              initial={{ opacity: 0, scale: 0.97, y: 6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97, y: 6 }}
+              transition={{ duration: 0.15 }}
+              style={{
+                position: 'fixed', left: tooltipPos.x, top: tooltipPos.y,
+                zIndex: 1000, width: 280, pointerEvents: 'none',
+                background: 'rgba(10,13,18,0.98)',
+                border: `1px solid ${sec.color}44`,
+                borderRadius: 10, padding: '16px 18px',
+                boxShadow: `0 20px 48px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04)`,
+                backdropFilter: 'blur(24px)',
+              }}>
+
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: sec.color, boxShadow: `0 0 8px ${sec.color}`, flexShrink: 0 }} />
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: sec.color, letterSpacing: '0.14em' }}>{sec.label.toUpperCase()}</span>
+              </div>
+
+              {/* Impact number + plain-English sentence */}
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 24, fontWeight: 800, color: imp.impact > 0 ? '#ff5252' : '#00e676', lineHeight: 1, marginBottom: 8 }}>
+                {imp.impact > 0 ? '+' : ''}{mag}%
+              </div>
+              <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6, marginBottom: 14 }}>
+                {impactSentence(sec.label, imp.impact)}
+              </div>
+
+              {/* Time lag */}
+              <div style={{ paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', marginBottom: 10 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 5 }}>⏱ TIME TO IMPACT · T+{imp.lag} DAYS</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.62)' }}>{lagLabel(imp.lag)}</div>
+              </div>
+
+              {/* Confidence */}
+              <div style={{ paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)', marginBottom: 10 }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 5 }}>🎯 CONFIDENCE · {(imp.conf * 100).toFixed(0)}%</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.62)' }}>
+                  In {(imp.conf * 100).toFixed(0)}% of historically comparable shocks, this sector responded within this magnitude range. The remaining {(100 - imp.conf * 100).toFixed(0)}% accounts for policy intervention or unexpected offsets.
+                </div>
+              </div>
+
+              {/* Mechanism */}
+              <div style={{ paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 5 }}>💬 HOW IT TRANSMITS</div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{imp.mechanism}</div>
+              </div>
+
+              {/* Circuit breaker */}
+              {imp.circuitBreaker && (
+                <div style={{ marginTop: 12, padding: '8px 10px', background: 'rgba(255,59,48,0.1)', border: '1px solid rgba(255,59,48,0.25)', borderRadius: 6 }}>
+                  <div style={{ fontSize: 11, color: '#ff5252', lineHeight: 1.55 }}>⚠ Circuit Breaker — impact is extreme enough to likely trigger emergency intervention (central bank, government). Actual outcome may deviate significantly from the model.</div>
+                </div>
+              )}
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
 
       <footer style={{ maxWidth: 1200, margin: '0 auto', padding: '24px clamp(16px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)' }}>MACRO_ENGINE · BFS propagation, historically calibrated · Not financial advice</span>
