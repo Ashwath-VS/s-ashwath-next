@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
   SECTORS, TRIGGERS, CONTEXTS, INTENSITIES, PERSONAS,
-  runSimulation, type ImpactResult,
+  runSimulation, autoSuggestTriggers, type ImpactResult, type LiveMarket,
 } from '@/lib/macroData';
 
 const MacroNetwork = dynamic(() => import('@/components/MacroNetwork'), { ssr: false });
@@ -63,9 +63,11 @@ export default function ScenariosPage() {
   const [impacts,     setImpacts]     = useState<Record<string, ImpactResult> | null>(null);
   const [selectedNode,setSelectedNode] = useState<string | null>(null);
   const [running,     setRunning]     = useState(false);
-  const [hoveredImpact, setHoveredImpact] = useState<string | null>(null);
-  const [tooltipPos,    setTooltipPos]    = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [mobileTooltip, setMobileTooltip] = useState<string | null>(null);
+  const [hoveredImpact,  setHoveredImpact]  = useState<string | null>(null);
+  const [tooltipPos,     setTooltipPos]     = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [mobileTooltip,  setMobileTooltip]  = useState<string | null>(null);
+  const [hoveredMarket,  setHoveredMarket]  = useState<string | null>(null);
+  const [marketTipPos,   setMarketTipPos]   = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [marketData,  setMarketData]  = useState<MarketData | null>(null);
   const [triggerLiveData, setTriggerLiveData] = useState<TriggerLiveData | null>(null);
   const [llmText,     setLlmText]     = useState('');
@@ -84,6 +86,16 @@ export default function ScenariosPage() {
     }).catch(() => {});
   }, []);
 
+  const liveMarket = useMemo<LiveMarket>(() => ({
+    vix:         parseFloat(marketData?.vix ?? '18'),
+    oilChange:   parseFloat(marketData?.oilChange ?? '0'),
+    sp500Change: parseFloat(marketData?.sp500Change ?? '0'),
+  }), [marketData]);
+
+  const autoSuggested = useMemo(() =>
+    marketData ? autoSuggestTriggers(liveMarket) : []
+  , [marketData, liveMarket]);
+
   const toggleTrigger = (id: string) =>
     setSelectedTriggers(p => p.includes(id) ? p.filter(t => t !== id) : [...p, id]);
 
@@ -92,15 +104,7 @@ export default function ScenariosPage() {
     setRunning(true); setLlmText(''); setLlmError('');
     await new Promise(r => setTimeout(r, 700));
 
-    const liveSeeds: Record<string, number> = {};
-    if (marketData) {
-      const oc = parseFloat(marketData.oilChange ?? '0');
-      const sc = parseFloat(marketData.sp500Change ?? '0');
-      if (Math.abs(oc) > 0.01) liveSeeds['OIL_ENERGY']    = oc;
-      if (Math.abs(sc) > 0.01) liveSeeds['EQUITY_MARKETS'] = sc;
-    }
-
-    const results = runSimulation(selectedTriggers, intensity, context, region, liveSeeds);
+    const results = runSimulation(selectedTriggers, intensity, context, region, liveMarket);
     setImpacts(results);
     setRunning(false);
 
@@ -118,7 +122,7 @@ export default function ScenariosPage() {
       setLlmError('Could not reach LLM. Check GEMINI_API_KEY in Netlify environment variables.');
     }
     setLlmLoading(false);
-  }, [selectedTriggers, intensity, context, region, persona, marketData]);
+  }, [selectedTriggers, intensity, context, region, persona, marketData, liveMarket]);
 
   const contextColor = context === 'CRISIS' ? '#ff3b30' : context === 'STRESSED' ? '#ffb020' : '#00e676';
 
@@ -136,15 +140,23 @@ export default function ScenariosPage() {
         </span>
 
         {[
-          { label: 'VIX',     val: marketData?.vix },
-          { label: 'WTI',     val: marketData?.oil    ? `$${marketData.oil}`   : null },
-          { label: 'S&P 500', val: marketData?.sp500 },
-          { label: 'USD/EUR', val: marketData?.usdEur },
-          { label: 'GOLD',    val: marketData?.gold   ? `$${marketData.gold}`  : null },
-          { label: '10Y UST', val: marketData?.tenYear ? `${marketData.tenYear}%` : null },
+          { key: 'VIX',     label: 'VIX',     val: marketData?.vix },
+          { key: 'WTI',     label: 'WTI',     val: marketData?.oil    ? `$${marketData.oil}`      : null },
+          { key: 'SP500',   label: 'S&P 500', val: marketData?.sp500 },
+          { key: 'USDEUR',  label: 'USD/EUR', val: marketData?.usdEur },
+          { key: 'GOLD',    label: 'GOLD',    val: marketData?.gold   ? `$${marketData.gold}`     : null },
+          { key: 'UST10Y',  label: '10Y UST', val: marketData?.tenYear ? `${marketData.tenYear}%` : null },
         ].map(item => item.val ? (
-          <span key={item.label} style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.42)' }}>
+          <span key={item.key}
+            onMouseEnter={(e) => {
+              const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              setMarketTipPos({ x: r.left, y: r.bottom + 8 });
+              setHoveredMarket(item.key);
+            }}
+            onMouseLeave={() => setHoveredMarket(null)}
+            style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.42)', cursor: 'default', position: 'relative' }}>
             {item.label}{' '}<strong style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{item.val}</strong>
+            <span style={{ marginLeft: 4, fontSize: 8, color: 'rgba(255,255,255,0.2)' }}>ⓘ</span>
           </span>
         ) : null)}
 
@@ -198,6 +210,7 @@ export default function ScenariosPage() {
             const live = triggerLiveData?.triggers?.[key];
             const signalDots = live ? Math.round(live.signal * 3) : 0;
             const isHot = signalDots >= 2;
+            const isSuggested = autoSuggested.includes(key);
             const headline = live?.headlines?.[0];
             return (
               <motion.button key={key} onClick={() => toggleTrigger(key)}
@@ -207,7 +220,7 @@ export default function ScenariosPage() {
                   display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '12px 16px',
                   background: active ? `${t.color}18` : 'rgba(255,255,255,0.02)',
-                  border: `1.5px solid ${active ? t.color : isHot ? `${t.color}50` : 'rgba(255,255,255,0.07)'}`,
+                  border: `1.5px solid ${active ? t.color : isSuggested ? `${t.color}80` : isHot ? `${t.color}50` : 'rgba(255,255,255,0.07)'}`,
                   borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
                   boxShadow: active ? `0 0 20px ${t.color}22` : isHot ? `0 0 10px ${t.color}14` : 'none',
                   transition: 'border-color 0.18s, background 0.18s, box-shadow 0.18s',
@@ -222,7 +235,16 @@ export default function ScenariosPage() {
                     <span style={{ fontSize: 13, fontWeight: 600, color: active ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.7)' }}>
                       {t.label}
                     </span>
-                    {isHot && (
+                    {isSuggested && !active && (
+                      <span style={{
+                        fontFamily: 'var(--mono)', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em',
+                        color: '#ffb020', border: '1px solid rgba(255,176,32,0.5)',
+                        padding: '1px 5px', borderRadius: 2, flexShrink: 0,
+                      }}>
+                        TODAY
+                      </span>
+                    )}
+                  {isHot && !isSuggested && (
                       <span style={{
                         fontFamily: 'var(--mono)', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em',
                         color: t.color, border: `1px solid ${t.color}66`,
@@ -509,6 +531,74 @@ export default function ScenariosPage() {
           </div>
         </motion.div>
       )}
+
+      {/* ── MARKET STRIP TOOLTIP ──────────────────── */}
+      {(() => {
+        const MARKET_TIPS: Record<string, { title: string; body: string; range?: string }> = {
+          VIX: {
+            title: "VIX — The Market's Fear Gauge",
+            body: "Measures how much volatility investors expect in the S&P 500 over the next 30 days. Think of it as a collective anxiety score. When it spikes, institutions are buying protection — usually because something bad is expected.",
+            range: "Under 15 = calm · 15–25 = normal · 25–35 = stressed · Above 35 = panic",
+          },
+          WTI: {
+            title: "WTI Crude — US Oil Benchmark",
+            body: "West Texas Intermediate is the benchmark price for US crude oil per barrel in USD. Every $10 move in WTI adds or removes ~$1.50–2.00 from the cost of filling a car tank and directly affects jet fuel, diesel, and plastics costs globally.",
+            range: "Below $60 = deflationary · $60–90 = normal · Above $90 = inflationary pressure",
+          },
+          SP500: {
+            title: "S&P 500 — US Equity Barometer",
+            body: "Daily change in the 500 largest US companies by market cap. Used as a proxy for overall corporate earnings expectations and investor risk appetite. A -2% day is notable; -5% in a day triggers circuit breakers on US exchanges.",
+            range: "Daily moves: ±1% = normal · ±2% = elevated · ±3%+ = significant event",
+          },
+          USDEUR: {
+            title: "USD/EUR — Dollar Strength Signal",
+            body: "How many euros one US dollar buys. A stronger dollar (number rising) makes US exports more expensive, pressures emerging market dollar-denominated debt, and compresses earnings for US multinationals reporting overseas revenue.",
+            range: "Above 1.10 = strong USD · 1.05–1.10 = neutral · Below 1.00 = very strong USD (rare)",
+          },
+          GOLD: {
+            title: "Gold — Safe Haven Asset",
+            body: "Price per troy ounce in USD. Gold rises when investors distrust paper assets — in geopolitical crises, high inflation, or banking stress. It's the oldest insurance policy against systemic failure.",
+            range: "Below $1,800 = low fear · $1,800–2,200 = elevated · Above $2,500 = significant flight to safety",
+          },
+          UST10Y: {
+            title: "10-Year US Treasury Yield",
+            body: "The interest rate the US government pays to borrow for 10 years. This is the global risk-free rate — it directly sets mortgage rates, corporate bond pricing, and the discount rate used to value equities. When this rises sharply, growth stocks fall hardest.",
+            range: "Below 2% = easy money · 2–4% = normal · Above 5% = tight — significant headwind for equities and real estate",
+          },
+        };
+        const tip = hoveredMarket ? MARKET_TIPS[hoveredMarket] : null;
+        if (!tip) return null;
+        const leftPos = Math.min(marketTipPos.x, window.innerWidth - 312);
+        return (
+          <motion.div
+            key={hoveredMarket}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.14 }}
+            style={{
+              position: 'fixed', left: leftPos, top: marketTipPos.y,
+              zIndex: 1001, width: 300, pointerEvents: 'none',
+              background: 'rgba(10,13,18,0.98)',
+              border: '1px solid rgba(255,176,32,0.3)',
+              borderRadius: 10, padding: '14px 16px',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(24px)',
+            }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: '#ffb020', letterSpacing: '0.12em', marginBottom: 8 }}>
+              {tip.title.toUpperCase()}
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.65, marginBottom: tip.range ? 10 : 0 }}>
+              {tip.body}
+            </div>
+            {tip.range && (
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                {tip.range}
+              </div>
+            )}
+          </motion.div>
+        );
+      })()}
 
       {/* ── DESKTOP HOVER TOOLTIP ─────────────────── */}
       <AnimatePresence>

@@ -198,12 +198,50 @@ export const PERSONAS = [
   { id: 'jobseeker_retail',   label: 'Job Seeker · Retail',       icon: '🏪', jobSeeker: true },
 ];
 
+export interface LiveMarket {
+  vix?: number;
+  oilChange?: number;   // fraction — 0.04 = oil up 4% today
+  sp500Change?: number; // fraction — -0.02 = equities down 2% today
+}
+
+/** VIX → cascade amplifier.
+ *  High VIX = markets are fearful = contagion spreads harder and faster.
+ *  Low VIX = complacency = shocks absorb more slowly. */
+function vixCascadeMult(vix: number): number {
+  if (vix < 15) return 0.82;   // Complacent — shocks less contagious
+  if (vix < 20) return 1.0;    // Normal baseline
+  if (vix < 25) return 1.12;   // Slightly elevated
+  if (vix < 30) return 1.28;   // Stressed — fear is spreading
+  if (vix < 40) return 1.45;   // Fearful — amplified contagion
+  return 1.65;                  // Panic — cascades run hard
+}
+
+/** If a sector is ALREADY moving in the shock direction today,
+ *  part of the impact is already priced in — dampen the first-order hit. */
+function pricedInDampening(triggerImpact: number, liveMove: number | undefined): number {
+  if (!liveMove || Math.sign(liveMove) !== Math.sign(triggerImpact)) return triggerImpact;
+  // Same direction — market partly absorbed it. Max 25% dampening.
+  const damp = Math.min(0.25, Math.abs(liveMove) * 3);
+  return triggerImpact * (1 - damp);
+}
+
+/** Which triggers are live-relevant given today's market data. */
+export function autoSuggestTriggers(market: LiveMarket): string[] {
+  const { vix = 18, oilChange = 0, sp500Change = 0 } = market;
+  const suggestions = new Set<string>();
+  if (vix > 28)                              suggestions.add('MARKET_CRASH');
+  if (sp500Change < -0.02)                   suggestions.add('MARKET_CRASH');
+  if (Math.abs(oilChange) > 0.03)            suggestions.add('OIL_SHOCK');
+  if (vix > 32 && Math.abs(oilChange) > 0.02) suggestions.add('WAR_CONFLICT');
+  return [...suggestions];
+}
+
 export function runSimulation(
   triggerIds: string[],
   intensityKey: string,
   contextKey: string,
   regionKey: string,
-  liveSeeds?: Record<string, number>
+  liveMarket?: LiveMarket,
 ): Record<string, ImpactResult> {
   const intensity = INTENSITIES[intensityKey] ?? 1.0;
   const context   = CONTEXTS[contextKey]   ?? CONTEXTS.BASELINE;
@@ -215,27 +253,46 @@ export function runSimulation(
 
   const MAX_DEPTH = 5, MIN_IMPACT = 0.02, CIRCUIT_BREAKER = 0.85;
 
-  // Seed from live market data if available
-  if (liveSeeds) {
-    Object.entries(liveSeeds).forEach(([sector, baseImpact]) => {
-      if (Math.abs(baseImpact) > MIN_IMPACT) {
-        queue.push({ sector, impact: baseImpact, lag: 0, conf: 0.95, depth: 0, via: null, mechanism: 'Live market baseline — current conditions pre-shock.' });
-      }
+  // Live calibration factors derived from today's market data
+  const vix         = liveMarket?.vix ?? 18;
+  const cascadeMult = vixCascadeMult(vix);
+  const liveOil     = liveMarket?.oilChange;
+  const liveSP      = liveMarket?.sp500Change;
+
+  // Seed live market baseline — what's already moving today before the shock hits
+  if (liveOil && Math.abs(liveOil) > MIN_IMPACT) {
+    queue.push({
+      sector: 'OIL_ENERGY', impact: liveOil, lag: 0, conf: 0.95, depth: 0, via: null,
+      mechanism: `Live market: oil already ${liveOil > 0 ? 'up' : 'down'} ${(Math.abs(liveOil) * 100).toFixed(1)}% today — pre-loaded as baseline.`,
+    });
+  }
+  if (liveSP && Math.abs(liveSP) > MIN_IMPACT) {
+    queue.push({
+      sector: 'EQUITY_MARKETS', impact: liveSP, lag: 0, conf: 0.95, depth: 0, via: null,
+      mechanism: `Live market: equities already ${liveSP > 0 ? 'up' : 'down'} ${(Math.abs(liveSP) * 100).toFixed(1)}% today — pre-loaded as baseline.`,
     });
   }
 
+  // Trigger first-order impacts — dampened if sector already priced in
   triggerIds.forEach(tid => {
     const trig = TRIGGERS[tid];
     if (!trig) return;
     trig.firstOrder.forEach(fo => {
+      const liveMove = fo.sector === 'OIL_ENERGY' ? liveOil
+                     : fo.sector === 'EQUITY_MARKETS' ? liveSP
+                     : undefined;
+      const rawImpact   = fo.impact * intensity;
+      const adjForLive  = pricedInDampening(rawImpact, liveMove);
       queue.push({
-        sector: fo.sector, impact: fo.impact * intensity,
+        sector: fo.sector, impact: adjForLive,
         lag: fo.lag, conf: fo.conf, depth: 0, via: null,
-        mechanism: trig.label + ' — direct first-order shock',
+        mechanism: trig.label + ' — direct first-order shock'
+          + (adjForLive !== rawImpact ? ` (dampened ${((1 - adjForLive / rawImpact) * 100).toFixed(0)}% — already partially priced in today)` : ''),
       });
     });
   });
 
+  // BFS propagation — cascade impacts amplified/dampened by VIX
   const seen = new Set<string>();
   let idx = 0;
   while (idx < queue.length) {
@@ -245,8 +302,10 @@ export function runSimulation(
     seen.add(key);
 
     const ctxMult   = context.multipliers[node.sector] ?? context.multipliers._default ?? 1.0;
-    const adjImpact = node.impact * ctxMult;
-    const cb = Math.abs(adjImpact) > CIRCUIT_BREAKER;
+    // VIX multiplier only on cascades (depth > 0) — first-order impacts are anchored historically
+    const vixAdj    = node.depth > 0 ? cascadeMult : 1.0;
+    const adjImpact = node.impact * ctxMult * vixAdj;
+    const cb        = Math.abs(adjImpact) > CIRCUIT_BREAKER;
 
     if (!impacts[node.sector] || Math.abs(adjImpact) > Math.abs(impacts[node.sector].impact)) {
       impacts[node.sector] = {
@@ -259,12 +318,12 @@ export function runSimulation(
     EDGES.filter(e => e.from === node.sector).forEach(edge => {
       const regMult = (edge.region?.[regionKey]) ?? 1.0;
       queue.push({
-        sector: edge.to,
-        impact: adjImpact * edge.weight * edge.dir * regMult,
-        lag:    node.lag + edge.lag,
-        conf:   node.conf * edge.conf,
-        depth:  node.depth + 1,
-        via:    node.sector,
+        sector:    edge.to,
+        impact:    adjImpact * edge.weight * edge.dir * regMult,
+        lag:       node.lag + edge.lag,
+        conf:      node.conf * edge.conf,
+        depth:     node.depth + 1,
+        via:       node.sector,
         mechanism: edge.mechanism,
       });
     });
