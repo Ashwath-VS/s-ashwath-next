@@ -68,12 +68,13 @@ const domains = [
     status: 'LIVE',
     statusColor: '#00e676',
     href: '/scenarios',
-    problem: 'A rate hike hits equity markets, propagates to credit, flows into employment — but that chain is invisible to most decision-makers. Most briefings tell you what happened, not what to do about it.',
+    problem: 'A rate hike hits equity markets, propagates to credit, flows into employment — but that chain is invisible to most decision-makers. Most briefings tell you what happened, not what to do about it. This platform translates complex technical market reports into plain English — for any decision-maker, in any role.',
     agents: [
-      { name: 'BFS Cascade Propagation Engine', desc: 'Breadth-first search across 13 sectors and 31 weighted directional edges. Each trigger propagates with sector-specific lag, confidence, and circuit-breaker thresholds. Seeded with live Yahoo Finance market data.', stack: 'TypeScript · custom BFS engine · 13 sectors · 31 edges · historical calibration' },
-      { name: 'Strategic Intelligence Brief · Gemini', desc: 'Reads the full cascade output plus live market conditions, then generates a plain-English brief for one of 12 personas across 4 structured sections. Under 400 words. Actionable.', stack: 'Gemini 2.5 Flash · 12 personas · Yahoo Finance live data · persona-tailored prompts' },
+      { name: 'BFS Cascade Propagation Engine', desc: 'Breadth-first search across 13 sectors and 31 weighted directional edges. Each trigger propagates with sector-specific lag, confidence, and circuit-breaker thresholds. Cascade multiplier seeded live from VIX — same trigger produces different numbers at VIX 14 vs VIX 38. Already-priced-in dampening applied when live market is already moving in the shock direction.', stack: 'TypeScript · custom BFS engine · 13 sectors · 31 edges · VIX cascade multiplier · live Yahoo Finance seeding' },
+      { name: 'Live Trigger Intelligence · RSS Engine', desc: 'Pulls BBC World, BBC Business, NYT World, and NYT Business RSS feeds every 15 minutes. Keyword-matches headlines to 6 shock categories. Returns signal strength (0–3 dots), ACTIVE badge, and a real headline per trigger — so the cards always reflect what is actually happening in the news, not static labels.', stack: 'TypeScript · BBC RSS · NYT RSS · regex keyword engine · 15-min server cache · 6 trigger categories' },
+      { name: 'Macro Intelligence Brief · Gemini Search Grounding', desc: 'Reads the full cascade output plus live market data, then generates a plain-English brief for one of 11 personas across 4 structured sections. Uses Google Search Grounding at inference time — Gemini searches the current web before writing, so every brief is anchored in real events happening right now, not training data generics. Under 450 words. Specific and actionable.', stack: 'Gemini 2.5 Flash · Google Search Grounding · 11 personas · Yahoo Finance live data · temperature 0.4' },
     ],
-    metrics: [{ v: '13', l: 'Sectors modelled' }, { v: '31', l: 'Directional edges' }, { v: '12', l: 'Briefing personas' }, { v: 'Live', l: 'Market data seeding' }],
+    metrics: [{ v: '13', l: 'Sectors modelled' }, { v: '31', l: 'Directional edges' }, { v: '11', l: 'Briefing personas' }, { v: 'Live', l: 'VIX-calibrated cascade' }],
   },
   {
     id: 'DOMAIN_03',
@@ -97,8 +98,9 @@ const platformStack = [
   { layer: 'Animation', detail: 'Framer Motion 12 · GSAP 3.15 + @gsap/react', note: 'Page transitions, scroll animations, marquee ticker, scramble text, section dividers' },
   { layer: 'Visualisation', detail: 'D3 7.9', note: 'Macro network force-directed graph — 13 nodes, 31 edges, BFS cascade overlay' },
   { layer: 'Styling', detail: 'CSS Custom Properties · Inline styles · Zero CSS frameworks', note: 'Design tokens in globals.css — all spacing, color, and typography via CSS vars' },
-  { layer: 'LLM', detail: 'Google Gemini 2.5 Flash · @google/generative-ai', note: 'Persona-tailored macro cascade briefs — 12 roles, 4 structured sections, <400 words' },
-  { layer: 'Market Data', detail: 'Yahoo Finance API · FX rate feeds', note: '5-minute server-side cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST' },
+  { layer: 'LLM', detail: 'Google Gemini 2.5 Flash · Google Search Grounding', note: 'Persona briefs grounded in current real-world events via Google Search at inference time — 11 roles, 4 sections, <450 words' },
+  { layer: 'Market Data', detail: 'Yahoo Finance API · open.exchangerate-api.com', note: '5-min cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST. VIX drives cascade multiplier in real time.' },
+  { layer: 'News Feed', detail: 'BBC World · BBC Business · NYT World · NYT Business RSS', note: '15-min cache on /api/triggers — keyword-matched to 6 shock categories, signal strength + live headline per trigger' },
   { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
   { layer: 'Hosting', detail: 'Netlify · GitHub', note: 'CI/CD via GitHub → Netlify. Env vars managed in Netlify dashboard.' },
 ];
@@ -261,7 +263,7 @@ export default function DocsPage() {
             <Link href="/">ALL DOMAINS</Link>
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6 }}>
-            // Technical Documentation · S. Ashwath · Operator-Builder · 5 Domains · 11 Agents
+            // Technical Documentation · S. Ashwath · Operator-Builder · 5 Domains · 13 Agents
           </div>
         </div>
       </footer>

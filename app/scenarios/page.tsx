@@ -177,7 +177,7 @@ export default function ScenariosPage() {
             Macro Cascade <span style={{ color: '#ff9100' }}>Intelligence</span> Engine
           </h1>
           <p style={{ fontSize: 15, color: 'var(--txt-dim)', maxWidth: 560, lineHeight: 1.65 }}>
-            Select a macro shock. The propagation engine traces impact through 13 sectors using today&apos;s market conditions — then an AI brief tells you exactly what it means for your role.
+            Select a macro shock. The engine traces impact through 13 sectors using live market data — then translates the cascade into a plain-English brief for your specific role. No jargon. No generics. Just what this means for you, grounded in what&apos;s happening right now.
           </p>
         </motion.div>
       </div>
@@ -734,7 +734,11 @@ function NodeDetail({ impacts, selectedNode }: { impacts: Record<string, ImpactR
 }
 
 function LlmBrief({ text, persona }: { text: string; persona?: { label: string; icon: string; jobSeeker?: boolean } }) {
-  const sections = text.split(/(?=\n## |\n# )/).filter(s => s.trim());
+  // Strip any preamble before the first markdown heading (search grounding may add one)
+  const headerIdx = text.search(/(?:^|\n)(#{1,2} )/);
+  const cleanText = headerIdx > 0 ? text.slice(headerIdx).trim() : text.trim();
+  // Prepend newline so the lookahead split catches the very first section
+  const sections = ('\n' + cleanText).split(/(?=\n#{1,2} )/).filter(s => s.trim());
 
   return (
     <div style={{ background: 'linear-gradient(135deg, rgba(255,176,32,0.04) 0%, rgba(255,255,255,0.02) 100%)', border: '1px solid rgba(255,176,32,0.18)', borderRadius: 10, overflow: 'hidden' }}>
@@ -748,7 +752,7 @@ function LlmBrief({ text, persona }: { text: string; persona?: { label: string; 
           <div style={{ fontSize: 15, fontWeight: 700 }}>{persona?.label}</div>
         </div>
         <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '10px', color: 'rgba(0,230,118,0.7)', border: '1px solid rgba(0,230,118,0.2)', padding: '3px 10px', borderRadius: 2, letterSpacing: '0.08em' }}>
-          AI · GEMINI 2.5
+          Macro Intelligence Report
         </span>
       </div>
 
