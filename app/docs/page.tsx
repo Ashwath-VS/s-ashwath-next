@@ -68,13 +68,19 @@ const domains = [
     status: 'LIVE',
     statusColor: '#00e676',
     href: '/scenarios',
-    problem: 'A rate hike hits equity markets, propagates to credit, flows into employment — but that chain is invisible to most decision-makers. Most briefings tell you what happened, not what to do about it. This platform translates complex technical market reports into plain English — for any decision-maker, in any role.',
-    agents: [
-      { name: 'BFS Cascade Propagation Engine', desc: 'Breadth-first search across 13 sectors and 31 weighted directional edges. Each trigger propagates with sector-specific lag, confidence, and circuit-breaker thresholds. Cascade multiplier seeded live from VIX — same trigger produces different numbers at VIX 14 vs VIX 38. Already-priced-in dampening applied when live market is already moving in the shock direction.', stack: 'TypeScript · custom BFS engine · 13 sectors · 31 edges · VIX cascade multiplier · live Yahoo Finance seeding' },
-      { name: 'Live Trigger Intelligence · RSS Engine', desc: 'Pulls BBC World, BBC Business, NYT World, and NYT Business RSS feeds every 15 minutes. Keyword-matches headlines to 6 shock categories. Returns signal strength (0–3 dots), ACTIVE badge, and a real headline per trigger — so the cards always reflect what is actually happening in the news, not static labels.', stack: 'TypeScript · BBC RSS · NYT RSS · regex keyword engine · 15-min server cache · 6 trigger categories' },
-      { name: 'Macro Intelligence Brief · Gemini Search Grounding', desc: 'Reads the full cascade output plus live market data, then generates a plain-English brief for one of 11 personas across 4 structured sections. Uses Google Search Grounding at inference time — Gemini searches the current web before writing, so every brief is anchored in real events happening right now, not training data generics. Under 450 words. Specific and actionable.', stack: 'Gemini 2.5 Flash · Google Search Grounding · 11 personas · Yahoo Finance live data · temperature 0.4' },
+    problem: 'A Bloomberg terminal costs $25,000 a year. Oxford Economics and Macrobond serve institutional desks. None of them produce a plain-English brief for the CFO, the startup founder, or the logistics professional who needs to understand what a macro shock means for their specific role. This platform replicates the same four-layer analytical pipeline — live news trigger detection, live market seeding, a calibrated sector cascade model, and AI narrative grounded in today\'s real events — and delivers institutional-rigour output in plain English, for any decision-maker, free.',
+    pipeline: [
+      { step: '01', label: 'RSS NEWS SIGNALS',    src: 'BBC World · BBC Business · NYT World · NYT Business', detail: '15-min server cache. Keyword-matched to 6 shock categories. Returns signal strength 0–3 and a live headline per trigger. Cards reflect real news — not static labels.' },
+      { step: '02', label: 'LIVE MARKET SEEDING', src: 'Yahoo Finance · open.exchangerate-api.com', detail: '5-min cache. VIX is extracted and converted to a cascade depth multiplier (VIX 14 = 0.82×, VIX 38 = 1.45×). WTI and S&P500 changes dampen first-order impacts already priced in today.' },
+      { step: '03', label: 'BFS CASCADE MODEL',   src: '13 sectors · 31 data-calibrated edges', detail: 'Breadth-first search propagates shock impact sector-by-sector. Edge weights calibrated via event-conditional regression against 23 historical shocks (Gulf War 1990 → Ukraine 2022) using Yahoo Finance ETF data. Circuit breakers cap runaway cascades.' },
+      { step: '04', label: 'AI SEARCH GROUNDING', src: 'Gemini 2.5 Flash · Google Search API', detail: 'Gemini receives the full 13-sector cascade output plus live market data. Google Search Grounding fires at inference time — the model searches the current web before writing. The brief must cite specific cascade numbers AND specific current events. 11 persona cuts.' },
     ],
-    metrics: [{ v: '13', l: 'Sectors modelled' }, { v: '31', l: 'Directional edges' }, { v: '11', l: 'Briefing personas' }, { v: 'Live', l: 'VIX-calibrated cascade' }],
+    agents: [
+      { name: 'BFS Cascade Propagation Engine', desc: 'Breadth-first search across 13 sectors and 31 directional edges. Each trigger fires first-order shocks; the BFS engine propagates them sector-by-sector with sector-specific lag, confidence, and circuit-breaker thresholds. Edge weights are data-calibrated — not authored — via event-conditional correlation analysis across 23 historical shock events using Yahoo Finance ETF return data. VIX is applied as a real-time cascade multiplier: same WAR_CONFLICT trigger produces different sector numbers at VIX 14 vs VIX 38. Already-priced-in dampening prevents double-counting sectors the market is already moving on today.', stack: 'TypeScript · custom BFS engine · 13 sectors · 31 edges · yfinance-calibrated weights · VIX multiplier · priced-in dampening' },
+      { name: 'Live Trigger Intelligence · RSS Engine', desc: 'Pulls BBC World, BBC Business, NYT World, and NYT Business RSS feeds every 15 minutes. Keyword-matches each headline to 6 shock categories (WAR_CONFLICT, OIL_SHOCK, RATE_HIKE, PANDEMIC, SUPPLY_CHAIN, MARKET_CRASH). Returns signal strength 0–1 and a real headline per trigger category — so every trigger card shows real news relevance, not a static label. ACTIVE badge fires when signal strength crosses threshold.', stack: 'TypeScript · BBC RSS · NYT RSS · regex keyword engine · 15-min server cache · 6 shock categories' },
+      { name: 'Macro Intelligence Brief · Gemini Search Grounding', desc: 'Receives the full 13-sector cascade output (all sectors, with impact %, lag, confidence, and propagation mechanism) plus live market data. Google Search Grounding fires at inference time — Gemini searches the current web before writing, not its training data. The system instruction requires the model to cite at least two specific cascade sectors by percentage AND anchor each claim to a specific current real-world event. Output: 4-section plain-English brief, under 500 words, specific to one of 11 decision-maker personas. Not a generic macro summary — a personalised analytical report.', stack: 'Gemini 2.5 Flash · Google Search Grounding · temperature 0.4 · 11 personas · full cascade context · live market data' },
+    ],
+    metrics: [{ v: '4-layer', l: 'Pipeline depth' }, { v: '23', l: 'Calibration events' }, { v: '11', l: 'Briefing personas' }, { v: 'Live', l: 'Search-grounded output' }],
   },
   {
     id: 'DOMAIN_03',
@@ -155,9 +161,46 @@ export default function DocsPage() {
 
           {/* Problem statement */}
           <motion.p custom={di * 0.1 + 0.05} variants={fadeUp} initial="hidden" whileInView="visible" viewport={viewport}
-            style={{ fontSize: 'clamp(16px,1.8vw,19px)', fontWeight: 500, lineHeight: 1.55, color: 'var(--txt)', maxWidth: '58ch', marginBottom: 32, letterSpacing: '-0.01em' }}>
+            style={{ fontSize: 'clamp(15px,1.7vw,18px)', fontWeight: 500, lineHeight: 1.65, color: 'var(--txt)', maxWidth: '62ch', marginBottom: 28, letterSpacing: '-0.01em' }}>
             {d.problem}
           </motion.p>
+
+          {/* Pipeline architecture — DOMAIN_05 only */}
+          {'pipeline' in d && Array.isArray((d as {pipeline?: unknown[]}).pipeline) && (
+            <motion.div custom={di * 0.1 + 0.07} variants={fadeUp} initial="hidden" whileInView="visible" viewport={viewport}
+              style={{ marginBottom: 32 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.16em', color: `${d.color}88`, marginBottom: 12 }}>
+                // REPORT GENERATION PIPELINE — 4-LAYER ARCHITECTURE
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0, border: `1px solid ${d.color}20`, borderRadius: 6, overflow: 'hidden' }}>
+                {((d as {pipeline: {step:string;label:string;src:string;detail:string}[]}).pipeline).map((step, si) => (
+                  <div key={si} style={{
+                    padding: '16px 14px',
+                    borderRight: si < 3 ? `1px solid ${d.color}15` : 'none',
+                    background: si % 2 ? `${d.color}03` : 'transparent',
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: `${d.color}55`, letterSpacing: '0.1em' }}>{step.step}</span>
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: d.color, boxShadow: `0 0 5px ${d.color}`, display: 'inline-block' }} />
+                      {si < 3 && (
+                        <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 10, color: `${d.color}40` }}>→</span>
+                      )}
+                    </div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, color: d.color, letterSpacing: '0.07em', lineHeight: 1.35 }}>
+                      {step.label}
+                    </div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.04em', lineHeight: 1.5 }}>
+                      {step.src}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', lineHeight: 1.6 }}>
+                      {step.detail}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {/* Metrics strip */}
           <motion.div custom={di * 0.1 + 0.1} variants={fadeUp} initial="hidden" whileInView="visible" viewport={viewport}

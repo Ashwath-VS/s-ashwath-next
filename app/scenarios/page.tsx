@@ -171,14 +171,72 @@ export default function ScenariosPage() {
       <div style={{ padding: '52px clamp(16px,4vw,48px) 40px', maxWidth: 1200, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
           <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: '#ff9100', letterSpacing: '0.18em', marginBottom: 14 }}>
-            MACRO_ENGINE · DOMAIN_05 · LIVE SIMULATION
+            MACRO_ENGINE · DOMAIN_05 · INSTITUTIONAL-GRADE · LIVE
           </div>
-          <h1 style={{ fontSize: 'clamp(26px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: 14 }}>
+          <h1 style={{ fontSize: 'clamp(26px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: 20 }}>
             Macro Cascade <span style={{ color: '#ff9100' }}>Intelligence</span> Engine
           </h1>
-          <p style={{ fontSize: 15, color: 'var(--txt-dim)', maxWidth: 560, lineHeight: 1.65 }}>
-            Select a macro shock. The engine traces impact through 13 sectors using live market data — then translates the cascade into a plain-English brief for your specific role. No jargon. No generics. Just what this means for you, grounded in what&apos;s happening right now.
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', maxWidth: 600, lineHeight: 1.75, marginBottom: 14 }}>
+            A Bloomberg institutional brief requires a $25,000/year terminal and an analyst to interpret it.
+            This platform runs the same four-layer analytical pipeline — and delivers the output as a plain-English report
+            specific to your role, grounded in what is happening in the market <em>right now</em>.
           </p>
+          <p style={{ fontSize: 13.5, color: 'var(--txt-dim)', maxWidth: 580, lineHeight: 1.72, marginBottom: 28 }}>
+            Every report is generated fresh. Live RSS news signals feed trigger detection. Live market data seeds the cascade model.
+            A BFS propagation engine — calibrated against 23 historical shocks from the Gulf War to Ukraine — computes sector-by-sector impact.
+            Gemini then searches the current web at inference time and writes a brief that cites the model numbers alongside real events happening today.
+            Not training data. Not templates. Institutional rigour, for any decision-maker.
+          </p>
+
+          {/* ── 4-STEP PIPELINE ARCHITECTURE ── */}
+          <div style={{ marginBottom: 32, maxWidth: 900 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.16em', color: 'rgba(255,145,0,0.55)', marginBottom: 12 }}>
+              // HOW EACH REPORT IS GENERATED — 4-LAYER PIPELINE
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4,1fr)', gap: isMobile ? 8 : 0, position: 'relative' }}>
+              {([
+                { n:'01', label:'RSS NEWS\nSIGNALS',    src:'BBC · NYT',                  detail:'15-min cache · keyword-matched to 6 shock categories · live signal strength 0–3' },
+                { n:'02', label:'LIVE MARKET\nSEEDING', src:'Yahoo Finance · FX feeds',   detail:'VIX → cascade multiplier · WTI + S&P500 → priced-in dampening · 5-min cache' },
+                { n:'03', label:'BFS CASCADE\nMODEL',   src:'13 sectors · 31 edges',      detail:'Calibrated: 23 historical shocks · Gulf War 1990 to Ukraine 2022 · ETF regression data' },
+                { n:'04', label:'AI SEARCH\nGROUNDING', src:'Gemini 2.5 Flash · Google',  detail:'Searches current web at inference time · cites cascade numbers + real events · 11 personas' },
+              ] as { n:string; label:string; src:string; detail:string }[]).map((step, i) => (
+                <div key={i} style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', position: 'relative' }}>
+                  {/* Connector arrow between steps */}
+                  {!isMobile && i < 3 && (
+                    <div style={{
+                      position: 'absolute', right: -1, top: '50%', transform: 'translateY(-50%)',
+                      zIndex: 2, display: 'flex', alignItems: 'center',
+                    }}>
+                      <div style={{ width: 1, height: 24, background: 'rgba(255,145,0,0.3)' }} />
+                    </div>
+                  )}
+                  <div style={{
+                    flex: 1,
+                    background: 'rgba(255,145,0,0.04)',
+                    border: '1px solid rgba(255,145,0,0.14)',
+                    borderRight: !isMobile && i < 3 ? '1px solid rgba(255,145,0,0.08)' : '1px solid rgba(255,145,0,0.14)',
+                    borderRadius: isMobile ? 6 : i === 0 ? '6px 0 0 6px' : i === 3 ? '0 6px 6px 0' : 0,
+                    padding: isMobile ? '12px 14px' : '16px 14px',
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,145,0,0.45)', letterSpacing: '0.1em' }}>{step.n}</span>
+                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#ff9100', boxShadow: '0 0 6px #ff9100' }} />
+                    </div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, fontWeight: 700, color: '#ff9100', letterSpacing: '0.08em', lineHeight: 1.4, whiteSpace: 'pre-line' }}>
+                      {step.label}
+                    </div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+                      {step.src}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', lineHeight: 1.55 }}>
+                      {step.detail}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* ── DIFFERENTIATION TABLE ── */}
           <div style={{ marginTop: 28, maxWidth: 700 }}>
