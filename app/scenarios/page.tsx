@@ -73,6 +73,15 @@ export default function ScenariosPage() {
   const [llmText,     setLlmText]     = useState('');
   const [llmLoading,  setLlmLoading]  = useState(false);
   const [llmError,    setLlmError]    = useState('');
+  const [lockedRun,   setLockedRun]   = useState<{
+    impacts: Record<string, ImpactResult>;
+    triggers: string[];
+    intensity: string;
+    context: string;
+    region: string;
+    llmText: string;
+  } | null>(null);
+  const [activeBrief, setActiveBrief] = useState<'current' | 'locked'>('current');
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -106,6 +115,7 @@ export default function ScenariosPage() {
 
     const results = runSimulation(selectedTriggers, intensity, context, region, liveMarket);
     setImpacts(results);
+    setActiveBrief('current');
     setRunning(false);
 
     setLlmLoading(true);
@@ -123,6 +133,12 @@ export default function ScenariosPage() {
     }
     setLlmLoading(false);
   }, [selectedTriggers, intensity, context, region, persona, marketData, liveMarket]);
+
+  const handleLock = useCallback(() => {
+    if (!impacts) return;
+    setLockedRun({ impacts, triggers: selectedTriggers, intensity, context, region, llmText });
+    setActiveBrief('current');
+  }, [impacts, selectedTriggers, intensity, context, region, llmText]);
 
   const contextColor = context === 'CRISIS' ? '#ff3b30' : context === 'STRESSED' ? '#ffb020' : '#00e676';
 
@@ -301,6 +317,20 @@ export default function ScenariosPage() {
       {/* ── CONTROLS ──────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
         style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px) 36px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+
+        {/* Locked scenario banner */}
+        {lockedRun && (
+          <div style={{ marginBottom: 16, padding: '10px 16px', background: 'rgba(255,145,0,0.05)', border: '1px solid rgba(255,145,0,0.28)', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 900, color: '#fff', background: '#ff9100', padding: '2px 7px', borderRadius: 3, letterSpacing: '0.1em' }}>A</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(255,145,0,0.8)', letterSpacing: '0.04em' }}>
+              SCENARIO A LOCKED — {lockedRun.triggers.map(t => TRIGGERS[t]?.label ?? t).join(' + ')} · {lockedRun.intensity} · {lockedRun.context}
+            </span>
+            <button onClick={() => { setLockedRun(null); setActiveBrief('current'); }}
+              style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.35)', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, padding: '4px 12px', cursor: 'pointer', letterSpacing: '0.08em' }}>
+              UNLOCK
+            </button>
+          </div>
+        )}
 
         {/* Trigger cards */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
@@ -540,6 +570,18 @@ export default function ScenariosPage() {
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 800, color: imp.impact > 0 ? '#ff5252' : '#00e676', lineHeight: 1 }}>
                           {imp.impact > 0 ? '+' : ''}{(imp.impact * 100).toFixed(1)}%
                         </div>
+                        {/* Delta vs locked scenario A */}
+                        {lockedRun && (() => {
+                          const lockedImp = lockedRun.impacts[key];
+                          const delta = lockedImp ? (imp.impact - lockedImp.impact) * 100 : null;
+                          if (delta === null || Math.abs(delta) < 0.15) return null;
+                          const isAmplified = Math.abs(imp.impact) > Math.abs(lockedImp!.impact);
+                          return (
+                            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, marginTop: 3, color: isAmplified ? '#ff9100' : 'rgba(255,255,255,0.35)' }}>
+                              Δ {delta > 0 ? '+' : ''}{delta.toFixed(1)}% vs A
+                            </div>
+                          );
+                        })()}
                         <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--txt-faint)', marginTop: 5 }}>
                           T+{imp.lag}d · {(imp.conf * 100).toFixed(0)}% conf
                           {imp.circuitBreaker && <span style={{ color: '#ff3b30', marginLeft: 6 }}>⚠</span>}
@@ -576,6 +618,26 @@ export default function ScenariosPage() {
                 );
               })}
             </div>
+
+            {/* Lock & Compare */}
+            <div style={{ marginTop: 22, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+              <motion.button onClick={handleLock}
+                whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.97 }}
+                style={{
+                  fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+                  color: lockedRun ? '#ff9100' : 'rgba(255,255,255,0.55)',
+                  background: lockedRun ? 'rgba(255,145,0,0.1)' : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${lockedRun ? 'rgba(255,145,0,0.35)' : 'rgba(255,255,255,0.1)'}`,
+                  borderRadius: 6, padding: '9px 22px', cursor: 'pointer', transition: 'all 0.18s',
+                }}>
+                {lockedRun ? '⟳  REPLACE SCENARIO A' : '⊠  LOCK AS SCENARIO A'}
+              </motion.button>
+              {lockedRun && (
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(255,255,255,0.28)', lineHeight: 1.6 }}>
+                  Change parameters above and run again — delta appears in each cell
+                </span>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -608,7 +670,32 @@ export default function ScenariosPage() {
           {llmText && !llmLoading && (
             <motion.div key="brief" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.55, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
-              <LlmBrief text={llmText} persona={PERSONAS.find(p => p.id === persona)} />
+
+              {/* A / B tab toggle — only when locked run has a brief */}
+              {lockedRun?.llmText && (
+                <div style={{ display: 'flex', gap: 0, marginBottom: 16, border: '1px solid rgba(255,255,255,0.09)', borderRadius: 6, overflow: 'hidden', width: 'fit-content' }}>
+                  {([
+                    { val: 'locked'  as const, label: 'A — LOCKED',  color: '#ff9100' },
+                    { val: 'current' as const, label: 'B — CURRENT', color: '#ffb020' },
+                  ]).map(({ val, label, color }) => (
+                    <button key={val} onClick={() => setActiveBrief(val)}
+                      style={{
+                        fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+                        padding: '9px 20px', border: 'none', cursor: 'pointer', transition: 'all 0.15s',
+                        background: activeBrief === val ? `${color}20` : 'transparent',
+                        color: activeBrief === val ? color : 'rgba(255,255,255,0.28)',
+                        borderRight: val === 'locked' ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                      }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <LlmBrief
+                text={lockedRun?.llmText && activeBrief === 'locked' ? lockedRun.llmText : llmText}
+                persona={PERSONAS.find(p => p.id === persona)}
+              />
             </motion.div>
           )}
 
