@@ -218,9 +218,16 @@ export default function MacroNetwork({ impacts, onNodeClick, selectedNode }: Pro
     return () => { sim.stop(); };
   }, [impacts, selectedNode, onNodeClick]);
 
+  const activeCount = impacts ? Object.values(impacts).filter(i => Math.abs(i.impact) > 0.01).length : 0;
+  const graphLabel = impacts
+    ? `Macro sector cascade network. ${activeCount} of 13 sectors impacted. Click any node to inspect its cascade detail in the panel beside the graph.`
+    : 'Macro sector cascade network. 13 interconnected sectors shown. Run a cascade to see propagation paths.';
+
   return (
     <svg
       ref={svgRef}
+      role="img"
+      aria-label={graphLabel}
       width="100%"
       height="560"
       style={{ display: 'block', overflow: 'visible' }}

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useId } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {
   SECTORS, TRIGGERS, CONTEXTS, INTENSITIES, PERSONAS,
@@ -83,17 +83,32 @@ export default function ScenariosPage() {
     llmText: string;
   } | null>(null);
   const [activeBrief, setActiveBrief] = useState<'current' | 'locked'>('current');
+  const [llmStatusMsg, setLlmStatusMsg] = useState('');
   const isMobile = useIsMobile();
+  const prefersReduced = useReducedMotion();
+  const liveRegionId = useId();
 
   useEffect(() => {
-    fetch('/api/market').then(r => r.json()).then((d: MarketData) => {
-      setMarketData(d);
-      if (d.autoContext) setContext(d.autoContext);
-    }).catch(() => {});
+    fetch('/api/market')
+      .then(r => r.json())
+      .then((d: MarketData) => {
+        setMarketData(d);
+        if (d.autoContext) setContext(d.autoContext);
+      })
+      .catch(() => {
+        // Market API unavailable — UI shows LOADING; no data state is handled visually
+        setMarketData({ source: 'unavailable' });
+      });
 
-    fetch('/api/triggers').then(r => r.json()).then((d: TriggerLiveData) => {
-      setTriggerLiveData(d);
-    }).catch(() => {});
+    fetch('/api/triggers')
+      .then(r => r.json())
+      .then((d: TriggerLiveData) => {
+        setTriggerLiveData(d);
+      })
+      .catch(() => {
+        // RSS unavailable — show fallback state with zero signals
+        setTriggerLiveData({ triggers: {}, live: false, total: 0 });
+      });
   }, []);
 
   const liveMarket = useMemo<LiveMarket>(() => ({
@@ -112,6 +127,7 @@ export default function ScenariosPage() {
   const handleRun = useCallback(async () => {
     if (!selectedTriggers.length) return;
     setRunning(true); setLlmText(''); setLlmError('');
+    setLlmStatusMsg('Running cascade propagation…');
     await new Promise(r => setTimeout(r, 700));
 
     const results = runSimulation(selectedTriggers, intensity, context, region, liveMarket);
@@ -119,7 +135,9 @@ export default function ScenariosPage() {
     setActiveBrief('current');
     setRunning(false);
 
+    const personaLabel = PERSONAS.find(p => p.id === persona)?.label ?? persona;
     setLlmLoading(true);
+    setLlmStatusMsg(`Generating intelligence brief for ${personaLabel}, please wait…`);
     try {
       const res = await fetch('/api/llm', {
         method: 'POST',
@@ -127,10 +145,16 @@ export default function ScenariosPage() {
         body: JSON.stringify({ persona, triggers: selectedTriggers, impacts: results, liveData: marketData, intensity, context }),
       });
       const data = await res.json();
-      if (data.error) setLlmError(data.error);
-      else setLlmText(data.text ?? '');
+      if (data.error) {
+        setLlmError(data.error);
+        setLlmStatusMsg('Brief generation failed. See error below.');
+      } else {
+        setLlmText(data.text ?? '');
+        setLlmStatusMsg(`Brief ready for ${personaLabel}.`);
+      }
     } catch {
       setLlmError('Could not reach LLM. Check GEMINI_API_KEY in Netlify environment variables.');
+      setLlmStatusMsg('Brief generation failed. Network error.');
     }
     setLlmLoading(false);
   }, [selectedTriggers, intensity, context, region, persona, marketData, liveMarket]);
@@ -147,11 +171,13 @@ export default function ScenariosPage() {
     <div style={{ paddingTop: 52 }}>
 
       {/* ── LIVE MARKET STRIP ─────────────────────── */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
+      <motion.div initial={{ opacity: prefersReduced ? 1 : 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
         style={{ background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '10px clamp(16px,4vw,48px)', display: 'flex', gap: 28, alignItems: 'center', flexWrap: 'wrap', backdropFilter: 'blur(8px)' }}>
 
         <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', display: 'flex', alignItems: 'center', gap: 6, color: marketData?.source === 'live' ? '#00e676' : '#ffb020' }}>
-          <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 2, repeat: Infinity }}
+          <motion.span
+            animate={prefersReduced ? {} : { opacity: [1, 0.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
             style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
           {marketData?.source?.toUpperCase() ?? 'LOADING'}
         </span>
@@ -164,17 +190,25 @@ export default function ScenariosPage() {
           { key: 'GOLD',    label: 'GOLD',    val: marketData?.gold   ? `$${marketData.gold}`     : null },
           { key: 'UST10Y',  label: '10Y UST', val: marketData?.tenYear ? `${marketData.tenYear}%` : null },
         ].map(item => item.val ? (
-          <span key={item.key}
+          <button key={item.key}
+            aria-label={`${item.label}: ${item.val}. Press for explanation.`}
+            aria-expanded={hoveredMarket === item.key}
             onMouseEnter={(e) => {
               const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
               setMarketTipPos({ x: r.left, y: r.bottom + 8 });
               setHoveredMarket(item.key);
             }}
             onMouseLeave={() => setHoveredMarket(null)}
-            style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.42)', cursor: 'default', position: 'relative' }}>
+            onFocus={(e) => {
+              const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              setMarketTipPos({ x: r.left, y: r.bottom + 8 });
+              setHoveredMarket(item.key);
+            }}
+            onBlur={() => setHoveredMarket(null)}
+            style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.42)', cursor: 'default', position: 'relative', background: 'transparent', border: 'none', padding: '4px 2px' }}>
             {item.label}{' '}<strong style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{item.val}</strong>
-            <span style={{ marginLeft: 4, fontSize: 8, color: 'rgba(255,255,255,0.2)' }}>ⓘ</span>
-          </span>
+            <span aria-hidden="true" style={{ marginLeft: 4, fontSize: 8, color: 'rgba(255,255,255,0.2)' }}>ⓘ</span>
+          </button>
         ) : null)}
 
         {marketData?.autoContext && (
@@ -186,7 +220,7 @@ export default function ScenariosPage() {
 
       {/* ── HEADER ────────────────────────────────── */}
       <div style={{ padding: '52px clamp(16px,4vw,48px) 40px', maxWidth: 1200, margin: '0 auto' }}>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
+        <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
           <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: '#ff9100', letterSpacing: '0.18em', marginBottom: 14 }}>
             MACRO_ENGINE · DOMAIN_05 · INSTITUTIONAL-GRADE · LIVE
           </div>
@@ -316,7 +350,7 @@ export default function ScenariosPage() {
       </div>
 
       {/* ── CONTROLS ──────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+      <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
         style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px) 36px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
 
         {/* Locked scenario banner */}
@@ -341,7 +375,7 @@ export default function ScenariosPage() {
           {triggerLiveData && (
             <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: triggerLiveData.live ? 'rgba(0,230,118,0.7)' : 'rgba(255,176,32,0.6)', display: 'flex', alignItems: 'center', gap: 5 }}>
               <motion.span
-                animate={{ opacity: [1, 0.25, 1] }}
+                animate={prefersReduced ? {} : { opacity: [1, 0.25, 1] }}
                 transition={{ duration: 2.4, repeat: Infinity }}
                 style={{ width: 4, height: 4, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}
               />
@@ -361,8 +395,10 @@ export default function ScenariosPage() {
             const headline = live?.headlines?.[0];
             return (
               <motion.button key={key} onClick={() => toggleTrigger(key)}
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
+                aria-pressed={active}
+                aria-label={`${t.label}${active ? ', selected' : ''}. Live signal: ${signalDots} of 3.${headline ? ` Latest: ${headline}` : ''}`}
+                whileHover={prefersReduced ? {} : { scale: 1.03, y: -2 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '12px 16px',
@@ -508,8 +544,10 @@ export default function ScenariosPage() {
           </div>
 
           <motion.button onClick={handleRun} disabled={running || !selectedTriggers.length}
-            whileHover={!running && selectedTriggers.length ? { scale: 1.03, y: -2 } : {}}
-            whileTap={!running && selectedTriggers.length ? { scale: 0.97 } : {}}
+            aria-label={running ? 'Running cascade propagation…' : !selectedTriggers.length ? 'Select at least one trigger to run cascade' : 'Run cascade propagation'}
+            aria-busy={running}
+            whileHover={!prefersReduced && !running && selectedTriggers.length ? { scale: 1.03, y: -2 } : {}}
+            whileTap={!prefersReduced && !running && selectedTriggers.length ? { scale: 0.97 } : {}}
             style={{
               fontFamily: 'var(--mono)', fontSize: '12px', fontWeight: 700,
               letterSpacing: '0.1em', color: '#07090c',
@@ -549,7 +587,7 @@ export default function ScenariosPage() {
       {/* ── IMPACT GRID ───────────────────────────── */}
       <AnimatePresence>
         {impacts && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+          <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
             style={{ maxWidth: 1200, margin: '0 auto', padding: '32px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 18 }}>
@@ -573,13 +611,25 @@ export default function ScenariosPage() {
                 const deltaBorder = isFlipped ? 'rgba(124,77,255,0.40)' : isAmplified ? 'rgba(255,145,0,0.45)' : 'rgba(0,230,118,0.30)';
                 const deltaTag    = isFlipped ? 'FLIP ↕' : isAmplified ? 'AMP ▲' : 'MIT ▼';
 
+                const handleCardActivate = () => {
+                  if (!imp) return;
+                  if (isMobile) { setMobileTooltip(showMobileTooltip ? null : key); }
+                  else { setSelectedNode(key); }
+                };
                 return (
                   <motion.div key={key}
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    role={imp ? 'button' : undefined}
+                    tabIndex={imp ? 0 : undefined}
+                    aria-label={imp
+                      ? `${sec.label}: ${imp.impact > 0 ? '+' : ''}${(imp.impact * 100).toFixed(1)}% impact, T+${imp.lag} days, ${(imp.conf * 100).toFixed(0)}% confidence${hasDelta && rawDelta !== null ? `. Scenario delta: ${rawDelta > 0 ? '+' : ''}${rawDelta.toFixed(1)}%` : ''}`
+                      : `${sec.label}: not reached by current cascade`}
+                    aria-expanded={isMobile && imp ? showMobileTooltip : undefined}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardActivate(); } }}
+                    initial={{ opacity: prefersReduced ? (imp ? 1 : 0.3) : 0, scale: prefersReduced ? 1 : 0.95 }}
                     animate={{ opacity: imp ? 1 : 0.3, scale: 1 }}
-                    transition={{ duration: 0.4, delay: i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
-                    whileHover={imp ? { y: -3, boxShadow: hasDelta ? `0 12px 36px ${deltaColor}28` : `0 10px 30px ${sec.color}18` } : {}}
-                    onClick={() => { if (!imp) return; if (isMobile) { setMobileTooltip(showMobileTooltip ? null : key); } else { setSelectedNode(key); } }}
+                    transition={{ duration: 0.4, delay: prefersReduced ? 0 : i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                    whileHover={imp && !prefersReduced ? { y: -3, boxShadow: hasDelta ? `0 12px 36px ${deltaColor}28` : `0 10px 30px ${sec.color}18` } : {}}
+                    onClick={handleCardActivate}
                     onMouseEnter={(e) => {
                       if (isMobile || !imp) return;
                       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -589,7 +639,17 @@ export default function ScenariosPage() {
                       setTooltipPos({ x: tx, y: ty });
                       setHoveredImpact(key);
                     }}
+                    onFocus={(e) => {
+                      if (isMobile || !imp) return;
+                      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      const tipW = 288;
+                      const tx = rect.right + 12 + tipW > window.innerWidth ? rect.left - tipW - 12 : rect.right + 12;
+                      const ty = Math.max(8, Math.min(rect.top, window.innerHeight - 380));
+                      setTooltipPos({ x: tx, y: ty });
+                      setHoveredImpact(key);
+                    }}
                     onMouseLeave={() => setHoveredImpact(null)}
+                    onBlur={() => setHoveredImpact(null)}
                     style={{
                       background: hasDelta ? deltaBg : 'rgba(255,255,255,0.025)',
                       border: `1.5px solid ${hasDelta ? deltaColor + '55' : imp ? sec.color + '30' : 'rgba(255,255,255,0.06)'}`,
@@ -611,7 +671,10 @@ export default function ScenariosPage() {
                           </span>
                         )}
                         {imp && isMobile && (
-                          <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: showMobileTooltip ? sec.color : 'rgba(255,255,255,0.25)', cursor: 'pointer', lineHeight: 1 }}>ⓘ</span>
+                          <button
+                            aria-label={`${showMobileTooltip ? 'Hide' : 'Show'} details for ${sec.label}`}
+                            onClick={(e) => { e.stopPropagation(); setMobileTooltip(showMobileTooltip ? null : key); }}
+                            style={{ fontFamily: 'var(--mono)', fontSize: 10, color: showMobileTooltip ? sec.color : 'rgba(255,255,255,0.25)', cursor: 'pointer', lineHeight: 1, background: 'transparent', border: 'none', padding: '6px', margin: '-6px', borderRadius: 4 }}>ⓘ</button>
                         )}
                       </div>
                     </div>
@@ -642,9 +705,11 @@ export default function ScenariosPage() {
                           {imp.circuitBreaker && <span style={{ color: '#ff3b30', marginLeft: 6 }}>⚠</span>}
                         </div>
                         <div style={{ height: 2, borderRadius: 2, background: 'rgba(255,255,255,0.06)', marginTop: 10, overflow: 'hidden' }}>
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, Math.abs(imp.impact) * 100)}%` }}
-                            transition={{ duration: 0.8, delay: i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
-                            style={{ height: '100%', background: sec.color, borderRadius: 2 }} />
+                          <motion.div
+                            initial={{ scaleX: 0, originX: 0 }}
+                            animate={{ scaleX: prefersReduced ? Math.min(1, Math.abs(imp.impact)) : Math.min(1, Math.abs(imp.impact)) }}
+                            transition={{ duration: prefersReduced ? 0 : 0.8, delay: prefersReduced ? 0 : i * 0.03, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                            style={{ height: '100%', width: '100%', background: sec.color, borderRadius: 2, transformOrigin: 'left' }} />
                         </div>
                         {/* Mobile inline tooltip */}
                         <AnimatePresence>
@@ -698,7 +763,9 @@ export default function ScenariosPage() {
             {/* Lock & Compare */}
             <div style={{ marginTop: 22, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
               <motion.button onClick={handleLock}
-                whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.97 }}
+                aria-label={lockedRun ? 'Replace Scenario A with current results' : 'Lock current results as Scenario A for comparison'}
+                whileHover={prefersReduced ? {} : { scale: 1.02, y: -1 }}
+                whileTap={prefersReduced ? {} : { scale: 0.97 }}
                 style={{
                   fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
                   color: lockedRun ? '#ff9100' : 'rgba(255,255,255,0.55)',
@@ -720,6 +787,15 @@ export default function ScenariosPage() {
 
       {/* ── LLM BRIEF ─────────────────────────────── */}
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        {/* Screen reader live region — announces cascade + brief status changes */}
+        <div
+          id={liveRegionId}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
+          {llmStatusMsg}
+        </div>
         <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 20 }}>
           // STRATEGIC INTELLIGENCE BRIEF · AI-GENERATED · PLAIN ENGLISH
         </div>
@@ -744,7 +820,7 @@ export default function ScenariosPage() {
           )}
 
           {llmText && !llmLoading && (
-            <motion.div key="brief" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            <motion.div key="brief" initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.55, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
 
               {/* A / B tab toggle — only when locked run has a brief */}
@@ -1034,7 +1110,7 @@ function NodeDetail({ impacts, selectedNode }: { impacts: Record<string, ImpactR
           ))}
           <motion.div initial={{ width: 0 }} animate={{ width: `${imp.conf * 100}%` }} transition={{ duration: 0.8, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
             style={{ height: 2, background: sec.color, borderRadius: 2, marginTop: 14 }} />
-          <div style={{ marginTop: 14, fontSize: 12, color: 'var(--txt-dim)', lineHeight: 1.7, padding: '12px 14px', background: 'rgba(255,255,255,0.025)', borderLeft: `2px solid ${sec.color}55`, borderRadius: '0 6px 6px 0' }}>
+          <div style={{ marginTop: 14, fontSize: 12, color: 'var(--txt-dim)', lineHeight: 1.7, padding: '12px 14px', background: `${sec.color}09`, border: `1px solid ${sec.color}22`, borderRadius: 6 }}>
             {imp.mechanism}
           </div>
           {imp.circuitBreaker && (
