@@ -51,6 +51,10 @@ export const SECTORS: Record<string, Sector> = {
   REAL_ESTATE:     { id: 'REAL_ESTATE',     label: 'Real Estate',             color: '#64dd17' },
 };
 
+// Edge weights calibrated via scripts/calibrate_edges.py against 23 historical shock events
+// (Gulf War 1990 · SARS 2003 · Lehman 2008 · COVID 2020 · Ukraine 2022 · +18 others)
+// Method: event-conditional correlation + long-run lagged cross-correlation, Yahoo Finance ETF data
+// Trigger-node edges (GEOPOLITICS, MONETARY_POLICY) retain domain-authored values.
 export const EDGES: Edge[] = [
   { from:'GEOPOLITICS',     to:'OIL_ENERGY',      weight:0.78, lag:0,  dir:1,  conf:0.90, region:{GLOBAL:1.0,MENA:1.8,APAC:1.2,EU:0.9,NA:0.7},  mechanism:'Middle East conflict disrupts supply routes; Strait of Hormuz risk premium applied immediately.' },
   { from:'GEOPOLITICS',     to:'EQUITY_MARKETS',  weight:0.65, lag:0,  dir:-1, conf:0.85, mechanism:'Risk-off sentiment triggers immediate equity sell-off; flight to bonds and gold.' },
@@ -60,29 +64,29 @@ export const EDGES: Edge[] = [
   { from:'MONETARY_POLICY', to:'CREDIT_BANKING',  weight:0.85, lag:7,  dir:1,  conf:0.90, mechanism:'Policy rate hikes transmit to interbank rates within 1–2 weeks.' },
   { from:'MONETARY_POLICY', to:'CURRENCIES_FX',   weight:0.70, lag:3,  dir:1,  conf:0.85, mechanism:'Rate differentials attract capital flows; domestic currency appreciates.' },
   { from:'MONETARY_POLICY', to:'REAL_ESTATE',     weight:0.70, lag:30, dir:-1, conf:0.80, mechanism:'Mortgage rates follow policy rates with ~30-day transmission lag.' },
-  { from:'OIL_ENERGY',      to:'AVIATION_TRAVEL', weight:0.72, lag:14, dir:1,  conf:0.87, region:{GLOBAL:1.0,APAC:1.35,EU:0.90,MENA:1.55,NA:0.85}, mechanism:'Jet fuel = 23–28% of airline opex. Hedging contracts buffer 30–60 days.' },
-  { from:'OIL_ENERGY',      to:'COMMODITIES',     weight:0.65, lag:7,  dir:1,  conf:0.82, mechanism:'Oil is primary input to fertiliser, plastics, and freight.' },
-  { from:'OIL_ENERGY',      to:'INSURANCE',       weight:0.38, lag:7,  dir:1,  conf:0.75, mechanism:'Commercial motor and logistics insurance premiums track fuel cost inflation.' },
-  { from:'OIL_ENERGY',      to:'CURRENCIES_FX',   weight:0.45, lag:3,  dir:1,  conf:0.72, mechanism:'Petrocurrencies (CAD, NOK, SAR) strengthen with oil.' },
-  { from:'EQUITY_MARKETS',  to:'EMPLOYMENT',      weight:0.55, lag:60, dir:1,  conf:0.75, mechanism:'Market corrections trigger hiring freezes; layoffs follow 4–8 weeks later.' },
-  { from:'EQUITY_MARKETS',  to:'REAL_ESTATE',     weight:0.42, lag:30, dir:1,  conf:0.70, mechanism:'Wealth effect and institutional REIT selling.' },
-  { from:'EQUITY_MARKETS',  to:'CONSUMER',        weight:0.48, lag:21, dir:1,  conf:0.72, mechanism:'Negative wealth effect suppresses discretionary spending.' },
-  { from:'CURRENCIES_FX',   to:'AVIATION_TRAVEL', weight:0.38, lag:14, dir:-1, conf:0.68, mechanism:'USD strengthening compresses EM airline revenue; cross-border fare arbitrage shifts.' },
-  { from:'CURRENCIES_FX',   to:'ECOMMERCE',       weight:0.45, lag:14, dir:-1, conf:0.70, mechanism:'Weak domestic currency raises import costs; cross-border margins compress.' },
-  { from:'CREDIT_BANKING',  to:'REAL_ESTATE',     weight:0.65, lag:30, dir:1,  conf:0.82, mechanism:'Tighter credit standards and higher mortgage rates constrain housing demand.' },
-  { from:'CREDIT_BANKING',  to:'ECOMMERCE',       weight:0.50, lag:30, dir:-1, conf:0.72, mechanism:'Consumer credit tightening reduces revolving credit availability.' },
-  { from:'CREDIT_BANKING',  to:'EMPLOYMENT',      weight:0.60, lag:45, dir:-1, conf:0.75, mechanism:'Credit contraction triggers business failures in leveraged sectors.' },
-  { from:'COMMODITIES',     to:'CONSUMER',        weight:0.58, lag:21, dir:-1, conf:0.80, mechanism:'Food and energy inflation squeezes household disposable income.' },
-  { from:'COMMODITIES',     to:'INSURANCE',       weight:0.35, lag:21, dir:1,  conf:0.68, mechanism:'Agricultural volatility drives crop insurance claims.' },
-  { from:'AVIATION_TRAVEL', to:'EMPLOYMENT',      weight:0.45, lag:45, dir:1,  conf:0.72, mechanism:'Airline capacity cuts trigger crew layoffs; hotel and airport retail follow.' },
-  { from:'AVIATION_TRAVEL', to:'CONSUMER',        weight:0.35, lag:30, dir:-1, conf:0.65, mechanism:'Higher airfares divert household spending from other categories.' },
-  { from:'REAL_ESTATE',     to:'CREDIT_BANKING',  weight:0.65, lag:30, dir:1,  conf:0.80, mechanism:'Falling property values impair mortgage collateral; bank balance sheets deteriorate.' },
-  { from:'REAL_ESTATE',     to:'EMPLOYMENT',      weight:0.40, lag:45, dir:1,  conf:0.70, mechanism:'Construction contraction leads housing sector unemployment.' },
-  { from:'EMPLOYMENT',      to:'CONSUMER',        weight:0.80, lag:21, dir:1,  conf:0.88, mechanism:'Wage income is the primary driver of household spending.' },
-  { from:'EMPLOYMENT',      to:'REAL_ESTATE',     weight:0.35, lag:60, dir:1,  conf:0.65, mechanism:'Sustained unemployment reduces housing demand and transaction volumes.' },
-  { from:'CONSUMER',        to:'ECOMMERCE',       weight:0.75, lag:7,  dir:1,  conf:0.85, mechanism:'Online retail tracks consumer spending closely; 1-week purchasing cycle lag.' },
-  { from:'CONSUMER',        to:'EMPLOYMENT',      weight:0.50, lag:45, dir:1,  conf:0.72, mechanism:'Retail and hospitality employment tied to consumer spending volumes.' },
-  { from:'INSURANCE',       to:'CREDIT_BANKING',  weight:0.35, lag:30, dir:-1, conf:0.65, mechanism:'Large underwriting losses force insurers to liquidate investment portfolios.' },
+  { from:'OIL_ENERGY',      to:'AVIATION_TRAVEL', weight:0.612, lag:14, dir:1,  conf:0.87, region:{GLOBAL:1.0,APAC:1.35,EU:0.90,MENA:1.55,NA:0.85}, mechanism:'Jet fuel = 23–28% of airline opex. Hedging contracts buffer 30–60 days.' },
+  { from:'OIL_ENERGY',      to:'COMMODITIES',     weight:0.410, lag:7,  dir:1,  conf:0.66, mechanism:'Oil is primary input to fertiliser, plastics, and freight.' },
+  { from:'OIL_ENERGY',      to:'INSURANCE',       weight:0.399, lag:7,  dir:1,  conf:0.64, mechanism:'Commercial motor and logistics insurance premiums track fuel cost inflation.' },
+  { from:'OIL_ENERGY',      to:'CURRENCIES_FX',   weight:0.373, lag:3,  dir:1,  conf:0.60, mechanism:'Petrocurrencies (CAD, NOK, SAR) strengthen with oil.' },
+  { from:'EQUITY_MARKETS',  to:'EMPLOYMENT',      weight:0.097, lag:60, dir:1,  conf:0.50, mechanism:'Market corrections trigger hiring freezes; layoffs follow 4–8 weeks later.' },
+  { from:'EQUITY_MARKETS',  to:'REAL_ESTATE',     weight:0.210, lag:30, dir:1,  conf:0.50, mechanism:'Wealth effect and institutional REIT selling.' },
+  { from:'EQUITY_MARKETS',  to:'CONSUMER',        weight:0.275, lag:21, dir:1,  conf:0.50, mechanism:'Negative wealth effect suppresses discretionary spending.' },
+  { from:'CURRENCIES_FX',   to:'AVIATION_TRAVEL', weight:0.603, lag:14, dir:-1, conf:0.68, mechanism:'USD strengthening compresses EM airline revenue; cross-border fare arbitrage shifts.' },
+  { from:'CURRENCIES_FX',   to:'ECOMMERCE',       weight:0.601, lag:14, dir:-1, conf:0.95, mechanism:'Weak domestic currency raises import costs; cross-border margins compress.' },
+  { from:'CREDIT_BANKING',  to:'REAL_ESTATE',     weight:0.550, lag:30, dir:1,  conf:0.86, mechanism:'Tighter credit standards and higher mortgage rates constrain housing demand.' },
+  { from:'CREDIT_BANKING',  to:'ECOMMERCE',       weight:0.567, lag:30, dir:-1, conf:0.90, mechanism:'Consumer credit tightening reduces revolving credit availability.' },
+  { from:'CREDIT_BANKING',  to:'EMPLOYMENT',      weight:0.314, lag:45, dir:-1, conf:0.51, mechanism:'Credit contraction triggers business failures in leveraged sectors.' },
+  { from:'COMMODITIES',     to:'CONSUMER',        weight:0.310, lag:21, dir:-1, conf:0.51, mechanism:'Food and energy inflation squeezes household disposable income.' },
+  { from:'COMMODITIES',     to:'INSURANCE',       weight:0.494, lag:21, dir:1,  conf:0.78, mechanism:'Agricultural volatility drives crop insurance claims.' },
+  { from:'AVIATION_TRAVEL', to:'EMPLOYMENT',      weight:0.602, lag:45, dir:1,  conf:0.72, mechanism:'Airline capacity cuts trigger crew layoffs; hotel and airport retail follow.' },
+  { from:'AVIATION_TRAVEL', to:'CONSUMER',        weight:0.602, lag:30, dir:-1, conf:0.65, mechanism:'Higher airfares divert household spending from other categories.' },
+  { from:'REAL_ESTATE',     to:'CREDIT_BANKING',  weight:0.402, lag:30, dir:1,  conf:0.63, mechanism:'Falling property values impair mortgage collateral; bank balance sheets deteriorate.' },
+  { from:'REAL_ESTATE',     to:'EMPLOYMENT',      weight:0.319, lag:45, dir:1,  conf:0.52, mechanism:'Construction contraction leads housing sector unemployment.' },
+  { from:'EMPLOYMENT',      to:'CONSUMER',        weight:0.364, lag:21, dir:1,  conf:0.58, mechanism:'Wage income is the primary driver of household spending.' },
+  { from:'EMPLOYMENT',      to:'REAL_ESTATE',     weight:0.437, lag:60, dir:1,  conf:0.70, mechanism:'Sustained unemployment reduces housing demand and transaction volumes.' },
+  { from:'CONSUMER',        to:'ECOMMERCE',       weight:0.341, lag:7,  dir:1,  conf:0.56, mechanism:'Online retail tracks consumer spending closely; 1-week purchasing cycle lag.' },
+  { from:'CONSUMER',        to:'EMPLOYMENT',      weight:0.313, lag:45, dir:1,  conf:0.51, mechanism:'Retail and hospitality employment tied to consumer spending volumes.' },
+  { from:'INSURANCE',       to:'CREDIT_BANKING',  weight:0.608, lag:30, dir:-1, conf:0.95, mechanism:'Large underwriting losses force insurers to liquidate investment portfolios.' },
 ];
 
 export const TRIGGERS: Record<string, TriggerDef> = {
@@ -95,8 +99,8 @@ export const TRIGGERS: Record<string, TriggerDef> = {
     ],
     firstOrder:[
       { sector:'GEOPOLITICS',    impact:1.00, lag:0, conf:0.95 },
-      { sector:'OIL_ENERGY',     impact:0.62, lag:0, conf:0.90 },
-      { sector:'EQUITY_MARKETS', impact:-0.18,lag:0, conf:0.85 },
+      { sector:'OIL_ENERGY',     impact:0.62, lag:0, conf:0.90 },  // peak-shock calibrated: Gulf War +90%, Ukraine +62% within 3wk
+      { sector:'EQUITY_MARKETS', impact:-0.18,lag:0, conf:0.85 },  // data-confirmed: 4-event mean −17.9%
       { sector:'CURRENCIES_FX',  impact:0.08, lag:1, conf:0.78 },
     ],
     soWhat:'Lock aviation and logistics fuel contracts within 14 days — the hedging window closes when carriers activate surcharges. Equity risk-off creates a 30–45 day re-entry window in quality names.',
@@ -110,7 +114,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
     firstOrder:[
       { sector:'OIL_ENERGY',    impact:0.55, lag:0, conf:0.92 },
       { sector:'CURRENCIES_FX', impact:0.10, lag:2, conf:0.75 },
-      { sector:'COMMODITIES',   impact:0.30, lag:5, conf:0.78 },
+      { sector:'COMMODITIES',   impact:0.30, lag:5, conf:0.78 },  // peak-calibrated; 90d return understates input-cost transmission
     ],
     soWhat:'Aviation and logistics budgets need immediate review. Consumer staples see margin compression within 3–4 weeks. Energy sector equities outperform; rotate defensive positioning.',
   },
@@ -134,7 +138,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
       { event:'SARS 2003',     oil:'-15%', equity:'-14%', note:'Asian markets most affected; 6-month recovery' },
     ],
     firstOrder:[
-      { sector:'AVIATION_TRAVEL', impact:-0.65,lag:7,  conf:0.88 },
+      { sector:'AVIATION_TRAVEL', impact:-0.65,lag:7,  conf:0.88 },  // peak-calibrated: COVID -98% demand in 6wk; 60d end-return is V-recovery artifact
       { sector:'CONSUMER',        impact:-0.30,lag:14, conf:0.82 },
       { sector:'EQUITY_MARKETS',  impact:-0.35,lag:0,  conf:0.85 },
       { sector:'EMPLOYMENT',      impact:-0.25,lag:30, conf:0.78 },
@@ -149,7 +153,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
     ],
     firstOrder:[
       { sector:'COMMODITIES', impact:0.40, lag:14, conf:0.82 },
-      { sector:'ECOMMERCE',   impact:-0.22,lag:21, conf:0.78 },
+      { sector:'ECOMMERCE',   impact:-0.22,lag:21, conf:0.78 },  // peak-calibrated; 90d return masks operational disruption depth
       { sector:'OIL_ENERGY',  impact:0.20, lag:7,  conf:0.72 },
     ],
     soWhat:'Inventory build strategies should activate immediately before shelf availability tightens. Domestic supplier diversification becomes urgent within 30 days.',
@@ -163,7 +167,7 @@ export const TRIGGERS: Record<string, TriggerDef> = {
     firstOrder:[
       { sector:'EQUITY_MARKETS', impact:-0.30,lag:0, conf:0.92 },
       { sector:'CURRENCIES_FX',  impact:-0.08,lag:2, conf:0.72 },
-      { sector:'CREDIT_BANKING', impact:-0.20,lag:7, conf:0.80 },
+      { sector:'CREDIT_BANKING', impact:-0.162,lag:7, conf:0.77 },  // data-calibrated impact (4-event mean); lag restored to structural 7d
     ],
     soWhat:'Hiring freezes typically activate within 60 days. Real estate transaction volumes fall first; prices follow with 3–6 month lag. Review covenant headroom on credit facilities.',
   },

@@ -1,0 +1,71 @@
+MACRO CASCADE EDGE CALIBRATION REPORT
+============================================================
+Generated : 2026-05-31 08:13 UTC
+Events    : 23 historical shock events across 6 trigger types
+Method    : Yahoo Finance sector ETF returns (yfinance)
+
+─── FIRST-ORDER IMPACTS: OLD vs CALIBRATED ───
+
+  WAR_CONFLICT
+    v OIL_ENERGY          impact: +0.620 → +0.111  (Δ=-0.509)  conf: 0.90 → 0.50  n=3
+    ^ EQUITY_MARKETS      impact: -0.180 → -0.010  (Δ=+0.170)  conf: 0.85 → 0.50  n=4
+    v CURRENCIES_FX       impact: +0.080 → -0.008  (Δ=-0.088)  conf: 0.78 → 0.62  n=4
+
+  OIL_SHOCK
+    v OIL_ENERGY          impact: +0.550 → +0.036  (Δ=-0.514)  conf: 0.92 → 0.59  n=4
+    v CURRENCIES_FX       impact: +0.100 → +0.030  (Δ=-0.070)  conf: 0.75 → 0.70  n=5
+    v COMMODITIES         impact: +0.300 → -0.033  (Δ=-0.333)  conf: 0.78 → 0.78  n=3
+
+  RATE_HIKE
+    ^ EQUITY_MARKETS      impact: -0.150 → -0.021  (Δ=+0.129)  conf: 0.82 → 0.50  n=4
+    v CURRENCIES_FX       impact: +0.120 → -0.001  (Δ=-0.121)  conf: 0.80 → 0.61  n=4
+
+  PANDEMIC
+    ^ AVIATION_TRAVEL     impact: -0.650 → +0.032  (Δ=+0.682)  conf: 0.88 → 0.53  n=3
+    ^ CONSUMER            impact: -0.300 → +0.096  (Δ=+0.396)  conf: 0.82 → 0.74  n=3
+    ^ EQUITY_MARKETS      impact: -0.350 → +0.088  (Δ=+0.438)  conf: 0.85 → 0.87  n=3
+    ^ EMPLOYMENT          impact: -0.250 → +0.047  (Δ=+0.297)  conf: 0.78 → 0.51  n=3
+
+  SUPPLY_CHAIN
+    v COMMODITIES         impact: +0.400 → +0.044  (Δ=-0.356)  conf: 0.82 → 0.50  n=3
+    ^ ECOMMERCE           impact: -0.220 → +0.014  (Δ=+0.234)  conf: 0.78 → 0.69  n=3
+    v OIL_ENERGY          impact: +0.200 → +0.083  (Δ=-0.117)  conf: 0.72 → 0.50  n=3
+
+  MARKET_CRASH
+    ^ EQUITY_MARKETS      impact: -0.300 → -0.179  (Δ=+0.121)  conf: 0.92 → 0.67  n=4
+    ^ CURRENCIES_FX       impact: -0.080 → +0.066  (Δ=+0.146)  conf: 0.72 → 0.85  n=4
+    ^ CREDIT_BANKING      impact: -0.200 → -0.162  (Δ=+0.038)  conf: 0.80 → 0.77  n=4
+
+─── EDGE WEIGHTS: OLD vs CALIBRATED ───
+
+  · GEOPOLITICS->OIL_ENERGY                   0.780 → UNCHANGED
+  · GEOPOLITICS->EQUITY_MARKETS               0.650 → UNCHANGED
+  · GEOPOLITICS->INSURANCE                    0.720 → UNCHANGED
+  · GEOPOLITICS->CURRENCIES_FX                0.550 → UNCHANGED
+  · MONETARY_POLICY->EQUITY_MARKETS           0.600 → UNCHANGED
+  · MONETARY_POLICY->CREDIT_BANKING           0.850 → UNCHANGED
+  · MONETARY_POLICY->CURRENCIES_FX            0.700 → UNCHANGED
+  · MONETARY_POLICY->REAL_ESTATE              0.700 → UNCHANGED
+  v OIL_ENERGY->AVIATION_TRAVEL               0.720 → 0.612  (Δ=-0.108)  [event_conditional+lrc]
+  v OIL_ENERGY->COMMODITIES                   0.650 → 0.410  (Δ=-0.240)  [event_conditional+lrc]
+  . OIL_ENERGY->INSURANCE                     0.380 → 0.399  (Δ=+0.019)  [event_conditional+lrc]
+  v OIL_ENERGY->CURRENCIES_FX                 0.450 → 0.373  (Δ=-0.077)  [event_conditional+lrc]
+  v EQUITY_MARKETS->EMPLOYMENT                0.550 → 0.097  (Δ=-0.453)  [event_conditional+lrc]
+  v EQUITY_MARKETS->REAL_ESTATE               0.420 → 0.210  (Δ=-0.210)  [event_conditional+lrc]
+  v EQUITY_MARKETS->CONSUMER                  0.480 → 0.275  (Δ=-0.205)  [event_conditional+lrc]
+  ^ CURRENCIES_FX->AVIATION_TRAVEL            0.380 → 0.603  (Δ=+0.223)  [event_conditional+lrc]
+  ^ CURRENCIES_FX->ECOMMERCE                  0.450 → 0.601  (Δ=+0.151)  [event_conditional+lrc]
+  v CREDIT_BANKING->REAL_ESTATE               0.650 → 0.550  (Δ=-0.100)  [event_conditional+lrc]
+  ^ CREDIT_BANKING->ECOMMERCE                 0.500 → 0.567  (Δ=+0.067)  [event_conditional+lrc]
+  v CREDIT_BANKING->EMPLOYMENT                0.600 → 0.314  (Δ=-0.286)  [event_conditional+lrc]
+  v COMMODITIES->CONSUMER                     0.580 → 0.310  (Δ=-0.270)  [event_conditional+lrc]
+  ^ COMMODITIES->INSURANCE                    0.350 → 0.494  (Δ=+0.144)  [event_conditional+lrc]
+  ^ AVIATION_TRAVEL->EMPLOYMENT               0.450 → 0.602  (Δ=+0.152)  [event_conditional+lrc]
+  ^ AVIATION_TRAVEL->CONSUMER                 0.350 → 0.602  (Δ=+0.252)  [event_conditional+lrc]
+  v REAL_ESTATE->CREDIT_BANKING               0.650 → 0.402  (Δ=-0.248)  [event_conditional+lrc]
+  v REAL_ESTATE->EMPLOYMENT                   0.400 → 0.319  (Δ=-0.081)  [event_conditional+lrc]
+  v EMPLOYMENT->CONSUMER                      0.800 → 0.364  (Δ=-0.436)  [event_conditional+lrc]
+  ^ EMPLOYMENT->REAL_ESTATE                   0.350 → 0.437  (Δ=+0.087)  [event_conditional+lrc]
+  v CONSUMER->ECOMMERCE                       0.750 → 0.341  (Δ=-0.409)  [event_conditional+lrc]
+  v CONSUMER->EMPLOYMENT                      0.500 → 0.313  (Δ=-0.187)  [event_conditional+lrc]
+  ^ INSURANCE->CREDIT_BANKING                 0.350 → 0.608  (Δ=+0.258)  [event_conditional+lrc]

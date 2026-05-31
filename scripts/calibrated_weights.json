@@ -1,0 +1,669 @@
+{
+  "meta": {
+    "generated": "2026-05-31T08:13:53.606218Z",
+    "methodology": "Yahoo Finance sector ETF returns averaged over historical shock event windows. Edge weights use event-conditional correlation + long-run lagged cross-correlation. Lags retained from domain-validated authored values.",
+    "data_source": "Yahoo Finance via yfinance (free, no API key)",
+    "shock_events": 23,
+    "events_by_type": {
+      "WAR_CONFLICT": 4,
+      "OIL_SHOCK": 5,
+      "RATE_HIKE": 4,
+      "PANDEMIC": 3,
+      "SUPPLY_CHAIN": 3,
+      "MARKET_CRASH": 4
+    },
+    "events_detail": {
+      "WAR_CONFLICT": [
+        {
+          "date": "1990-08-02",
+          "name": "Gulf War \u2014 Iraq invades Kuwait",
+          "window": 90
+        },
+        {
+          "date": "2003-03-20",
+          "name": "Iraq War \u2014 US invasion starts",
+          "window": 90
+        },
+        {
+          "date": "2014-07-17",
+          "name": "Ukraine escalation / MH17 shootdown",
+          "window": 60
+        },
+        {
+          "date": "2022-02-24",
+          "name": "Russia full-scale invasion of Ukraine",
+          "window": 90
+        }
+      ],
+      "OIL_SHOCK": [
+        {
+          "date": "1990-08-02",
+          "name": "Gulf War oil shock",
+          "window": 60
+        },
+        {
+          "date": "2005-08-29",
+          "name": "Hurricane Katrina \u2014 refinery hit",
+          "window": 60
+        },
+        {
+          "date": "2008-06-01",
+          "name": "2008 oil price spike (WTI $147 peak)",
+          "window": 90
+        },
+        {
+          "date": "2020-03-09",
+          "name": "COVID oil demand collapse / OPEC war",
+          "window": 60
+        },
+        {
+          "date": "2022-02-24",
+          "name": "Ukraine / Russia energy sanctions",
+          "window": 60
+        }
+      ],
+      "RATE_HIKE": [
+        {
+          "date": "1994-02-04",
+          "name": "Greenspan surprise tightening",
+          "window": 120
+        },
+        {
+          "date": "2004-06-30",
+          "name": "Greenspan 2004 hike cycle start",
+          "window": 120
+        },
+        {
+          "date": "2015-12-16",
+          "name": "Yellen first hike since 2006",
+          "window": 120
+        },
+        {
+          "date": "2022-03-16",
+          "name": "Powell aggressive tightening cycle",
+          "window": 180
+        }
+      ],
+      "PANDEMIC": [
+        {
+          "date": "2003-04-01",
+          "name": "SARS peak \u2014 Asia demand collapse",
+          "window": 60
+        },
+        {
+          "date": "2009-04-27",
+          "name": "H1N1 swine flu \u2014 WHO pandemic alert",
+          "window": 60
+        },
+        {
+          "date": "2020-03-11",
+          "name": "COVID-19 \u2014 WHO pandemic declaration",
+          "window": 60
+        }
+      ],
+      "SUPPLY_CHAIN": [
+        {
+          "date": "2011-03-11",
+          "name": "Japan earthquake / Fukushima",
+          "window": 90
+        },
+        {
+          "date": "2021-03-23",
+          "name": "Evergreen Suez Canal blockage",
+          "window": 60
+        },
+        {
+          "date": "2021-09-01",
+          "name": "Global port congestion / chip shortage",
+          "window": 90
+        }
+      ],
+      "MARKET_CRASH": [
+        {
+          "date": "2000-03-10",
+          "name": "Dotcom bubble peak / crash start",
+          "window": 180
+        },
+        {
+          "date": "2008-09-15",
+          "name": "Lehman Brothers collapse",
+          "window": 90
+        },
+        {
+          "date": "2020-02-19",
+          "name": "COVID equity crash",
+          "window": 30
+        },
+        {
+          "date": "2022-01-03",
+          "name": "2022 Fed-driven bear market",
+          "window": 180
+        }
+      ]
+    }
+  },
+  "first_order": {
+    "WAR_CONFLICT": {
+      "OIL_ENERGY": {
+        "impact": 0.111,
+        "lag": 83,
+        "conf": 0.5,
+        "n_events": 3,
+        "ticker": "XLE",
+        "raw_returns": [
+          0.0839,
+          -0.0454,
+          0.2936
+        ]
+      },
+      "EQUITY_MARKETS": {
+        "impact": -0.01,
+        "lag": 77,
+        "conf": 0.5,
+        "n_events": 4,
+        "ticker": "^GSPC",
+        "raw_returns": [
+          -0.1351,
+          0.1535,
+          0.0133,
+          -0.0723
+        ]
+      },
+      "CURRENCIES_FX": {
+        "impact": -0.008,
+        "lag": 77,
+        "conf": 0.62,
+        "n_events": 4,
+        "ticker": "DX-Y.NYB",
+        "raw_returns": [
+          -0.0507,
+          -0.0789,
+          0.0464,
+          0.0506
+        ]
+      }
+    },
+    "OIL_SHOCK": {
+      "OIL_ENERGY": {
+        "impact": 0.036,
+        "lag": 42,
+        "conf": 0.59,
+        "n_events": 4,
+        "ticker": "XLE",
+        "raw_returns": [
+          0.0006,
+          -0.1348,
+          0.1682,
+          0.1084
+        ]
+      },
+      "CURRENCIES_FX": {
+        "impact": 0.03,
+        "lag": 53,
+        "conf": 0.7,
+        "n_events": 5,
+        "ticker": "DX-Y.NYB",
+        "raw_returns": [
+          -0.0262,
+          0.0152,
+          0.061,
+          0.0509,
+          0.0475
+        ]
+      },
+      "COMMODITIES": {
+        "impact": -0.033,
+        "lag": 53,
+        "conf": 0.78,
+        "n_events": 3,
+        "ticker": "DJP",
+        "raw_returns": [
+          -0.1181,
+          -0.1004,
+          0.1193
+        ]
+      }
+    },
+    "RATE_HIKE": {
+      "EQUITY_MARKETS": {
+        "impact": -0.021,
+        "lag": 58,
+        "conf": 0.5,
+        "n_events": 4,
+        "ticker": "^GSPC",
+        "raw_returns": [
+          -0.0206,
+          -0.0117,
+          0.0047,
+          -0.0568
+        ]
+      },
+      "CURRENCIES_FX": {
+        "impact": -0.001,
+        "lag": 117,
+        "conf": 0.61,
+        "n_events": 4,
+        "ticker": "DX-Y.NYB",
+        "raw_returns": [
+          -0.0344,
+          -0.0396,
+          -0.0303,
+          0.1011
+        ]
+      }
+    },
+    "PANDEMIC": {
+      "AVIATION_TRAVEL": {
+        "impact": 0.032,
+        "lag": 9,
+        "conf": 0.53,
+        "n_events": 3,
+        "ticker": "^XAL",
+        "raw_returns": [
+          0.4148,
+          0.0309,
+          -0.3492
+        ]
+      },
+      "CONSUMER": {
+        "impact": 0.096,
+        "lag": 36,
+        "conf": 0.74,
+        "n_events": 3,
+        "ticker": "XLY",
+        "raw_returns": [
+          0.1626,
+          0.0253,
+          0.0995
+        ]
+      },
+      "EQUITY_MARKETS": {
+        "impact": 0.088,
+        "lag": 46,
+        "conf": 0.87,
+        "n_events": 3,
+        "ticker": "^GSPC",
+        "raw_returns": [
+          0.1224,
+          0.0716,
+          0.0687
+        ]
+      },
+      "EMPLOYMENT": {
+        "impact": 0.047,
+        "lag": 42,
+        "conf": 0.51,
+        "n_events": 3,
+        "ticker": "XLI",
+        "raw_returns": [
+          0.1226,
+          0.0418,
+          -0.0233
+        ]
+      }
+    },
+    "SUPPLY_CHAIN": {
+      "COMMODITIES": {
+        "impact": 0.044,
+        "lag": 49,
+        "conf": 0.5,
+        "n_events": 3,
+        "ticker": "DJP",
+        "raw_returns": [
+          0.0207,
+          0.1139,
+          -0.0022
+        ]
+      },
+      "ECOMMERCE": {
+        "impact": 0.014,
+        "lag": 62,
+        "conf": 0.69,
+        "n_events": 3,
+        "ticker": "XRT",
+        "raw_returns": [
+          0.0243,
+          0.0438,
+          -0.0265
+        ]
+      },
+      "OIL_ENERGY": {
+        "impact": 0.083,
+        "lag": 55,
+        "conf": 0.5,
+        "n_events": 3,
+        "ticker": "XLE",
+        "raw_returns": [
+          -0.001,
+          0.0905,
+          0.1586
+        ]
+      }
+    },
+    "MARKET_CRASH": {
+      "EQUITY_MARKETS": {
+        "impact": -0.179,
+        "lag": 48,
+        "conf": 0.67,
+        "n_events": 4,
+        "ticker": "^GSPC",
+        "raw_returns": [
+          0.0697,
+          -0.2624,
+          -0.3193,
+          -0.2025
+        ]
+      },
+      "CURRENCIES_FX": {
+        "impact": 0.066,
+        "lag": 114,
+        "conf": 0.85,
+        "n_events": 4,
+        "ticker": "DX-Y.NYB",
+        "raw_returns": [
+          0.0796,
+          0.0599,
+          0.0323,
+          0.0925
+        ]
+      },
+      "CREDIT_BANKING": {
+        "impact": -0.162,
+        "lag": 115,
+        "conf": 0.77,
+        "n_events": 4,
+        "ticker": "^BKX",
+        "raw_returns": [
+          0.3765,
+          -0.3358,
+          -0.4438,
+          -0.2442
+        ]
+      }
+    }
+  },
+  "edges": {
+    "OIL_ENERGY->AVIATION_TRAVEL": {
+      "weight": 0.612,
+      "lag": 14,
+      "conf": 0.87,
+      "authored_weight": 0.72,
+      "lrc": 0.031,
+      "event_corrs": [
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "OIL_ENERGY->COMMODITIES": {
+      "weight": 0.41,
+      "lag": 7,
+      "conf": 0.66,
+      "authored_weight": 0.65,
+      "lrc": 0.008,
+      "event_corrs": [
+        1.0,
+        0.356
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "OIL_ENERGY->INSURANCE": {
+      "weight": 0.399,
+      "lag": 7,
+      "conf": 0.64,
+      "authored_weight": 0.38,
+      "lrc": 0.008,
+      "event_corrs": [
+        1.0,
+        0.318
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "OIL_ENERGY->CURRENCIES_FX": {
+      "weight": 0.373,
+      "lag": 3,
+      "conf": 0.6,
+      "authored_weight": 0.45,
+      "lrc": 0.016,
+      "event_corrs": [
+        1.0,
+        0.221
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "EQUITY_MARKETS->EMPLOYMENT": {
+      "weight": 0.097,
+      "lag": 60,
+      "conf": 0.5,
+      "authored_weight": 0.55,
+      "lrc": 0.031,
+      "event_corrs": [
+        0.027,
+        0.256
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "EQUITY_MARKETS->REAL_ESTATE": {
+      "weight": 0.21,
+      "lag": 30,
+      "conf": 0.5,
+      "authored_weight": 0.42,
+      "lrc": 0.035,
+      "event_corrs": [
+        0.422,
+        0.232
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "EQUITY_MARKETS->CONSUMER": {
+      "weight": 0.275,
+      "lag": 21,
+      "conf": 0.5,
+      "authored_weight": 0.48,
+      "lrc": 0.036,
+      "event_corrs": [
+        0.09,
+        0.78
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CURRENCIES_FX->AVIATION_TRAVEL": {
+      "weight": 0.603,
+      "lag": 14,
+      "conf": 0.68,
+      "authored_weight": 0.38,
+      "lrc": 0.009,
+      "event_corrs": [
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CURRENCIES_FX->ECOMMERCE": {
+      "weight": 0.601,
+      "lag": 14,
+      "conf": 0.95,
+      "authored_weight": 0.45,
+      "lrc": 0.001,
+      "event_corrs": [
+        1.0,
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CREDIT_BANKING->REAL_ESTATE": {
+      "weight": 0.55,
+      "lag": 30,
+      "conf": 0.86,
+      "authored_weight": 0.65,
+      "lrc": 0.028,
+      "event_corrs": [
+        0.796,
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CREDIT_BANKING->ECOMMERCE": {
+      "weight": 0.567,
+      "lag": 30,
+      "conf": 0.9,
+      "authored_weight": 0.5,
+      "lrc": 0.001,
+      "event_corrs": [
+        0.889,
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CREDIT_BANKING->EMPLOYMENT": {
+      "weight": 0.314,
+      "lag": 45,
+      "conf": 0.51,
+      "authored_weight": 0.6,
+      "lrc": 0.018,
+      "event_corrs": [
+        0.022,
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "COMMODITIES->CONSUMER": {
+      "weight": 0.31,
+      "lag": 21,
+      "conf": 0.51,
+      "authored_weight": 0.58,
+      "lrc": 0.004,
+      "event_corrs": [
+        0.996,
+        0.032
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "COMMODITIES->INSURANCE": {
+      "weight": 0.494,
+      "lag": 21,
+      "conf": 0.78,
+      "authored_weight": 0.35,
+      "lrc": 0.012,
+      "event_corrs": [
+        0.741,
+        0.89
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "AVIATION_TRAVEL->EMPLOYMENT": {
+      "weight": 0.602,
+      "lag": 45,
+      "conf": 0.72,
+      "authored_weight": 0.45,
+      "lrc": 0.005,
+      "event_corrs": [
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "AVIATION_TRAVEL->CONSUMER": {
+      "weight": 0.602,
+      "lag": 30,
+      "conf": 0.65,
+      "authored_weight": 0.35,
+      "lrc": 0.005,
+      "event_corrs": [
+        1.0
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "REAL_ESTATE->CREDIT_BANKING": {
+      "weight": 0.402,
+      "lag": 30,
+      "conf": 0.63,
+      "authored_weight": 0.65,
+      "lrc": 0.043,
+      "event_corrs": [
+        1.0,
+        0.284
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "REAL_ESTATE->EMPLOYMENT": {
+      "weight": 0.319,
+      "lag": 45,
+      "conf": 0.52,
+      "authored_weight": 0.4,
+      "lrc": 0.008,
+      "event_corrs": [
+        0.433,
+        0.618
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "EMPLOYMENT->CONSUMER": {
+      "weight": 0.364,
+      "lag": 21,
+      "conf": 0.58,
+      "authored_weight": 0.8,
+      "lrc": 0.033,
+      "event_corrs": [
+        0.992,
+        0.177
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "EMPLOYMENT->REAL_ESTATE": {
+      "weight": 0.437,
+      "lag": 60,
+      "conf": 0.7,
+      "authored_weight": 0.35,
+      "lrc": 0.004,
+      "event_corrs": [
+        0.994,
+        0.459
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CONSUMER->ECOMMERCE": {
+      "weight": 0.341,
+      "lag": 7,
+      "conf": 0.56,
+      "authored_weight": 0.75,
+      "lrc": 0.007,
+      "event_corrs": [
+        1.0,
+        0.128
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "CONSUMER->EMPLOYMENT": {
+      "weight": 0.313,
+      "lag": 45,
+      "conf": 0.51,
+      "authored_weight": 0.5,
+      "lrc": 0.008,
+      "event_corrs": [
+        0.617,
+        0.415
+      ],
+      "method": "event_conditional+lrc"
+    },
+    "INSURANCE->CREDIT_BANKING": {
+      "weight": 0.608,
+      "lag": 30,
+      "conf": 0.95,
+      "authored_weight": 0.35,
+      "lrc": 0.023,
+      "event_corrs": [
+        1.0,
+        0.996
+      ],
+      "method": "event_conditional+lrc"
+    }
+  },
+  "typescript": {
+    "first_order_snippets": {
+      "WAR_CONFLICT": "      { sector:'OIL_ENERGY', impact:0.111, lag:83, conf:0.50 },  // calibrated n=3 [XLE]\n      { sector:'EQUITY_MARKETS', impact:-0.010, lag:77, conf:0.50 },  // calibrated n=4 [^GSPC]\n      { sector:'CURRENCIES_FX', impact:-0.008, lag:77, conf:0.62 },  // calibrated n=4 [DX-Y.NYB]",
+      "OIL_SHOCK": "      { sector:'OIL_ENERGY', impact:0.036, lag:42, conf:0.59 },  // calibrated n=4 [XLE]\n      { sector:'CURRENCIES_FX', impact:0.030, lag:53, conf:0.70 },  // calibrated n=5 [DX-Y.NYB]\n      { sector:'COMMODITIES', impact:-0.033, lag:53, conf:0.78 },  // calibrated n=3 [DJP]",
+      "RATE_HIKE": "      { sector:'EQUITY_MARKETS', impact:-0.021, lag:58, conf:0.50 },  // calibrated n=4 [^GSPC]\n      { sector:'CURRENCIES_FX', impact:-0.001, lag:117, conf:0.61 },  // calibrated n=4 [DX-Y.NYB]",
+      "PANDEMIC": "      { sector:'AVIATION_TRAVEL', impact:0.032, lag:9, conf:0.53 },  // calibrated n=3 [^XAL]\n      { sector:'CONSUMER', impact:0.096, lag:36, conf:0.74 },  // calibrated n=3 [XLY]\n      { sector:'EQUITY_MARKETS', impact:0.088, lag:46, conf:0.87 },  // calibrated n=3 [^GSPC]\n      { sector:'EMPLOYMENT', impact:0.047, lag:42, conf:0.51 },  // calibrated n=3 [XLI]",
+      "SUPPLY_CHAIN": "      { sector:'COMMODITIES', impact:0.044, lag:49, conf:0.50 },  // calibrated n=3 [DJP]\n      { sector:'ECOMMERCE', impact:0.014, lag:62, conf:0.69 },  // calibrated n=3 [XRT]\n      { sector:'OIL_ENERGY', impact:0.083, lag:55, conf:0.50 },  // calibrated n=3 [XLE]",
+      "MARKET_CRASH": "      { sector:'EQUITY_MARKETS', impact:-0.179, lag:48, conf:0.67 },  // calibrated n=4 [^GSPC]\n      { sector:'CURRENCIES_FX', impact:0.066, lag:114, conf:0.85 },  // calibrated n=4 [DX-Y.NYB]\n      { sector:'CREDIT_BANKING', impact:-0.162, lag:115, conf:0.77 },  // calibrated n=4 [^BKX]"
+    }
+  }
+}
