@@ -115,7 +115,7 @@ const platformStack = [
 
 export default function DocsPage() {
   return (
-    <div style={{ paddingTop: 52, background: 'var(--bg)', minHeight: '100vh' }}>
+    <div style={{ paddingTop: 'var(--nav-h)', background: 'var(--bg)', minHeight: '100vh' }}>
 
       {/* ── HEADER ── */}
       <header style={{ padding: 'clamp(64px,8vw,100px) clamp(16px,4vw,48px) 48px', maxWidth: 1080, margin: '0 auto' }}>

@@ -111,7 +111,7 @@ export default function FintechPage() {
   };
 
   return (
-    <div style={{ paddingTop: 52 }}>
+    <div style={{ paddingTop: 'var(--nav-h)' }}>
 
       {/* ── HEADER ── */}
       <header style={{ padding: 'clamp(72px,10vw,120px) clamp(16px,4vw,48px) 64px', maxWidth: 1080, margin: '0 auto' }}>

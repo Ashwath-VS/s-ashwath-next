@@ -155,21 +155,93 @@ function SystemStatusPanel() {
 
 // ── Domain data ────────────────────────────────────────────
 const domains = [
-  { href: '/ecommerce',  title: 'E-Commerce',  tag: '✓ COMPLETE',    color: '#00e676', desc: 'Seven AI systems. One B2B marketplace. Built solo, end to end.', num: 'DOMAIN_01', live: true,  grid: { col: '1 / 3', row: '1 / 2' } },
-  { href: '/scenarios',  title: 'Macro Engine', tag: '◈ SIM LIVE',    color: '#ff9100', desc: 'Pick a shock. Watch 13 sectors cascade. Get an AI brief for your role.', num: 'DOMAIN_05', live: true,  grid: { col: '3 / 4', row: '1 / 3' } },
-  { href: '/fintech',    title: 'Fin-Tech',    tag: '◐ AGENT LIVE',   color: '#2979ff', desc: 'MSME credit intelligence with GST, bank, and ITR triangulation.', num: 'DOMAIN_02', live: true,  grid: { col: '1 / 2', row: '2 / 3' } },
-  { href: '/traveltech', title: 'Travel-Tech', tag: '◐ AGENT LIVE',   color: '#00acc1', desc: 'Fare monitor + IRROP rebooking. 18 years of airline domain depth.', num: 'DOMAIN_04', live: true,  grid: { col: '2 / 3', row: '2 / 3' } },
-  { href: '#',           title: 'Insurance',   tag: '○ COMING NEXT',  color: '#7c4dff', desc: 'AI for claims, underwriting and risk — regulated, high-stakes ops.', num: 'DOMAIN_03', live: false, grid: { col: '1 / 4', row: '3 / 4' } },
+  {
+    href: '/ecommerce',
+    title: 'E-Commerce',
+    tag: '✓ COMPLETE',
+    color: '#00e676',
+    desc: 'Seven AI systems. One B2B marketplace. Built solo, end to end.',
+    num: 'DOMAIN_01',
+    live: true,
+    grid: { col: '1 / 3', row: '1 / 2' },
+  },
+  {
+    href: '/scenarios',
+    title: 'Macro Engine',
+    tag: '◈ SIM LIVE',
+    color: '#ff9100',
+    desc: 'Pick a shock. Watch 13 sectors cascade. Get an AI brief for your role.',
+    num: 'DOMAIN_05',
+    live: true,
+    grid: { col: '3 / 4', row: '1 / 3' },
+  },
+  {
+    href: '/fintech',
+    title: 'Fin-Tech',
+    tag: '◐ AGENT LIVE',
+    color: '#2979ff',
+    desc: 'MSME credit intelligence with GST, bank, and ITR triangulation.',
+    num: 'DOMAIN_02',
+    live: true,
+    grid: { col: '1 / 2', row: '2 / 3' },
+  },
+  {
+    href: '/traveltech',
+    title: 'Travel-Tech',
+    tag: '◐ AGENT LIVE',
+    color: '#00acc1',
+    desc: 'AI fare scenario intelligence. 8 market agents, 26 route pairs, live signal scoring.',
+    num: 'DOMAIN_04',
+    live: true,
+    grid: { col: '2 / 3', row: '2 / 3' },
+  },
+  {
+    href: '#',
+    title: 'Insurance',
+    tag: '○ COMING NEXT',
+    color: '#7c4dff',
+    desc: 'AI for claims, underwriting and risk — regulated, high-stakes ops.',
+    num: 'DOMAIN_03',
+    live: false,
+    grid: { col: '1 / 4', row: '3 / 4' },
+  },
 ];
 
 const agentCards = [
-  { href: '/fintech',   slot: 'SLOT_01', title: 'SME Credit Analyst',       desc: 'Enter GST, bank credits, ITR. Get a structured credit brief with risk flags and a recommended limit.', cta: 'Try the agent', color: '#2979ff', domain: 'DOMAIN_02', icon: '◎' },
-  { href: '/traveltech',slot: 'SLOT_02', title: 'Fare Optimisation Agent',  desc: 'Enter your route, cabin, booked fare, and days out. Get a rebooking signal with net savings after change fees.', cta: 'Try the agent', color: '#00acc1', domain: 'DOMAIN_04', icon: '◎' },
-  { href: '/scenarios', slot: 'SLOT_03', title: 'Macro Cascade Simulator',  desc: 'Pick a macro shock, get a full sector cascade and an AI brief tailored to your role.', cta: 'Run simulation', color: '#ff9100', domain: 'DOMAIN_05', icon: '◈' },
+  {
+    href: '/fintech',
+    slot: 'SLOT_01',
+    title: 'SME Credit Analyst',
+    desc: 'Enter GST, bank credits, ITR. Get a structured credit brief with risk flags and a recommended limit.',
+    cta: 'Try the agent',
+    color: '#2979ff',
+    domain: 'DOMAIN_02',
+    icon: '◎',
+  },
+  {
+    href: '/traveltech',
+    slot: 'SLOT_02',
+    title: 'AirWave Fare Agent',
+    desc: 'Enter route, cabin class, and current fare. AirWave runs 8 market agents and returns a go/no-go rebooking signal with net savings after change fees.',
+    cta: 'Try the agent',
+    color: '#00acc1',
+    domain: 'DOMAIN_04',
+    icon: '◎',
+  },
+  {
+    href: '/scenarios',
+    slot: 'SLOT_03',
+    title: 'Macro Cascade Simulator',
+    desc: 'Pick a macro shock, get a full sector cascade and an AI brief tailored to your role.',
+    cta: 'Run simulation',
+    color: '#ff9100',
+    domain: 'DOMAIN_05',
+    icon: '◈',
+  },
 ];
 
-// ── Section header ─────────────────────────────────────────
-function SectionHeader({ num, label }: { num: string; label: string }) {
+// ── Section divider (replaces numbered eyebrow pattern) ────
+function SectionDivider({ label }: { label: string }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -177,11 +249,16 @@ function SectionHeader({ num, label }: { num: string; label: string }) {
       viewport={{ once: true }}
       style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}
     >
-      <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--acc)', letterSpacing: '0.12em' }}>{num}</span>
-      <span style={{ fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--txt-dim)' }}>{label}</span>
+      <span style={{
+        fontFamily: 'var(--mono)', fontSize: 11,
+        letterSpacing: '0.16em', textTransform: 'uppercase',
+        color: 'var(--txt-dim)', whiteSpace: 'nowrap',
+      }}>
+        {label}
+      </span>
       <motion.div
         initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', transformOrigin: 'left' }}
       />
     </motion.div>
@@ -194,11 +271,11 @@ export default function Home() {
   const headline = useScrambleText('I build and prove AI systems.', 300, 1000);
 
   return (
-    <div style={{ paddingTop: 52 }}>
+    <div style={{ paddingTop: 'var(--nav-h)' }}>
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section style={{
-        minHeight: 'calc(100vh - 52px)',
+        minHeight: 'calc(100dvh - var(--nav-h))',
         display: 'flex', alignItems: 'center',
         padding: `clamp(60px,8vw,120px) clamp(16px,4vw,48px)`,
         maxWidth: 1200, margin: '0 auto',
@@ -235,6 +312,7 @@ export default function Home() {
                 letterSpacing: '-0.04em',
                 marginBottom: 32,
                 fontFamily: 'var(--mono)',
+                textWrap: 'balance',
               }}
             >
               {headline}
@@ -276,36 +354,60 @@ export default function Home() {
               ))}
             </motion.div>
 
-            {/* CTAs */}
+            {/* CTAs — pill shape + Button-in-Button trailing icon */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              style={{ display: 'flex', gap: 14, marginTop: 36, flexWrap: 'wrap' }}
+              style={{ display: 'flex', gap: 12, marginTop: 36, flexWrap: 'wrap', alignItems: 'center' }}
             >
-              <a href="/scenarios" style={{
-                fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
-                letterSpacing: '0.1em', color: '#07090c',
-                background: 'var(--mac)', padding: '12px 24px',
-                borderRadius: 5, display: 'inline-flex', alignItems: 'center', gap: 8,
-                transition: 'opacity 0.2s, transform 0.2s',
-              }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.88'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; (e.currentTarget as HTMLElement).style.transform = 'none'; }}
+              {/* Primary */}
+              <motion.a href="/scenarios"
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.12, ease: [0.32, 0.72, 0, 1] }}
+                className="cta-primary-btn"
+                style={{
+                  fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
+                  letterSpacing: '0.1em', color: '#07090c',
+                  background: 'var(--mac)',
+                  padding: '10px 10px 10px 22px',
+                  borderRadius: 9999,
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  textDecoration: 'none',
+                }}
               >
                 ◈ Run a simulation
-              </a>
-              <a href="/ecommerce" style={{
-                fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 600,
-                letterSpacing: '0.1em', color: 'var(--txt-dim)',
-                border: '1px solid rgba(255,255,255,0.1)', padding: '12px 24px',
-                borderRadius: 5, display: 'inline-flex', alignItems: 'center', gap: 8,
-                transition: 'color 0.2s, border-color 0.2s, transform 0.2s',
-              }}
-                onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'var(--txt)'; el.style.borderColor = 'rgba(255,255,255,0.25)'; el.style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'var(--txt-dim)'; el.style.borderColor = 'rgba(255,255,255,0.1)'; el.style.transform = 'none'; }}
+                <span className="cta-trailing-icon" style={{
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: 'rgba(0,0,0,0.15)',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 14, flexShrink: 0,
+                }}>→</span>
+              </motion.a>
+
+              {/* Secondary */}
+              <motion.a href="/ecommerce"
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.12 }}
+                className="cta-secondary-btn"
+                style={{
+                  fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 600,
+                  letterSpacing: '0.1em', color: 'var(--txt-dim)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  padding: '10px 10px 10px 22px',
+                  borderRadius: 9999,
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  textDecoration: 'none',
+                  transition: 'color 0.25s, border-color 0.25s',
+                }}
               >
-                View completed build →
-              </a>
+                View completed build
+                <span className="cta-trailing-icon" style={{
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.05)',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 14, flexShrink: 0,
+                }}>→</span>
+              </motion.a>
             </motion.div>
           </div>
 
@@ -319,7 +421,7 @@ export default function Home() {
 
       {/* ── DOMAINS (BENTO) ───────────────────────────────── */}
       <section style={{ padding: `clamp(48px,6vw,80px) clamp(16px,4vw,48px)`, maxWidth: 1200, margin: '0 auto' }}>
-        <SectionHeader num="01" label="Domain Portfolio" />
+        <SectionDivider label="Domain Portfolio" />
 
         <div style={{
           display: 'grid',
@@ -339,10 +441,10 @@ export default function Home() {
                 transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
               >
                 {isInsurance ? (
-                  // Insurance — coming soon banner
+                  // Insurance — coming soon banner (no bezel needed, intentionally different)
                   <div style={{
                     border: '1px dashed rgba(124,77,255,0.2)',
-                    borderRadius: 8, padding: '22px 28px',
+                    borderRadius: 10, padding: '22px 28px',
                     background: 'rgba(124,77,255,0.03)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     flexWrap: 'wrap', gap: 16,
@@ -359,45 +461,57 @@ export default function Home() {
                     </span>
                   </div>
                 ) : (
-                  // Live domain card
+                  // Live domain card — Double-Bezel: outer shell + inner core
                   <motion.a href={d.href}
-                    whileHover={{ y: -4, boxShadow: `0 20px 60px ${d.color}20` }}
-                    transition={{ duration: 0.22 }}
+                    whileHover={{ y: -4, boxShadow: `0 24px 60px ${d.color}18` }}
+                    transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                     style={{
-                      display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                      minHeight: d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : 200,
+                      display: 'flex', flexDirection: 'column',
                       height: '100%',
-                      padding: '28px 28px 24px',
-                      background: 'var(--card-bg)',
-                      border: `1px solid ${d.color}28`,
-                      borderRadius: 8, overflow: 'hidden', position: 'relative',
+                      // Outer shell
+                      background: `${d.color}08`,
+                      border: `1px solid ${d.color}25`,
+                      borderRadius: 16,
+                      padding: 3,
                       cursor: 'pointer', textDecoration: 'none', color: 'inherit',
                     }}
                   >
-                    {/* Gradient wash */}
-                    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 55% at 0% 0%, ${d.color}0d, transparent)`, pointerEvents: 'none' }} />
-                    {/* Corner accent */}
-                    <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: `0 32px 32px 0`, borderColor: `transparent ${d.color}40 transparent transparent` }} />
+                    {/* Inner core */}
+                    <div style={{
+                      flex: 1,
+                      display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                      minHeight: d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : 200,
+                      padding: '28px 28px 24px',
+                      background: 'var(--card-bg)',
+                      borderRadius: 13,
+                      overflow: 'hidden', position: 'relative',
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                    }}>
+                      {/* Gradient wash */}
+                      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 55% at 0% 0%, ${d.color}0d, transparent)`, pointerEvents: 'none' }} />
+                      {/* Corner accent */}
+                      <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 32px 32px 0', borderColor: `transparent ${d.color}40 transparent transparent` }} />
 
-                    {/* Top */}
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: d.color }}>
-                          <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2.5, repeat: Infinity }}
-                            style={{ width: 6, height: 6, borderRadius: '50%', background: d.color, boxShadow: `0 0 8px ${d.color}`, display: 'inline-block' }} />
-                          {d.tag}
+                      {/* Top */}
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: d.color }}>
+                            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2.5, repeat: Infinity }}
+                              style={{ width: 6, height: 6, borderRadius: '50%', background: d.color, boxShadow: `0 0 8px ${d.color}`, display: 'inline-block' }} />
+                            {d.tag}
+                          </div>
+                          <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.1em' }}>{d.num}</span>
                         </div>
-                        <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.1em' }}>{d.num}</span>
+                        <h3 style={{ fontSize: d.num === 'DOMAIN_01' ? 'clamp(24px,3vw,34px)' : 'clamp(20px,2.5vw,26px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{d.title}</h3>
+                        <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65, maxWidth: '36ch' }}>{d.desc}</p>
                       </div>
-                      <h3 style={{ fontSize: d.num === 'DOMAIN_01' ? 'clamp(24px,3vw,34px)' : 'clamp(20px,2.5vw,26px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{d.title}</h3>
-                      <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65, maxWidth: '36ch' }}>{d.desc}</p>
-                    </div>
 
-                    {/* Bottom CTA */}
-                    <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: d.color, fontWeight: 600 }}>
-                        {d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →'}
-                      </span>
+                      {/* Bottom CTA */}
+                      <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: d.color, fontWeight: 600 }}>
+                          {d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →'}
+                        </span>
+                      </div>
                     </div>
                   </motion.a>
                 )}
@@ -409,7 +523,7 @@ export default function Home() {
 
       {/* ── AGENTS ────────────────────────────────────────── */}
       <section style={{ padding: `0 clamp(16px,4vw,48px) clamp(60px,8vw,100px)`, maxWidth: 1200, margin: '0 auto' }}>
-        <SectionHeader num="02" label="Agentic AIs · Try Live" />
+        <SectionDivider label="Agentic AIs — Try Live" />
 
         <div style={{
           display: 'grid',
@@ -423,33 +537,49 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.55, delay: i * 0.1 }}
             >
+              {/* Double-Bezel agent card */}
               <motion.a href={a.href}
-                whileHover={{ y: -5, boxShadow: `0 18px 50px ${a.color}22` }}
-                transition={{ duration: 0.22 }}
+                whileHover={{ y: -5, boxShadow: `0 20px 50px ${a.color}18` }}
+                transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                 style={{
-                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                  border: `1px solid ${a.color}30`, borderRadius: 8,
-                  padding: '24px', background: `${a.color}07`,
-                  minHeight: 230, height: '100%',
-                  textDecoration: 'none', color: 'inherit', position: 'relative', overflow: 'hidden',
+                  display: 'flex', flexDirection: 'column',
+                  height: '100%',
+                  // Outer shell
+                  background: `${a.color}07`,
+                  border: `1px solid ${a.color}28`,
+                  borderRadius: 14,
+                  padding: 2,
+                  textDecoration: 'none', color: 'inherit', cursor: 'pointer',
                 }}
               >
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${a.color}, transparent)`, opacity: 0.55 }} />
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--txt-faint)' }}>// {a.slot}</span>
-                    <span style={{ fontSize: 18, color: a.color, opacity: 0.65 }}>{a.icon}</span>
+                {/* Inner core */}
+                <div style={{
+                  flex: 1,
+                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                  minHeight: 230,
+                  padding: '24px',
+                  background: `${a.color}05`,
+                  borderRadius: 12,
+                  position: 'relative', overflow: 'hidden',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                }}>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${a.color}, transparent)`, opacity: 0.55 }} />
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--txt-faint)' }}>// {a.slot}</span>
+                      <span style={{ fontSize: 18, color: a.color, opacity: 0.65 }}>{a.icon}</span>
+                    </div>
+                    <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, letterSpacing: '-0.01em' }}>{a.title}</h4>
+                    <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65 }}>{a.desc}</p>
                   </div>
-                  <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, letterSpacing: '-0.01em' }}>{a.title}</h4>
-                  <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65 }}>{a.desc}</p>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--live)' }}>
-                    <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-                      style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--live)', boxShadow: '0 0 6px var(--live)', display: 'inline-block' }} />
-                    LIVE · {a.domain}
-                  </span>
-                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: a.color, fontWeight: 600 }}>{a.cta} →</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--live)' }}>
+                      <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
+                        style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--live)', boxShadow: '0 0 6px var(--live)', display: 'inline-block' }} />
+                      LIVE · {a.domain}
+                    </span>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: a.color, fontWeight: 600 }}>{a.cta} →</span>
+                  </div>
                 </div>
               </motion.a>
             </motion.div>
@@ -468,13 +598,25 @@ export default function Home() {
           S<span style={{ color: 'var(--acc)' }}>-</span>ASHWATH
         </span>
         <div style={{ display: 'flex', gap: 24, fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.08em' }}>
-          <a href="mailto:rambotechnologies@gmail.com" style={{ color: 'var(--txt-dim)', transition: 'color 0.2s' }}
+          <a href="mailto:rambotechnologies@gmail.com"
+            style={{ color: 'var(--txt-dim)', transition: 'color 0.2s' }}
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--txt)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--txt-dim)')}>EMAIL</a>
-          <a href="https://linkedin.com/in/s-ashwathv" style={{ color: 'var(--txt-dim)', transition: 'color 0.2s' }}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--txt-dim)')}>
+            EMAIL
+          </a>
+          <a href="https://linkedin.com/in/s-ashwathv"
+            style={{ color: 'var(--txt-dim)', transition: 'color 0.2s' }}
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--txt)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--txt-dim)')}>LINKEDIN</a>
-          <span style={{ color: 'var(--txt-faint)' }}>GITHUB · SOON</span>
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--txt-dim)')}>
+            LINKEDIN
+          </a>
+          <a href="https://github.com/Ashwath-VS"
+            target="_blank" rel="noopener noreferrer"
+            style={{ color: 'var(--txt-dim)', transition: 'color 0.2s' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--txt)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--txt-dim)')}>
+            GITHUB
+          </a>
         </div>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--txt-faint)', width: '100%', letterSpacing: '0.06em' }}>
           // AI systems proven across five domains · built solo · s-ashwath.com

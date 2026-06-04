@@ -22,6 +22,8 @@
   --mono:      'JetBrains Mono', monospace;
   --sans:      'Space Grotesk', sans-serif;
   --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  /* Floating pill nav: 16px top margin + 48px pill = 64px; 80px gives 16px breathing room */
+  --nav-h:     80px;
 }
 
 *, *::before, *::after {
@@ -86,4 +88,30 @@ body::after {
 @media (max-width: 768px) {
   .mobile-hide { display: none !important; }
   .mobile-stack { flex-direction: column !important; }
+  .mobile-hamburger { display: flex !important; }
+}
+
+/* ── Keyframes ──────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── CTA button hover states ───────────────────────── */
+.cta-trailing-icon {
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), background 0.25s;
+}
+
+.cta-primary-btn:hover .cta-trailing-icon {
+  transform: translateX(2px) translateY(-1px) scale(1.08);
+}
+
+.cta-secondary-btn:hover {
+  color: var(--txt) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.cta-secondary-btn:hover .cta-trailing-icon {
+  transform: translateX(2px) translateY(-1px) scale(1.08);
+  background: rgba(255, 255, 255, 0.09) !important;
 }

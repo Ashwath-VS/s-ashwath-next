@@ -168,7 +168,7 @@ export default function ScenariosPage() {
   const contextColor = context === 'CRISIS' ? '#ff3b30' : context === 'STRESSED' ? '#ffb020' : '#00e676';
 
   return (
-    <div style={{ paddingTop: 52 }}>
+    <div style={{ paddingTop: 'var(--nav-h)' }}>
 
       {/* ── LIVE MARKET STRIP ─────────────────────── */}
       <motion.div initial={{ opacity: prefersReduced ? 1 : 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
