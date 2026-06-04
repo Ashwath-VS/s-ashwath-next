@@ -24,9 +24,9 @@ function inr(n: number): string {
 }
 
 function signalColor(val: string): string {
-  if (['LOW', 'FAST_TRACK', 'LIKELY_COVERED'].includes(val)) return 'var(--live)';
-  if (['MEDIUM', 'STANDARD', 'NEEDS_REVIEW'].includes(val)) return 'var(--poc)';
-  return 'var(--acc)';
+  if (['LOW', 'FAST_TRACK', 'LIKELY_COVERED', 'ADMISSIBLE'].includes(val)) return 'var(--live)';
+  if (['MEDIUM', 'STANDARD', 'NEEDS_REVIEW', 'ON HOLD'].includes(val)) return 'var(--poc)';
+  return 'var(--acc)'; // HIGH, CRITICAL, INVESTIGATE, REFER_SIU, EXCLUDED, BLOCKED, PENDING
 }
 
 // ── Claims analysis engine ────────────────────────────────────
@@ -510,7 +510,12 @@ export default function InsurancePage() {
                       <MetricBadge label="Fraud Risk" val={brief.fraudRisk} />
                       <MetricBadge label="Coverage" val={brief.coverage} />
                       <MetricBadge label="Triage Priority" val={brief.triage} />
-                      <MetricBadge label="Settlement Est." val={brief.triage === 'REFER_SIU' || brief.triage === 'INVESTIGATE' ? 'PENDING' : brief.fraudRisk} />
+                      <MetricBadge label="Settlement" val={
+                        brief.triage === 'REFER_SIU'    ? 'BLOCKED' :
+                        brief.triage === 'INVESTIGATE'  ? 'ON HOLD' :
+                        brief.coverage === 'EXCLUDED'   ? 'EXCLUDED' :
+                        'ADMISSIBLE'
+                      } />
                     </div>
 
                     {/* Settlement range */}
