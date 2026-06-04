@@ -574,7 +574,7 @@ export default function ScenariosPage() {
               </div>
               <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
               <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.06em' }}>
-                {Object.values(impacts).filter(Boolean).length} of {Object.keys(impacts).length} sectors reached
+                {Object.keys(impacts).length} of {Object.keys(SECTORS).length} sectors reached
               </span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(172px,1fr))', gap: 10 }}>
@@ -1098,10 +1098,31 @@ export default function ScenariosPage() {
 function NodeDetail({ impacts, selectedNode }: { impacts: Record<string, ImpactResult> | null; selectedNode: string | null }) {
   if (!selectedNode) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: 320, textAlign: 'center', gap: 12 }}>
-        <motion.div animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 3, repeat: Infinity }}
-          style={{ fontSize: 32, color: 'rgba(255,255,255,0.2)' }}>◈</motion.div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', lineHeight: 1.8 }}>Click any node<br />to inspect its<br />cascade impact</div>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', minHeight: 320, gap: 16 }}>
+        {impacts ? (
+          /* Post-run: prompt to click a node */
+          <div style={{ textAlign: 'center' }}>
+            <motion.div animate={{ opacity: [0.3, 0.65, 0.3] }} transition={{ duration: 3, repeat: Infinity }}
+              style={{ fontSize: 28, color: 'rgba(255,255,255,0.18)', marginBottom: 10 }}>◈</motion.div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', lineHeight: 1.8 }}>
+              Click any lit node<br />to inspect its<br />cascade impact
+            </div>
+          </div>
+        ) : (
+          /* Pre-run: sector roster */
+          <div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.14em', color: 'rgba(255,145,0,0.5)', marginBottom: 12 }}>
+              13 SECTORS MODELLED
+            </div>
+            {Object.entries(SECTORS).map(([id, sec]) => (
+              <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <div style={{ width: 5, height: 5, borderRadius: '50%', background: sec.color, flexShrink: 0, boxShadow: `0 0 4px ${sec.color}80` }} />
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.04em' }}>{sec.label}</span>
+                {sec.trigger && <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 8, color: '#ff9100', letterSpacing: '0.08em' }}>TRIGGER</span>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
