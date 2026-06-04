@@ -440,8 +440,11 @@ export default function Home() {
           gap: 12,
         }}>
           {domains.map((d, i) => {
-            const isInsurance = !d.live;
             const gridStyle = isMobile ? {} : { gridColumn: d.grid.col, gridRow: d.grid.row };
+            const isWide = !isMobile && d.grid.col === '1 / 4'; // full-width card (Insurance)
+            const minH = d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : 200;
+            const ctaLabel = d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →';
+            const descMaxW = isWide ? '60ch' : '36ch';
 
             return (
               <motion.div key={d.href} style={gridStyle}
@@ -450,81 +453,61 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
               >
-                {isInsurance ? (
-                  // Insurance — coming soon banner (no bezel needed, intentionally different)
+                {/* Live domain card — Double-Bezel: outer shell + inner core */}
+                <motion.a href={d.href}
+                  whileHover={{ y: -4, boxShadow: `0 24px 60px ${d.color}18` }}
+                  transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+                  style={{
+                    display: 'flex', flexDirection: 'column',
+                    height: '100%',
+                    background: `${d.color}08`,
+                    border: `1px solid ${d.color}25`,
+                    borderRadius: 16,
+                    padding: 3,
+                    cursor: 'pointer', textDecoration: 'none', color: 'inherit',
+                  }}
+                >
+                  {/* Inner core */}
                   <div style={{
-                    border: '1px dashed rgba(124,77,255,0.2)',
-                    borderRadius: 10, padding: '22px 28px',
-                    background: 'rgba(124,77,255,0.03)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    flexWrap: 'wrap', gap: 16,
+                    flex: 1,
+                    display: 'flex', flexDirection: isWide && !isMobile ? 'row' : 'column',
+                    justifyContent: 'space-between',
+                    alignItems: isWide && !isMobile ? 'center' : undefined,
+                    minHeight: minH,
+                    padding: '28px 28px 24px',
+                    background: 'var(--card-bg)',
+                    borderRadius: 13,
+                    overflow: 'hidden', position: 'relative',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                    gap: isWide && !isMobile ? 40 : 0,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', border: '1px solid rgba(124,77,255,0.4)', display: 'inline-block' }} />
-                      <div>
-                        <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'rgba(124,77,255,0.5)', letterSpacing: '0.14em' }}>DOMAIN_03 · COMING NEXT</span>
-                        <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2, color: 'rgba(255,255,255,0.5)' }}>Insurance</div>
-                      </div>
-                    </div>
-                    <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'rgba(255,255,255,0.2)', maxWidth: '44ch' }}>
-                      AI for claims, underwriting and risk — regulated, high-stakes ops.
-                    </span>
-                  </div>
-                ) : (
-                  // Live domain card — Double-Bezel: outer shell + inner core
-                  <motion.a href={d.href}
-                    whileHover={{ y: -4, boxShadow: `0 24px 60px ${d.color}18` }}
-                    transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                    style={{
-                      display: 'flex', flexDirection: 'column',
-                      height: '100%',
-                      // Outer shell
-                      background: `${d.color}08`,
-                      border: `1px solid ${d.color}25`,
-                      borderRadius: 16,
-                      padding: 3,
-                      cursor: 'pointer', textDecoration: 'none', color: 'inherit',
-                    }}
-                  >
-                    {/* Inner core */}
-                    <div style={{
-                      flex: 1,
-                      display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                      minHeight: d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : 200,
-                      padding: '28px 28px 24px',
-                      background: 'var(--card-bg)',
-                      borderRadius: 13,
-                      overflow: 'hidden', position: 'relative',
-                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-                    }}>
-                      {/* Gradient wash */}
-                      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 55% at 0% 0%, ${d.color}0d, transparent)`, pointerEvents: 'none' }} />
-                      {/* Corner accent */}
-                      <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 32px 32px 0', borderColor: `transparent ${d.color}40 transparent transparent` }} />
+                    {/* Gradient wash */}
+                    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 55% at 0% 0%, ${d.color}0d, transparent)`, pointerEvents: 'none' }} />
+                    {/* Corner accent */}
+                    <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 32px 32px 0', borderColor: `transparent ${d.color}40 transparent transparent` }} />
 
-                      {/* Top */}
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: d.color }}>
-                            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2.5, repeat: Infinity }}
-                              style={{ width: 6, height: 6, borderRadius: '50%', background: d.color, boxShadow: `0 0 8px ${d.color}`, display: 'inline-block' }} />
-                            {d.tag}
-                          </div>
-                          <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.1em' }}>{d.num}</span>
+                    {/* Tag + title + desc */}
+                    <div style={{ position: 'relative', flex: isWide && !isMobile ? 1 : undefined }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: d.color }}>
+                          <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2.5, repeat: Infinity }}
+                            style={{ width: 6, height: 6, borderRadius: '50%', background: d.color, boxShadow: `0 0 8px ${d.color}`, display: 'inline-block' }} />
+                          {d.tag}
                         </div>
-                        <h3 style={{ fontSize: d.num === 'DOMAIN_01' ? 'clamp(24px,3vw,34px)' : 'clamp(20px,2.5vw,26px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{d.title}</h3>
-                        <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65, maxWidth: '36ch' }}>{d.desc}</p>
+                        <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.1em' }}>{d.num}</span>
                       </div>
-
-                      {/* Bottom CTA */}
-                      <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                        <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: d.color, fontWeight: 600 }}>
-                          {d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →'}
-                        </span>
-                      </div>
+                      <h3 style={{ fontSize: d.num === 'DOMAIN_01' ? 'clamp(24px,3vw,34px)' : 'clamp(20px,2.5vw,26px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{d.title}</h3>
+                      <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65, maxWidth: descMaxW }}>{d.desc}</p>
                     </div>
-                  </motion.a>
-                )}
+
+                    {/* CTA — right-aligned normally, center-right for wide cards */}
+                    <div style={{ position: 'relative', marginTop: isWide && !isMobile ? 0 : 20, display: 'flex', alignItems: isWide && !isMobile ? 'center' : 'flex-end', justifyContent: 'flex-end', flexShrink: 0 }}>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: d.color, fontWeight: 600 }}>
+                        {ctaLabel}
+                      </span>
+                    </div>
+                  </div>
+                </motion.a>
               </motion.div>
             );
           })}
@@ -537,7 +520,7 @@ export default function Home() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))',
           gap: 12,
         }}>
           {agentCards.map((a, i) => (
