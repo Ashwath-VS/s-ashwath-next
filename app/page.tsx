@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useScrambleText } from '@/hooks/useScrambleText';
@@ -579,6 +580,41 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── DOCS CALLOUT ──────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          maxWidth: 1200, margin: '0 auto',
+          padding: '0 clamp(16px,4vw,48px) 52px',
+        }}
+      >
+        <Link href="/docs" style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 14,
+          padding: '18px 28px',
+          background: 'rgba(255,59,48,0.03)',
+          border: '1px solid rgba(255,59,48,0.14)',
+          borderRadius: 8,
+          textDecoration: 'none',
+          transition: 'border-color 0.2s, background 0.2s',
+        }}>
+          <div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: 'var(--acc)', marginBottom: 5 }}>
+              TECHNICAL DOCUMENTATION
+            </div>
+            <div style={{ fontSize: 14, color: 'var(--txt-dim)', maxWidth: '58ch' }}>
+              Stack decisions, agent architectures, pipeline docs, and the problem statement behind each domain — all in one place.
+            </div>
+          </div>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--acc)', flexShrink: 0 }}>
+            VIEW DOCS →
+          </span>
+        </Link>
+      </motion.div>
 
       {/* ── FOOTER ────────────────────────────────────────── */}
       <footer style={{

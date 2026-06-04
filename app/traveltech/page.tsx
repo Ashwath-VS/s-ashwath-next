@@ -227,10 +227,13 @@ export default function TravelTechPage() {
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
             <a href="mailto:rambotechnologies@gmail.com">EMAIL</a>
             <a href="https://www.linkedin.com/in/s-ashwathv" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+            <Link href="/docs">DOCS</Link>
+            <Link href="/experience">EXPERIENCE</Link>
             <Link href="/">ALL DOMAINS</Link>
           </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6 }}>
-            // Travel-Tech · DOMAIN_04 · AirWave Fare Scenario Intelligence · 8 market agents · live data · open source
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <span>// Travel-Tech · DOMAIN_04 · AirWave · 8 market agents · live data · open source</span>
+            <Link href="/scenarios" style={{ color: 'inherit', textDecoration: 'none' }}>Next: Macro Engine →</Link>
           </div>
         </div>
       </footer>

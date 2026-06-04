@@ -22,30 +22,35 @@ const timeline = [
     role: 'Sr. Project / Engineering Manager',
     org: 'A GLOBAL DIGITAL-ENGINEERING FIRM',
     desc: 'Run multiple concurrent enterprise programs with 40+ distributed engineers across delivery models. Drove a GenAI upskilling program to 80%+ completion and established an AI proof-of-concept POD for emerging use cases.',
+    cta: null as null | { label: string; href: string },
   },
   {
     when: '2023 — 2025',
     role: 'Sr. Project / Engineering Manager',
     org: 'ENTERPRISE CREW-MANAGEMENT PLATFORM',
     desc: 'Led multiple scrum teams across development and maintenance for an aviation crew-control product. Delivered 15+ production releases in 19 months; owned roadmaps, release planning, and 24×7 production support.',
+    cta: null as null | { label: string; href: string },
   },
   {
     when: '2021 — 2023',
     role: 'Principal Technical Product Manager',
     org: 'AIRLINE RETAILING / GDS PLATFORM',
     desc: 'Led offer & order management transformation and API platform delivery for airline retailing — offers, orders, seats & ancillaries. Partnered with architects on target-state design and functional baselining.',
+    cta: { label: 'This domain context became AirWave →', href: '/traveltech' } as null | { label: string; href: string },
   },
   {
     when: '2015 — 2019',
     role: 'Business Solution Specialist / Lead BA',
     org: 'GLOBAL AIRLINE-TECH MAJOR',
     desc: 'Lead BA across airline e-commerce, reservations, departure control and API platforms — functional baselining, roadmap alignment, and cross-functional delivery across global teams.',
+    cta: null as null | { label: string; href: string },
   },
   {
     when: '2005 — 2015',
     role: 'Engineering & Delivery Roles',
     org: 'GLOBAL IT SERVICES & FINANCE PLATFORMS',
     desc: 'Software engineering and delivery across travel, finance, and global payments platforms — including a large multi-vendor transition program covering 37 enterprise applications. Foundations in .NET, SQL, GDS systems, and ITIL service delivery.',
+    cta: null as null | { label: string; href: string },
   },
 ]
 
@@ -84,18 +89,18 @@ const ventures = [
   },
 ]
 
-const chips = [
-  'AI Systems & Agents',
-  'Multi-LLM Orchestration',
-  'Enterprise Program Mgmt',
-  'Product Management',
-  'Travel-Tech / GDS',
-  'E-Commerce',
-  'Fin-Tech / Payments',
-  'API Platforms',
-  'Agile Delivery',
-  'Global Onsite-Offshore Teams',
-  'Founder / 0→1',
+const chips: { label: string; href?: string }[] = [
+  { label: 'AI Systems & Agents' },
+  { label: 'Multi-LLM Orchestration' },
+  { label: 'Enterprise Program Mgmt' },
+  { label: 'Product Management' },
+  { label: 'Travel-Tech / GDS',       href: '/traveltech' },
+  { label: 'E-Commerce',              href: '/ecommerce' },
+  { label: 'Fin-Tech / Payments',     href: '/fintech' },
+  { label: 'API Platforms' },
+  { label: 'Agile Delivery' },
+  { label: 'Global Onsite-Offshore Teams' },
+  { label: 'Founder / 0→1' },
 ]
 
 export default function ExperiencePage() {
@@ -261,6 +266,20 @@ export default function ExperiencePage() {
                     marginBottom: 10,
                   }}>{item.org}</div>
                   <div style={{ color: 'var(--txt-dim)', fontSize: 15.5 }}>{item.desc}</div>
+                  {item.cta && (
+                    <Link href={item.cta.href} style={{
+                      display: 'inline-block',
+                      marginTop: 10,
+                      fontFamily: 'var(--mono)',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      color: '#00acc1',
+                      textDecoration: 'none',
+                    }}>
+                      {item.cta.label}
+                    </Link>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -360,26 +379,39 @@ export default function ExperiencePage() {
               variants={stagger}
               style={{ display: 'flex', flexWrap: 'wrap', gap: 9 }}
             >
-              {chips.map((chip, i) => (
-                <motion.span
-                  key={i}
-                  variants={fadeUp}
-                  whileHover={{ borderColor: 'var(--acc)', color: 'var(--txt)' }}
-                  style={{
-                    fontFamily: 'var(--mono)',
-                    fontSize: 12,
-                    padding: '8px 14px',
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 3,
-                    color: 'var(--txt-dim)',
-                    transition: 'all 0.2s',
-                    display: 'inline-block',
-                  }}
-                >
-                  {chip}
-                </motion.span>
-              ))}
+              {chips.map((chip, i) => {
+                const chipStyle = {
+                  fontFamily: 'var(--mono)',
+                  fontSize: 12,
+                  padding: '8px 14px',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 3,
+                  color: 'var(--txt-dim)',
+                  transition: 'all 0.2s',
+                  display: 'inline-block',
+                  textDecoration: 'none',
+                };
+                return chip.href ? (
+                  <motion.div key={i} variants={fadeUp} style={{ display: 'inline-block' }}>
+                    <Link
+                      href={chip.href}
+                      style={{ ...chipStyle, cursor: 'pointer' }}
+                    >
+                      {chip.label} ↗
+                    </Link>
+                  </motion.div>
+                ) : (
+                  <motion.span
+                    key={i}
+                    variants={fadeUp}
+                    whileHover={{ borderColor: 'var(--acc)', color: 'var(--txt)' }}
+                    style={chipStyle}
+                  >
+                    {chip.label}
+                  </motion.span>
+                );
+              })}
             </motion.div>
           </motion.div>
         </div>
@@ -404,31 +436,34 @@ export default function ExperiencePage() {
             <h3 style={{ fontWeight: 600, fontSize: 24, marginBottom: 12, letterSpacing: '-0.01em' }}>
               Different industries. Same operator.
             </h3>
-            <p style={{ color: 'var(--txt-dim)', maxWidth: '50ch', margin: '0 auto 24px' }}>
-              The through-line isn't the domain — it's being the person who takes an idea from zero to running reality. If that's useful to you, I'm happy to compare notes.
+            <p style={{ color: 'var(--txt-dim)', maxWidth: '50ch', margin: '0 auto 28px' }}>
+              The through-line isn't the domain — it's being the person who takes an idea from zero to running reality. Five domains, eight AI systems, all built solo.
             </p>
-            <motion.a
-              href="/"
-              whileHover={{ background: '#fff', color: 'var(--bg)', y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                fontFamily: 'var(--mono)',
-                fontSize: 12.5,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                padding: '15px 30px',
-                background: 'var(--acc)',
-                color: '#fff',
-                borderRadius: 3,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 10,
-                textDecoration: 'none',
-                transition: 'all 0.3s',
-              }}
-            >
-              ← Back to domains
-            </motion.a>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+              {[
+                { href: '/ecommerce',  label: 'E-Commerce',   color: 'var(--acc)' },
+                { href: '/fintech',    label: 'FinTech',       color: '#2979ff' },
+                { href: '/insurance',  label: 'Insurance',     color: '#7c4dff' },
+                { href: '/traveltech', label: 'TravelTech',    color: '#00acc1' },
+                { href: '/scenarios',  label: 'Macro Engine',  color: '#ff9100' },
+              ].map(d => (
+                <Link key={d.href} href={d.href} style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  color: d.color,
+                  padding: '9px 18px',
+                  border: `1px solid ${d.color}44`,
+                  background: `${d.color}0a`,
+                  borderRadius: 3,
+                  textDecoration: 'none',
+                  transition: 'background 0.2s',
+                }}>
+                  {d.label} →
+                </Link>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -443,7 +478,8 @@ export default function ExperiencePage() {
             <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--txt-dim)' }}>
               <a href="mailto:rambotechnologies@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>EMAIL</a>
               <a href="https://www.linkedin.com/in/s-ashwathv" style={{ color: 'inherit', textDecoration: 'none' }}>LINKEDIN</a>
-              <span style={{ color: 'var(--txt-faint)' }}>GITHUB · SOON</span>
+              <a href="https://github.com/Ashwath-VS" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>GITHUB</a>
+              <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>ALL DOMAINS</Link>
             </div>
           </div>
         </div>

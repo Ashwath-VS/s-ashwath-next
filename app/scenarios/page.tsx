@@ -233,12 +233,12 @@ export default function ScenariosPage() {
 
           {/* Headline */}
           <h1 style={{ fontSize: 'clamp(30px,4.8vw,60px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, marginBottom: 18, textWrap: 'balance' as never }}>
-            Pick a shock.<br />
-            <span style={{ color: '#ff9100' }}>Watch 13 sectors cascade.</span>
+            Set a macro event.<br />
+            <span style={{ color: '#ff9100' }}>Read the sector cascade.</span>
           </h1>
 
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.52)', maxWidth: 520, lineHeight: 1.68, marginBottom: 36 }}>
-            Four-layer intelligence pipeline: live news signals, live market seeding, BFS propagation calibrated against 23 historical shocks, Gemini writes the brief. Free. Seconds.
+            Four-layer pipeline: live RSS news triggers, market-seeded BFS cascade calibrated against 23 historical shocks, and a Gemini brief grounded in today&apos;s real events. Institutional-depth analysis — no Bloomberg terminal required.
           </p>
 
           {/* Animated pipeline pills */}
@@ -1084,12 +1084,51 @@ export default function ScenariosPage() {
         })()}
       </AnimatePresence>
 
+      {/* ── CROSS-DOMAIN NOTE ─────────────────────── */}
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap', padding: '20px 24px', background: 'rgba(255,145,0,0.03)', border: '1px solid rgba(255,145,0,0.12)', borderRadius: 8 }}>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', color: 'rgba(255,145,0,0.6)', marginBottom: 8 }}>MACRO SIGNALS FEED DOMAIN AGENTS</div>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, margin: 0, maxWidth: '52ch' }}>
+              The same shock types modelled here — rate hikes, oil spikes, geopolitical stress — directly affect credit underwriting parameters and insurance fraud risk thresholds in the adjacent domain agents.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignSelf: 'center' }}>
+            {[
+              { href: '/fintech',   label: 'FinTech · Credit Risk',    color: '#2979ff' },
+              { href: '/insurance', label: 'Insurance · Claims Triage', color: '#7c4dff' },
+              { href: '/traveltech',label: 'TravelTech · Fare Intel',   color: '#00acc1' },
+            ].map(l => (
+              <a key={l.href} href={l.href} style={{
+                fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 600,
+                letterSpacing: '0.06em', color: l.color,
+                border: `1px solid ${l.color}33`, background: `${l.color}0a`,
+                padding: '7px 14px', borderRadius: 4, textDecoration: 'none',
+                transition: 'background 0.2s',
+                whiteSpace: 'nowrap',
+              }}>
+                {l.label} →
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <footer style={{ maxWidth: 1200, margin: '0 auto', padding: '24px clamp(16px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)' }}>MACRO_ENGINE · BFS propagation, historically calibrated · Not financial advice</span>
-        <button onClick={() => window.print()}
-          style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 4, padding: '6px 14px', cursor: 'pointer' }}>
-          ⊞ Export Brief
-        </button>
+        <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
+          {[
+            { href: '/',       label: 'ALL DOMAINS' },
+            { href: '/docs',   label: 'DOCS' },
+            { href: '/experience', label: 'EXPERIENCE' },
+          ].map(l => (
+            <a key={l.href} href={l.href} style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', textDecoration: 'none' }}>{l.label}</a>
+          ))}
+          <button onClick={() => window.print()}
+            style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--txt-faint)', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 4, padding: '6px 14px', cursor: 'pointer' }}>
+            ⊞ Export Brief
+          </button>
+        </div>
       </footer>
     </div>
   );

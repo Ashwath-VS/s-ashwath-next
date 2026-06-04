@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
@@ -489,10 +490,15 @@ export default function EcommercePage() {
             <div style={{ fontFamily: 'var(--mono)', fontWeight: 800, fontSize: 14 }}>
               S<span style={{ color: 'var(--acc)' }}>-</span>ASHWATH
             </div>
-            <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--txt-dim)' }}>
+            <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--txt-dim)', flexWrap: 'wrap' }}>
               <a href="mailto:rambotechnologies@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>EMAIL</a>
               <a href="https://www.linkedin.com/in/s-ashwathv" style={{ color: 'inherit', textDecoration: 'none' }}>LINKEDIN</a>
-              <span style={{ color: 'var(--txt-faint)' }}>GITHUB · SOON</span>
+              <Link href="/docs" style={{ color: 'inherit', textDecoration: 'none' }}>DOCS</Link>
+              <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>ALL DOMAINS</Link>
+            </div>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <span>// E-Commerce · DOMAIN_01 · 7 AI systems · solo build</span>
+              <Link href="/fintech" style={{ color: 'inherit', textDecoration: 'none' }}>Next: FinTech →</Link>
             </div>
           </div>
         </div>

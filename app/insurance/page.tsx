@@ -557,10 +557,12 @@ export default function InsurancePage() {
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
             <a href="mailto:rambotechnologies@gmail.com" style={{ transition: 'color 0.2s' }}>EMAIL</a>
             <a href="https://www.linkedin.com/in/s-ashwathv" target="_blank" rel="noopener noreferrer" style={{ transition: 'color 0.2s' }}>LINKEDIN</a>
+            <Link href="/docs">DOCS</Link>
             <Link href="/">ALL DOMAINS</Link>
           </div>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6 }}>
-            // Insurance · DOMAIN_03 · AI for claims triage and fraud signal analysis
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <span>// Insurance · DOMAIN_03 · AI for claims triage and fraud signal analysis</span>
+            <Link href="/traveltech" style={{ color: 'inherit', textDecoration: 'none' }}>Next: TravelTech →</Link>
           </div>
         </div>
       </footer>

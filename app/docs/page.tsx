@@ -54,12 +54,15 @@ const domains = [
     status: 'LIVE',
     statusColor: '#00e676',
     href: '/traveltech',
-    problem: 'TMCs are paid per transaction — rebooking costs them money. 94% of corporate bookings are never reviewed post-confirmation. The savings window opens and closes in silence.',
+    problem: 'Revenue management software on the airline side costs millions. A passenger booking LHR→JFK has no tools to model what a fuel spike, route disruption, or geopolitical event will do to fares over the following week. AirWave inverts this: pull live fares, run a deterministic P&L cascade model, deploy 8 independent market agents each with a fixed behavioral profile and fuel hedge position, then weight their votes by market share into a consensus fare prediction with a confidence band. Open-source under AGPL-3.0.',
     agents: [
-      { name: 'Fare Monitor · Alert Agent', desc: 'Scans GDS and NDC channels every 6 hours post-booking. Calculates gross savings, change fee, and net savings. Fires a rebook signal when the economics clear. Subscribe for $1 per booking.', stack: 'TypeScript · IATA route intelligence · fare analysis engine · NDC simulation' },
-      { name: 'IRROP Rebooking Agent', desc: 'On flight cancellation or severe delay, surfaces rebooking alternatives proactively — before the passenger joins the manual queue. Scores options by urgency profile, fare protection, and loyalty tier priority queue access.', stack: 'TypeScript · carrier alliance inventory model · tier-based scoring engine' },
+      {
+        name: 'AirWave · Fare Scenario Intelligence Engine',
+        desc: '8 market agents (LCC Revenue Manager, Legacy Network Carrier, ULCC Revenue Manager, Premium Boutique, Enterprise Travel Manager, Price-Elastic Consumer, Online Travel Agency, Miles Optimizer) each receive live fare data, a cascaded P&L shock output, and their own behavioral profile. Each produces an independent fare vote and confidence score. Votes are market-share-weighted (Legacy 42%, LCC 28%, ULCC 12%, Premium 7%) into a consensus predicted fare with a ±band. Stack multiple shock triggers for compounded scenarios. A/B comparison mode for two concurrent runs. Rate-limited Flask API (5 req/60s). Simulation history in localStorage. PDF export. Open-source on GitHub.',
+        stack: 'Vue 3 Composition API · Flask · Python · Gemini 2.5 Flash · Duffel NDC · OpenSky · Yahoo Finance · SerpAPI · News RSS · AGPL-3.0',
+      },
     ],
-    metrics: [{ v: '34%', l: 'Bookings with cheaper fare at 30d' }, { v: '$1.2K', l: 'Avg recoverable savings long-haul' }, { v: '47m', l: 'Avg hold time vs <10s agent' }, { v: '18yr', l: 'Airline & GDS domain depth' }],
+    metrics: [{ v: '8', l: 'Independent market agents' }, { v: '7', l: 'Shock triggers modelled' }, { v: '5', l: 'Live data sources' }, { v: '26', l: 'Tests passing' }],
   },
   {
     id: 'DOMAIN_05',
