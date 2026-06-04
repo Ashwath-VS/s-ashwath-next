@@ -116,29 +116,38 @@ export default function ExperiencePage() {
               alignItems: 'start',
             }}
           >
-            {/* Photo slot */}
+            {/* Avatar — initials */}
             <motion.div
               variants={fadeUp}
               style={{
                 width: isMobile ? 80 : 150,
                 height: isMobile ? 80 : 150,
-                borderRadius: 5,
-                border: '1px dashed var(--border)',
-                background: 'var(--surface)',
+                borderRadius: 14,
+                border: '1px solid rgba(255,59,48,0.22)',
+                background: 'rgba(255,59,48,0.05)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
+                position: 'relative',
+                overflow: 'hidden',
               }}
             >
+              {/* Radial wash */}
+              <div style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
+                background: 'radial-gradient(ellipse 80% 80% at 50% 30%, rgba(255,59,48,0.12), transparent)',
+              }} />
               <span style={{
                 fontFamily: 'var(--mono)',
-                fontSize: 10,
-                letterSpacing: '0.1em',
-                color: 'var(--txt-faint)',
-                textAlign: 'center',
-                lineHeight: 1.6,
+                fontSize: isMobile ? 26 : 44,
+                fontWeight: 800,
+                letterSpacing: '-0.04em',
+                color: 'var(--acc)',
+                lineHeight: 1,
+                position: 'relative',
               }}>
-                PHOTO<br />SLOT
+                SA
               </span>
             </motion.div>
 
