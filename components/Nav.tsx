@@ -9,6 +9,7 @@ const links = [
   { href: '/',            label: 'Home' },
   { href: '/ecommerce',   label: 'E-Commerce' },
   { href: '/fintech',     label: 'FinTech' },
+  { href: '/insurance',   label: 'Insurance' },
   { href: '/traveltech',  label: 'TravelTech' },
   { href: '/scenarios',   label: 'Macro Engine' },
   { href: '/experience',  label: 'Experience' },
@@ -105,7 +106,7 @@ export default function Nav() {
               background: 'var(--live)', boxShadow: '0 0 6px var(--live)',
               display: 'inline-block', animation: 'pulse 2s infinite',
             }} />
-            1 COMPLETE · 4 LIVE
+            5 DOMAINS LIVE
           </div>
 
           {/* Hamburger button — mobile only (shown via .mobile-hamburger in globals.css) */}
@@ -219,7 +220,7 @@ export default function Nav() {
                 background: 'var(--live)', boxShadow: '0 0 6px var(--live)',
                 display: 'inline-block', animation: 'pulse 2s infinite',
               }} />
-              1 COMPLETE · 4 LIVE
+              5 DOMAINS LIVE
             </motion.div>
           </motion.div>
         )}
