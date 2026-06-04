@@ -55,7 +55,7 @@ function impactSentence(sector: string, impact: number): string {
 }
 
 export default function ScenariosPage() {
-  const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
+  const [selectedTriggers, setSelectedTriggers] = useState<string[]>(['WAR_CONFLICT']);
   const [intensity,   setIntensity]   = useState('SEVERE');
   const [context,     setContext]     = useState('BASELINE');
   const [region,      setRegion]      = useState('GLOBAL');
@@ -219,131 +219,66 @@ export default function ScenariosPage() {
       </motion.div>
 
       {/* ── HEADER ────────────────────────────────── */}
-      <div style={{ padding: '52px clamp(16px,4vw,48px) 40px', maxWidth: 1200, margin: '0 auto' }}>
-        <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: '#ff9100', letterSpacing: '0.18em', marginBottom: 14 }}>
-            MACRO_ENGINE · DOMAIN_05 · INSTITUTIONAL-GRADE · LIVE
+      <div style={{ padding: '48px clamp(16px,4vw,48px) 36px', maxWidth: 1200, margin: '0 auto' }}>
+        <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16,1,0.3,1] as [number, number, number, number] }}>
+
+          {/* Eyebrow */}
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: '#ff9100', letterSpacing: '0.18em', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <motion.span
+              animate={prefersReduced ? {} : { opacity: [1, 0.15, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{ width: 5, height: 5, borderRadius: '50%', background: '#ff9100', display: 'inline-block', boxShadow: '0 0 8px #ff9100' }} />
+            MACRO ENGINE · DOMAIN_05 · LIVE
           </div>
-          <h1 style={{ fontSize: 'clamp(26px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: 20 }}>
-            Macro Cascade <span style={{ color: '#ff9100' }}>Intelligence</span> Engine
+
+          {/* Headline */}
+          <h1 style={{ fontSize: 'clamp(30px,4.8vw,60px)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1.05, marginBottom: 18, textWrap: 'balance' as never }}>
+            Pick a shock.<br />
+            <span style={{ color: '#ff9100' }}>Watch 13 sectors cascade.</span>
           </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', maxWidth: 600, lineHeight: 1.75, marginBottom: 14 }}>
-            A Bloomberg institutional brief requires a $25,000/year terminal and an analyst to interpret it.
-            This platform runs the same four-layer analytical pipeline — and delivers the output as a plain-English report
-            specific to your role, grounded in what is happening in the market <em>right now</em>.
-          </p>
-          <p style={{ fontSize: 13.5, color: 'var(--txt-dim)', maxWidth: 580, lineHeight: 1.72, marginBottom: 28 }}>
-            Every report is generated fresh. Live RSS news signals feed trigger detection. Live market data seeds the cascade model.
-            A BFS propagation engine — calibrated against 23 historical shocks from the Gulf War to Ukraine — computes sector-by-sector impact.
-            Gemini then searches the current web at inference time and writes a brief that cites the model numbers alongside real events happening today.
-            Not training data. Not templates. Institutional rigour, for any decision-maker.
+
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.52)', maxWidth: 520, lineHeight: 1.68, marginBottom: 36 }}>
+            Four-layer intelligence pipeline: live news signals, live market seeding, BFS propagation calibrated against 23 historical shocks, Gemini writes the brief. Free. Seconds.
           </p>
 
-          {/* ── 4-STEP PIPELINE ARCHITECTURE ── */}
-          <div style={{ marginBottom: 32, maxWidth: 900 }}>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.16em', color: 'rgba(255,145,0,0.55)', marginBottom: 12 }}>
-              // HOW EACH REPORT IS GENERATED — 4-LAYER PIPELINE
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4,1fr)', gap: isMobile ? 8 : 0, position: 'relative' }}>
-              {([
-                { n:'01', label:'RSS NEWS\nSIGNALS',    src:'BBC · NYT',                  detail:'15-min cache · keyword-matched to 6 shock categories · live signal strength 0–3' },
-                { n:'02', label:'LIVE MARKET\nSEEDING', src:'Yahoo Finance · FX feeds',   detail:'VIX → cascade multiplier · WTI + S&P500 → priced-in dampening · 5-min cache' },
-                { n:'03', label:'BFS CASCADE\nMODEL',   src:'13 sectors · 31 edges',      detail:'Calibrated: 23 historical shocks · Gulf War 1990 to Ukraine 2022 · ETF regression data' },
-                { n:'04', label:'AI SEARCH\nGROUNDING', src:'Gemini 2.5 Flash · Google',  detail:'Searches current web at inference time · cites cascade numbers + real events · 11 personas' },
-              ] as { n:string; label:string; src:string; detail:string }[]).map((step, i) => (
-                <div key={i} style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', position: 'relative' }}>
-                  {/* Connector arrow between steps */}
-                  {!isMobile && i < 3 && (
-                    <div style={{
-                      position: 'absolute', right: -1, top: '50%', transform: 'translateY(-50%)',
-                      zIndex: 2, display: 'flex', alignItems: 'center',
-                    }}>
-                      <div style={{ width: 1, height: 24, background: 'rgba(255,145,0,0.3)' }} />
-                    </div>
-                  )}
-                  <div style={{
-                    flex: 1,
-                    background: 'rgba(255,145,0,0.04)',
-                    border: '1px solid rgba(255,145,0,0.14)',
-                    borderRight: !isMobile && i < 3 ? '1px solid rgba(255,145,0,0.08)' : '1px solid rgba(255,145,0,0.14)',
-                    borderRadius: isMobile ? 6 : i === 0 ? '6px 0 0 6px' : i === 3 ? '0 6px 6px 0' : 0,
-                    padding: isMobile ? '12px 14px' : '16px 14px',
-                    display: 'flex', flexDirection: 'column', gap: 8,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,145,0,0.45)', letterSpacing: '0.1em' }}>{step.n}</span>
-                      <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#ff9100', boxShadow: '0 0 6px #ff9100' }} />
-                    </div>
-                    <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, fontWeight: 700, color: '#ff9100', letterSpacing: '0.08em', lineHeight: 1.4, whiteSpace: 'pre-line' }}>
-                      {step.label}
-                    </div>
-                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-                      {step.src}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', lineHeight: 1.55 }}>
-                      {step.detail}
-                    </div>
+          {/* Animated pipeline pills */}
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 10 }}>
+            {([
+              { n: '01', label: 'RSS SIGNALS',   sub: 'BBC · NYT',              color: '#ff9100' },
+              { n: '02', label: 'MARKET SEED',   sub: 'VIX · WTI · S&P',        color: '#ffb020' },
+              { n: '03', label: 'BFS CASCADE',   sub: '13 sectors · 31 edges',   color: '#ff6b00' },
+              { n: '04', label: 'AI BRIEF',      sub: 'Gemini 2.5 Flash',        color: '#ff9100' },
+            ] as { n: string; label: string; sub: string; color: string }[]).map((step, i) => (
+              <motion.div key={i}
+                initial={{ opacity: prefersReduced ? 1 : 0, x: prefersReduced ? 0 : -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.55, delay: prefersReduced ? 0 : 0.18 + i * 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 9,
+                  padding: '8px 14px',
+                  background: `${step.color}0c`,
+                  border: `1px solid ${step.color}28`,
+                  borderRadius: 9999,
+                }}>
+                  <motion.div
+                    animate={prefersReduced ? {} : { boxShadow: [`0 0 4px ${step.color}60`, `0 0 10px ${step.color}`, `0 0 4px ${step.color}60`] }}
+                    transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.35 }}
+                    style={{ width: 5, height: 5, borderRadius: '50%', background: step.color, flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, fontWeight: 700, color: step.color, letterSpacing: '0.08em', lineHeight: 1.2 }}>{step.label}</div>
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 8, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.04em', lineHeight: 1.2, marginTop: 2 }}>{step.sub}</div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── DIFFERENTIATION TABLE ── */}
-          <div style={{ marginTop: 28, maxWidth: 700 }}>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 9, letterSpacing: '0.16em', color: 'rgba(255,145,0,0.55)', marginBottom: 10 }}>
-              // HOW THIS DIFFERS FROM EXISTING TOOLS
-            </div>
-            <div style={{ overflowX: 'auto' }}>
-              <div style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: 6, overflow: 'hidden', minWidth: 580 }}>
-                {/* Header row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1fr 1fr 1fr 1.2fr', background: 'rgba(0,0,0,0.4)' }}>
-                  {['CAPABILITY', 'BLOOMBERG', 'OXFORD ECON', 'CHATGPT', 'THIS PLATFORM'].map((h, i) => (
-                    <div key={i} style={{
-                      padding: '7px 10px', fontFamily: 'var(--mono)', fontSize: 8.5, letterSpacing: '0.1em',
-                      color: i === 4 ? '#ff9100' : 'rgba(255,255,255,0.22)',
-                      fontWeight: i === 4 ? 700 : 400,
-                      borderRight: i < 4 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                      background: i === 4 ? 'rgba(255,145,0,0.05)' : 'transparent',
-                    }}>{h}</div>
-                  ))}
-                </div>
-                {/* Data rows */}
-                {([
-                  ['Live news trigger detection',          '—',             '—',             '—',        '✓'],
-                  ['BFS sector cascade / propagation',     'partial',       '✓',             '—',        '✓'],
-                  ['VIX-calibrated live market seeding',   '✓',             '—',             '—',        '✓'],
-                  ['Role-specific plain-English brief',    '—',             '—',             'manual',   '✓'],
-                  ['Grounded in today\'s real events',     '—',             '—',             'sometimes','✓'],
-                  ['Access cost',                          '$25K / yr',     'institutional', 'free',     'free'],
-                ] as [string, string, string, string, string][]).map((row, ri) => (
-                  <div key={ri} style={{
-                    display: 'grid', gridTemplateColumns: '2.2fr 1fr 1fr 1fr 1.2fr',
-                    borderTop: '1px solid rgba(255,255,255,0.05)',
-                    background: ri % 2 ? 'transparent' : 'rgba(255,255,255,0.01)',
-                  }}>
-                    <div style={{ padding: '8px 10px', fontSize: 11.5, color: 'rgba(255,255,255,0.5)', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
-                      {row[0]}
-                    </div>
-                    {row.slice(1).map((v, ci) => {
-                      const isHere = ci === 3;
-                      const color = v === '✓' ? (isHere ? '#00e676' : 'rgba(255,255,255,0.25)')
-                                  : v === '—' ? 'rgba(255,255,255,0.1)'
-                                  : (v === 'partial' || v === 'manual' || v === 'sometimes') ? '#ffb020'
-                                  : isHere ? '#ff9100' : 'rgba(255,255,255,0.3)';
-                      return (
-                        <div key={ci} style={{
-                          padding: '8px 10px', fontFamily: 'var(--mono)', fontSize: 9.5,
-                          textAlign: 'center', color, fontWeight: isHere ? 600 : 400,
-                          borderRight: ci < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                          background: isHere ? 'rgba(255,145,0,0.04)' : 'transparent',
-                        }}>{v}</div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
+                {i < 3 && (
+                  <motion.div
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: 1, opacity: 1 }}
+                    transition={{ duration: 0.45, delay: prefersReduced ? 0 : 0.28 + i * 0.1, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                    style={{ width: 28, height: 1, background: 'linear-gradient(90deg, rgba(255,145,0,0.3), rgba(255,145,0,0.08))', transformOrigin: 'left', flexShrink: 0, margin: '0 2px' }} />
+                )}
+              </motion.div>
+            ))}
           </div>
 
         </motion.div>
@@ -385,8 +320,8 @@ export default function ScenariosPage() {
             </span>
           )}
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 }}>
-          {Object.entries(TRIGGERS).map(([key, t]) => {
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(196px, 1fr))', gap: 10, marginBottom: 24 }}>
+          {Object.entries(TRIGGERS).map(([key, t], idx) => {
             const active = selectedTriggers.includes(key);
             const live = triggerLiveData?.triggers?.[key];
             const signalDots = live ? Math.round(live.signal * 3) : 0;
@@ -397,7 +332,10 @@ export default function ScenariosPage() {
               <motion.button key={key} onClick={() => toggleTrigger(key)}
                 aria-pressed={active}
                 aria-label={`${t.label}${active ? ', selected' : ''}. Live signal: ${signalDots} of 3.${headline ? ` Latest: ${headline}` : ''}`}
-                whileHover={prefersReduced ? {} : { scale: 1.03, y: -2 }}
+                initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: prefersReduced ? 0 : 0.05 + idx * 0.055, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                whileHover={prefersReduced ? {} : { scale: 1.025, y: -2 }}
                 whileTap={prefersReduced ? {} : { scale: 0.97 }}
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: 10,
@@ -405,9 +343,9 @@ export default function ScenariosPage() {
                   background: active ? `${t.color}18` : 'rgba(255,255,255,0.02)',
                   border: `1.5px solid ${active ? t.color : isSuggested ? `${t.color}80` : isHot ? `${t.color}50` : 'rgba(255,255,255,0.07)'}`,
                   borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
-                  boxShadow: active ? `0 0 20px ${t.color}22` : isHot ? `0 0 10px ${t.color}14` : 'none',
-                  transition: 'border-color 0.18s, background 0.18s, box-shadow 0.18s',
-                  width: isMobile ? '100%' : 210,
+                  boxShadow: active ? `0 0 24px ${t.color}28, 0 0 0 1px ${t.color}40` : isHot ? `0 0 10px ${t.color}14` : 'none',
+                  transition: 'border-color 0.22s, background 0.22s, box-shadow 0.22s',
+                  width: '100%',
                   minWidth: 0, overflow: 'hidden',
                 }}>
                 <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{t.icon}</span>
@@ -546,43 +484,83 @@ export default function ScenariosPage() {
           <motion.button onClick={handleRun} disabled={running || !selectedTriggers.length}
             aria-label={running ? 'Running cascade propagation…' : !selectedTriggers.length ? 'Select at least one trigger to run cascade' : 'Run cascade propagation'}
             aria-busy={running}
-            whileHover={!prefersReduced && !running && selectedTriggers.length ? { scale: 1.03, y: -2 } : {}}
+            whileHover={!prefersReduced && !running && selectedTriggers.length ? { scale: 1.02, y: -2 } : {}}
             whileTap={!prefersReduced && !running && selectedTriggers.length ? { scale: 0.97 } : {}}
+            className={(!running && selectedTriggers.length) ? 'cta-primary-btn' : ''}
             style={{
-              fontFamily: 'var(--mono)', fontSize: '12px', fontWeight: 700,
-              letterSpacing: '0.1em', color: '#07090c',
-              background: running ? 'rgba(255,176,32,0.45)' : !selectedTriggers.length ? 'rgba(255,176,32,0.2)' : '#ffb020',
-              border: 'none', borderRadius: 6,
-              padding: '10px 28px', cursor: running || !selectedTriggers.length ? 'not-allowed' : 'pointer',
-              transition: 'background 0.2s',
+              display: 'flex', alignItems: 'center', gap: 10,
+              fontFamily: 'var(--mono)', fontSize: '11px', fontWeight: 700,
+              letterSpacing: '0.1em',
+              color: running ? 'rgba(0,0,0,0.55)' : !selectedTriggers.length ? 'rgba(255,176,32,0.45)' : '#07090c',
+              background: running ? 'rgba(255,176,32,0.4)' : !selectedTriggers.length ? 'rgba(255,176,32,0.08)' : '#ffb020',
+              border: !selectedTriggers.length ? '1.5px solid rgba(255,176,32,0.22)' : 'none',
+              borderRadius: 9999,
+              padding: '7px 7px 7px 22px',
+              cursor: running || !selectedTriggers.length ? 'not-allowed' : 'pointer',
+              transition: 'background 0.25s, box-shadow 0.25s',
               alignSelf: 'flex-end',
+              boxShadow: (!running && selectedTriggers.length)
+                ? '0 0 0 1px rgba(255,176,32,0.4), 0 0 24px rgba(255,176,32,0.28), 0 4px 16px rgba(255,176,32,0.15)'
+                : 'none',
             }}>
-            {running ? '◌  PROPAGATING...' : '▶  RUN CASCADE'}
+            <span>{running ? 'PROPAGATING...' : 'RUN CASCADE'}</span>
+            <span className="cta-trailing-icon" style={{
+              width: 32, height: 32, borderRadius: 9999,
+              background: running ? 'rgba(0,0,0,0.1)' : !selectedTriggers.length ? 'rgba(255,176,32,0.1)' : 'rgba(0,0,0,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              {running ? (
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                  style={{ width: 13, height: 13, border: '2px solid rgba(0,0,0,0.15)', borderTopColor: 'rgba(0,0,0,0.55)', borderRadius: '50%' }} />
+              ) : (
+                <span style={{ fontSize: 11, color: !selectedTriggers.length ? 'rgba(255,176,32,0.4)' : '#07090c', lineHeight: 1 }}>▶</span>
+              )}
+            </span>
           </motion.button>
         </div>
       </motion.div>
 
       {/* ── NETWORK + DETAIL ──────────────────────── */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 300px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: isMobile ? 0 : 28, paddingTop: 28, paddingBottom: 28, position: 'relative' }}>
-          <AnimatePresence>
-            {running && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                style={{ position: 'absolute', inset: 0, zIndex: 10, background: 'rgba(7,9,12,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4 }}>
-                <div style={{ textAlign: 'center' }}>
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
-                    style={{ width: 32, height: 32, border: '2px solid rgba(255,176,32,0.2)', borderTopColor: '#ffb020', borderRadius: '50%', margin: '0 auto 16px' }} />
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: '#ffb020', letterSpacing: '0.08em' }}>Propagating cascade...</div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <MacroNetwork impacts={impacts} onNodeClick={setSelectedNode} selectedNode={selectedNode} />
+      <motion.div
+        initial={{ opacity: prefersReduced ? 1 : 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ paddingTop: 28, paddingBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em' }}>
+            SECTOR PROPAGATION GRAPH
+          </div>
+          {!impacts && (
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,145,0,0.45)', letterSpacing: '0.06em' }}>
+              ↑ Run cascade to see propagation
+            </span>
+          )}
+          {impacts && (
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.06em' }}>
+              Click a node to inspect sector details →
+            </span>
+          )}
         </div>
-        <div style={{ padding: 28 }}>
-          <NodeDetail impacts={impacts} selectedNode={selectedNode} />
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 300px' }}>
+          <div style={{ borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: isMobile ? 0 : 28, paddingTop: 8, paddingBottom: 28, position: 'relative' }}>
+            <AnimatePresence>
+              {running && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  style={{ position: 'absolute', inset: 0, zIndex: 10, background: 'rgba(7,9,12,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+                      style={{ width: 32, height: 32, border: '2px solid rgba(255,176,32,0.2)', borderTopColor: '#ffb020', borderRadius: '50%', margin: '0 auto 16px' }} />
+                    <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: '#ffb020', letterSpacing: '0.08em' }}>Propagating cascade...</div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <MacroNetwork impacts={impacts} onNodeClick={setSelectedNode} selectedNode={selectedNode} />
+          </div>
+          <div style={{ padding: 28 }}>
+            <NodeDetail impacts={impacts} selectedNode={selectedNode} />
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── IMPACT GRID ───────────────────────────── */}
       <AnimatePresence>
@@ -590,8 +568,14 @@ export default function ScenariosPage() {
           <motion.div initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
             style={{ maxWidth: 1200, margin: '0 auto', padding: '32px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 18 }}>
-              // SECTOR IMPACT MATRIX
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em' }}>
+                SECTOR IMPACT MATRIX
+              </div>
+              <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.06em' }}>
+                {Object.values(impacts).filter(Boolean).length} of {Object.keys(impacts).length} sectors reached
+              </span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(172px,1fr))', gap: 10 }}>
               {Object.entries(SECTORS).map(([key, sec], i) => {
@@ -796,8 +780,14 @@ export default function ScenariosPage() {
           style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
           {llmStatusMsg}
         </div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 20 }}>
-          // STRATEGIC INTELLIGENCE BRIEF · AI-GENERATED · PLAIN ENGLISH
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em' }}>
+            STRATEGIC INTELLIGENCE BRIEF
+          </div>
+          <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'rgba(255,145,0,0.4)', letterSpacing: '0.08em' }}>
+            AI · PLAIN ENGLISH · ROLE-SPECIFIC
+          </span>
         </div>
 
         <AnimatePresence mode="wait">
@@ -852,11 +842,39 @@ export default function ScenariosPage() {
           )}
 
           {!llmText && !llmLoading && !llmError && (
-            <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--txt-faint)', lineHeight: 1.8, padding: '20px', background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.07)', borderRadius: 8 }}>
-              // Select a trigger and run the cascade to generate your personalised brief<br />
-              // The AI reads the full cascade output + live market conditions<br />
-              // and translates the impact into plain English for your specific role
+            <motion.div key="idle" initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 10 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+              style={{ padding: '28px 32px', background: 'rgba(255,145,0,0.03)', border: '1px solid rgba(255,145,0,0.14)', borderRadius: 12 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, color: 'rgba(255,145,0,0.6)', letterSpacing: '0.14em', marginBottom: 12 }}>
+                READY TO GENERATE
+              </div>
+              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.72, marginBottom: 20, maxWidth: 560 }}>
+                Select a trigger above, hit <strong style={{ color: '#ffb020', fontWeight: 600 }}>RUN CASCADE</strong> — the model propagates impact across 13 sectors in under a second, then Gemini reads the cascade output alongside live market conditions and writes a brief tailored to your selected role.
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {([
+                  { icon: '📡', text: 'Live RSS · 15-min cache' },
+                  { icon: '⚡', text: 'BFS cascade in <1s' },
+                  { icon: '📊', text: '23 historical shock anchors' },
+                  { icon: '✍️', text: 'Gemini searches live web' },
+                  { icon: '🎯', text: '11 role-specific personas' },
+                ] as { icon: string; text: string }[]).map((item, i) => (
+                  <motion.div key={i}
+                    initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: prefersReduced ? 0 : 0.08 + i * 0.06, ease: [0.16,1,0.3,1] as [number, number, number, number] }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 7,
+                      padding: '5px 12px', borderRadius: 9999,
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      fontSize: 11, color: 'rgba(255,255,255,0.45)',
+                    }}>
+                    <span style={{ fontSize: 13 }}>{item.icon}</span>
+                    <span style={{ fontFamily: 'var(--mono)', letterSpacing: '0.04em' }}>{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -866,8 +884,11 @@ export default function ScenariosPage() {
       {selectedTriggers.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
           style={{ maxWidth: 1200, margin: '0 auto', padding: '28px clamp(16px,4vw,48px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em', marginBottom: 16 }}>
-            // HISTORICAL CALIBRATION
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', fontWeight: 700, color: 'var(--txt-faint)', letterSpacing: '0.16em' }}>
+              HISTORICAL CALIBRATION
+            </div>
+            <div style={{ height: 1, flex: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {selectedTriggers.flatMap(tid =>
