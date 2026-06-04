@@ -566,7 +566,7 @@ export default function Home() {
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${a.color}, transparent)`, opacity: 0.55 }} />
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--txt-faint)' }}>// {a.slot}</span>
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color: 'var(--txt-faint)' }}>{a.slot}</span>
                       <span style={{ fontSize: 18, color: a.color, opacity: 0.65 }}>{a.icon}</span>
                     </div>
                     <h4 style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, letterSpacing: '-0.01em' }}>{a.title}</h4>
@@ -619,7 +619,7 @@ export default function Home() {
           </a>
         </div>
         <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--txt-faint)', width: '100%', letterSpacing: '0.06em' }}>
-          // AI systems proven across five domains · built solo · s-ashwath.com
+          AI systems proven across five domains · built solo · s-ashwath.com
         </span>
       </footer>
     </div>

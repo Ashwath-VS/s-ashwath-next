@@ -96,7 +96,7 @@ const stats = [
 export default function EcommercePage() {
   const isMobile = useIsMobile();
   return (
-    <main style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 96 }}>
+    <main style={{ background: 'var(--bg)', minHeight: '100dvh', paddingTop: 'var(--nav-h)' }}>
       {/* Header */}
       <header style={{ padding: '50px 0 70px' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 32px' }}>
