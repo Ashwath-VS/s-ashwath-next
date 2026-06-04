@@ -86,14 +86,14 @@ const domains = [
     id: 'DOMAIN_03',
     label: 'Insurance',
     color: '#7c4dff',
-    status: 'PLANNED',
-    statusColor: '#ffb020',
-    href: null,
-    problem: 'Claims, underwriting, and risk workflows are document-heavy, rules-dense, and delay-prone. The same triangulation pattern from fin-tech applies — AI can compress the decision cycle.',
+    status: 'LIVE',
+    statusColor: '#00e676',
+    href: '/insurance',
+    problem: 'India processes over 250 million insurance claims annually. Adjusters spend 60% of their time reading FNOL attachments before making a single triage decision. Fraud patterns — early-inception claims, high-frequency claimants, over-valued amounts — surface only when you hold all signals together. Manual review processes them in isolation.',
     agents: [
-      { name: 'Claims Intelligence Agent', desc: 'In design. Will triage incoming claims against policy terms, flag anomalies, and generate a structured assessor brief with coverage determination and next-action recommendation.', stack: 'Planned · TypeScript · document parsing · policy rules engine' },
+      { name: 'Claims Triage Agent', desc: 'Takes six FNOL parameters — policy type, incident category, claim quantum, filing delay, prior claims history, and policy age — and runs them through a multi-signal fraud scoring engine. Outputs fraud risk (LOW to CRITICAL), coverage likelihood, triage priority (FAST_TRACK / STANDARD / INVESTIGATE / REFER_SIU), indicative settlement range, specific risk flags, and a three-paragraph adjuster narrative with recommended next action. Runs in under 10 seconds. No API calls — all inference is in-browser via a rule-based scoring engine calibrated against standard insurance underwriting heuristics.', stack: 'TypeScript · React · rule-based fraud scoring · FNOL triage engine · inline adjuster narrative' },
     ],
-    metrics: [{ v: 'Next', l: 'Domain in the lab' }, { v: 'TBD', l: 'Agent count' }, { v: '—', l: '' }, { v: '—', l: '' }],
+    metrics: [{ v: '250M+', l: 'Claims filed in India / yr' }, { v: '₹45,000 Cr', l: 'Annual fraud losses (est.)' }, { v: '<10s', l: 'FNOL to triage brief' }, { v: '4', l: 'Triage priority levels' }],
   },
 ];
 
@@ -107,7 +107,7 @@ const platformStack = [
   { layer: 'LLM', detail: 'Google Gemini 2.5 Flash · Google Search Grounding', note: 'Persona briefs grounded in current real-world events via Google Search at inference time — 11 roles, 4 sections, <450 words' },
   { layer: 'Market Data', detail: 'Yahoo Finance API · open.exchangerate-api.com', note: '5-min cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST. VIX drives cascade multiplier in real time.' },
   { layer: 'News Feed', detail: 'BBC World · BBC Business · NYT World · NYT Business RSS', note: '15-min cache on /api/triggers — keyword-matched to 6 shock categories, signal strength + live headline per trigger' },
-  { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
+  { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring · Insurance claims triage scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
   { layer: 'Hosting', detail: 'Netlify · GitHub', note: 'CI/CD via GitHub → Netlify. Env vars managed in Netlify dashboard.' },
 ];
 
@@ -115,7 +115,7 @@ const platformStack = [
 
 export default function DocsPage() {
   return (
-    <div style={{ paddingTop: 'var(--nav-h)', background: 'var(--bg)', minHeight: '100vh' }}>
+    <div style={{ paddingTop: 'var(--nav-h)', background: 'var(--bg)', minHeight: '100dvh' }}>
 
       {/* ── HEADER ── */}
       <header style={{ padding: 'clamp(64px,8vw,100px) clamp(16px,4vw,48px) 48px', maxWidth: 1080, margin: '0 auto' }}>
