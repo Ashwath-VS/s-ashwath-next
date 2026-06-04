@@ -89,9 +89,26 @@ Search for what is happening RIGHT NOW related to ${triggers.join(' + ')}, then 
       },
     });
 
+    // Check for safety blocks before calling .text()
+    const candidate = result.response.candidates?.[0];
+    if (candidate?.finishReason === 'SAFETY') {
+      return NextResponse.json({
+        error: 'The selected trigger combination triggered Google\'s content safety filter. Try a different trigger or reduce intensity — the cascade model results above are still valid.',
+      }, { status: 422 });
+    }
+
     const text = result.response.text();
     return NextResponse.json({ text });
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+
+    // Gemini content policy block surfaces as an exception in some SDK versions
+    if (msg.includes('SAFETY') || msg.includes('blocked') || msg.includes('content filtering')) {
+      return NextResponse.json({
+        error: 'The selected trigger combination triggered Google\'s content safety filter. Try a different trigger or reduce intensity — the cascade model results above are still valid.',
+      }, { status: 422 });
+    }
+
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
