@@ -33,7 +33,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
 const DOMAINS_STATUS = [
   { id: 'DOMAIN_01', name: 'E-Commerce',  status: 'COMPLETE', color: '#00e676' },
   { id: 'DOMAIN_02', name: 'Fin-Tech',    status: 'LIVE',     color: '#2979ff' },
-  { id: 'DOMAIN_03', name: 'Insurance',   status: 'BUILDING', color: '#7c4dff' },
+  { id: 'DOMAIN_03', name: 'Insurance',   status: 'LIVE',     color: '#7c4dff' },
   { id: 'DOMAIN_04', name: 'Travel-Tech', status: 'LIVE',     color: '#00acc1' },
   { id: 'DOMAIN_05', name: 'Macro Eng.',  status: 'LIVE',     color: '#ff9100' },
 ];
@@ -42,7 +42,7 @@ const BOOT = [
   '> initialising multi-domain engine...',
   '> connecting to market feeds...',
   '> loading 13 sectors, 31 edges...',
-  '> agents online: 4 / 5',
+  '> agents online: 5 / 5 — all domains live',
   '> system ready.',
 ];
 
@@ -138,12 +138,12 @@ function SystemStatusPanel() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
           <span style={{ fontSize: 9, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.28)' }}>AGENTS ONLINE</span>
-          <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--live)' }}>4 / 5</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--live)' }}>5 / 5</span>
         </div>
         <div style={{ height: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 2, overflow: 'hidden' }}>
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: '80%' }}
+            animate={{ width: '100%' }}
             transition={{ delay: 2.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             style={{ height: '100%', background: 'linear-gradient(90deg, var(--live), rgba(0,230,118,0.4))', borderRadius: 2 }}
           />
@@ -196,13 +196,13 @@ const domains = [
     grid: { col: '2 / 3', row: '2 / 3' },
   },
   {
-    href: '#',
+    href: '/insurance',
     title: 'Insurance',
-    tag: '○ COMING NEXT',
+    tag: '◐ AGENT LIVE',
     color: '#7c4dff',
-    desc: 'AI for claims, underwriting and risk — regulated, high-stakes ops.',
+    desc: 'AI claims triage with fraud signal scoring. FNOL to adjuster brief in seconds.',
     num: 'DOMAIN_03',
-    live: false,
+    live: true,
     grid: { col: '1 / 4', row: '3 / 4' },
   },
 ];
@@ -237,6 +237,16 @@ const agentCards = [
     color: '#ff9100',
     domain: 'DOMAIN_05',
     icon: '◈',
+  },
+  {
+    href: '/insurance',
+    slot: 'SLOT_04',
+    title: 'Claims Triage Agent',
+    desc: 'Enter FNOL details — policy type, incident, claim amount, filing delay, and claims history. Get a structured triage brief with fraud risk score and adjuster recommendation.',
+    cta: 'Try the agent',
+    color: '#7c4dff',
+    domain: 'DOMAIN_03',
+    icon: '◎',
   },
 ];
 
@@ -325,7 +335,7 @@ export default function Home() {
             >
               18 years leading enterprise technology programmes. Rather than directing the work, I build and validate it{' '}
               <strong style={{ color: 'var(--txt)', fontWeight: 600 }}>with my own hands.</strong>
-              {' '}One completed experiment. Four more live in the lab.
+              {' '}Five domains. Eight AI systems. All built solo.
             </motion.p>
 
             {/* Stats */}
@@ -336,7 +346,7 @@ export default function Home() {
             >
               {[
                 { value: 5,  suffix: '',   label: 'Domains' },
-                { value: 7,  suffix: '',   label: 'AI Systems' },
+                { value: 8,  suffix: '',   label: 'AI Systems' },
                 { value: 18, suffix: 'yr', label: 'Enterprise' },
               ].map((s, i) => (
                 <div key={s.label} style={{
