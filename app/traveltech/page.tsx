@@ -184,13 +184,32 @@ export default function TravelTechPage() {
         {/* CTAs */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          {process.env.NEXT_PUBLIC_AIRWAVE_URL && (
+            <a
+              href={process.env.NEXT_PUBLIC_AIRWAVE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                padding: '12px 24px', background: TRV, color: '#07090c',
+                fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                borderRadius: 3, textDecoration: 'none',
+              }}
+            >
+              ◈ Launch AirWave ↗
+            </a>
+          )}
           <a
             href="https://github.com/Ashwath-VS/airwave"
             target="_blank"
             rel="noopener noreferrer"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
-              padding: '12px 24px', background: TRV, color: '#07090c',
+              padding: '12px 24px',
+              background: process.env.NEXT_PUBLIC_AIRWAVE_URL ? 'transparent' : TRV,
+              color: process.env.NEXT_PUBLIC_AIRWAVE_URL ? TRV : '#07090c',
+              border: process.env.NEXT_PUBLIC_AIRWAVE_URL ? `1px solid rgba(0,172,193,0.35)` : 'none',
               fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700,
               letterSpacing: '0.12em', textTransform: 'uppercase',
               borderRadius: 3, textDecoration: 'none',
