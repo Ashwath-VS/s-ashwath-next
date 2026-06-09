@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const TRV = '#00acc1';
+const SQ = '#ff7043';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -239,6 +240,103 @@ export default function TravelTechPage() {
         </motion.div>
       </section>
 
+      {/* ── SQUALL CASE STUDY ── */}
+      <section style={{ padding: '20px clamp(16px,4vw,48px) 100px', maxWidth: 1080, margin: '0 auto' }}>
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 34 }}>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: SQ, letterSpacing: '0.1em' }}>02</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--txt-dim)' }}>Airline IROPS Intelligence</span>
+          <motion.span initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
+            style={{ flex: 1, height: 1, background: 'var(--border)', transformOrigin: 'left' }} />
+        </motion.div>
+
+        {/* Title + positioning */}
+        <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ fontWeight: 700, fontSize: 'clamp(26px, 4vw, 44px)', lineHeight: 1.02, letterSpacing: '-0.02em', marginBottom: 18 }}>
+          Squall — predict the disruption<br /><span style={{ color: SQ, textShadow: '0 0 26px rgba(255,112,67,0.4)' }}>before</span> the airline does.
+        </motion.h2>
+        <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ fontSize: 15, color: 'var(--txt-dim)', marginBottom: 14, maxWidth: '68ch', lineHeight: 1.7 }}>
+          Where AirWave models revenue under pressure, Squall models <strong style={{ color: 'var(--txt)' }}>operations</strong> under pressure.
+          When a storm, ATC slowdown, or congestion event hits, airlines lose $150K–$500K per disrupted wide-body rotation — not from the
+          cancellation itself, but from the slow, siloed recovery. Squall compresses that lag with three coordinated agents.
+        </motion.p>
+        <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ fontSize: 14, color: 'var(--txt-faint)', marginBottom: 40, maxWidth: '64ch', lineHeight: 1.65 }}>
+          Enter an origin–destination pair. Squall fans out to live weather, disruption-news, and air-traffic feeds at both endpoints
+          concurrently, runs a deterministic risk cascade, scores every real flight on the route, then drafts proactive passenger outreach —
+          a forward-looking signal, not a FlightAware-style after-the-fact status.
+        </motion.p>
+
+        {/* Stats row */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 1, background: 'var(--border)', overflow: 'hidden', marginBottom: 32 }}>
+          {[
+            { val: '3',     label: 'Agents',        sub: 'Predictor · Communicator · Optimizer (preview)' },
+            { val: '5',     label: 'Live Sources',  sub: 'Open-Meteo · OpenSky · SerpAPI Flights + News · Gemini' },
+            { val: '28k+',  label: 'Airports',      sub: 'Global coverage — busiest hub to Tier-3 regional' },
+            { val: '0',     label: 'Static Values', sub: 'Every number recomputed live, per request' },
+          ].map(s => (
+            <div key={s.label} style={{ background: 'var(--surface)', padding: '20px 22px' }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 30, fontWeight: 700, color: SQ, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, fontWeight: 600, color: 'var(--txt)', marginTop: 7, marginBottom: 4 }}>{s.label}</div>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.03em', lineHeight: 1.5 }}>{s.sub}</div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* 3 Agents */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ marginBottom: 32 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', color: 'var(--txt-faint)', marginBottom: 16 }}>// THREE COORDINATED AGENTS</div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', overflow: 'hidden' }}>
+            {[
+              { step: 'PREDICTOR', live: 'LIVE', desc: 'Deterministic cascade — no LLM in the math. Normalises live weather, disruption-news, and traffic-density signals into declared 0–100 sub-scores, weight-blends them (renormalising over whatever is available), then compounds across both endpoints.' },
+              { step: 'COMMUNICATOR', live: 'LIVE', desc: 'Synthetic passenger personas grounded in the real flight profile; Gemini drafts a tailored, proactive rebooking message per persona. Passenger identities are never real — in production this binds to the carrier PNR/DCS feed.' },
+              { step: 'OPTIMIZER', live: 'PREVIEW', desc: 'Architecture preview. Production recovery requires an OR solver balancing aircraft availability, crew-legality, and passenger recovery — the layer where most IROPS projects actually fail. Honestly scoped, not faked.' },
+            ].map(s => (
+              <div key={s.step} style={{ background: 'var(--surface)', padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--txt)', letterSpacing: '0.04em' }}>{s.step}</span>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 8.5, padding: '2px 7px', border: `1px solid ${s.live === 'LIVE' ? 'rgba(76,175,80,0.4)' : 'var(--border)'}`, color: s.live === 'LIVE' ? '#4caf50' : 'var(--txt-faint)', letterSpacing: '0.08em' }}>{s.live}</span>
+                </div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-dim)', lineHeight: 1.7 }}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Honest scoping */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ borderLeft: `2px solid ${SQ}`, background: 'rgba(255,112,67,0.06)', padding: '16px 20px', marginBottom: 36 }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.14em', color: SQ, marginBottom: 8 }}>// HONESTY IS THE FEATURE</div>
+          <div style={{ fontSize: 13.5, color: 'var(--txt-dim)', lineHeight: 1.7, maxWidth: '70ch' }}>
+            Everything operationally measurable is live and recomputed per request — weather and traffic work for any airport on earth;
+            news and flight density are richer at major hubs, and the score renormalises over whatever signals are available at regional fields.
+            Only passenger identities are synthetic, declared openly. That boundary — live where it can be, simulated only where it must be —
+            is what separates a credible advisory tool from an AI black box.
+          </div>
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <a href={process.env.NEXT_PUBLIC_SQUALL_URL || 'https://squall.s-ashwath.com'} target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: SQ, color: '#0a0b0d', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 3, textDecoration: 'none' }}>
+            ◈ Launch Squall ↗
+          </a>
+          <a href="https://github.com/Ashwath-VS/squall" target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'transparent', color: SQ, border: `1px solid rgba(255,112,67,0.35)`, fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 3, textDecoration: 'none' }}>
+            View on GitHub ↗
+          </a>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--txt-faint)', lineHeight: 1.7 }}>
+            FastAPI (async) · React + Vite + TypeScript<br />
+            <span style={{ opacity: 0.55 }}>concurrent live fan-out · deterministic cascade · auto OpenAPI docs</span>
+          </div>
+        </motion.div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '36px clamp(16px,4vw,48px)' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
@@ -251,7 +349,7 @@ export default function TravelTechPage() {
             <Link href="/">ALL DOMAINS</Link>
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-            <span>// Travel-Tech · DOMAIN_04 · AirWave · 8 market agents · live data · open source</span>
+            <span>// Travel-Tech · DOMAIN_04 · AirWave (revenue) + Squall (operations) · live data · open source</span>
             <Link href="/scenarios" style={{ color: 'inherit', textDecoration: 'none' }}>Next: Macro Engine →</Link>
           </div>
         </div>
