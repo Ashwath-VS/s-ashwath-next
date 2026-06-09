@@ -5,8 +5,14 @@ import PageWrapper from '@/components/PageWrapper';
 import Cursor from '@/components/Cursor';
 
 export const metadata: Metadata = {
-  title: 'S. Ashwath · Multi-Domain AI Systems Builder',
+  title: 'S. Ashwath · Multi-Domain AI Systems Experiments',
   description: 'Enterprise technology leader who builds AI systems hands-on across e-commerce, fin-tech, insurance, and travel-tech.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
