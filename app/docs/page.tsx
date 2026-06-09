@@ -111,7 +111,7 @@ const platformStack = [
   { layer: 'Market Data', detail: 'Yahoo Finance API · open.exchangerate-api.com', note: '5-min cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST. VIX drives cascade multiplier in real time.' },
   { layer: 'News Feed', detail: 'BBC World · BBC Business · NYT World · NYT Business RSS', note: '15-min cache on /api/triggers — keyword-matched to 6 shock categories, signal strength + live headline per trigger' },
   { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring · Insurance claims triage scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
-  { layer: 'Hosting', detail: 'Netlify · GitHub', note: 'CI/CD via GitHub → Netlify. Env vars managed in Netlify dashboard.' },
+  { layer: 'Hosting', detail: 'Fly.io · GitHub', note: 'Two always-on services: s-ashwath.com (Next.js) · airwave.s-ashwath.com (Flask + Vue). Singapore region. Env vars managed as Fly.io secrets.' },
 ];
 
 // ── Component ───────────────────────────────────────────────────────────────
