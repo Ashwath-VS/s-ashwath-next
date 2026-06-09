@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(git stash list)",
+      "PowerShell(git log *)",
+      "PowerShell(git diff *)",
+      "PowerShell(git status)",
+      "PowerShell(git add *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" logs *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" status *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" secrets list *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" deploy *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" secrets set *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" certs *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" apps *)",
+      "PowerShell(& \"C:\\Users\\sashw\\.fly\\bin\\flyctl.exe\" machines *)",
+      "PowerShell(npm run build *)",
+      "PowerShell(npm run lint *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-Content *)"
+    ],
+    "deny": []
+  }
+}
