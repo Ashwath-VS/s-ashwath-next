@@ -245,7 +245,7 @@ export default function TravelTechPage() {
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 34 }}>
           <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: SQ, letterSpacing: '0.1em' }}>02</span>
-          <span style={{ fontFamily: 'var(--mono)', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--txt-dim)' }}>Airline IROPS Intelligence</span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 13, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--txt-dim)' }}>SQUALL.IROPS · Disruption Intelligence</span>
           <motion.span initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
             style={{ flex: 1, height: 1, background: 'var(--border)', transformOrigin: 'left' }} />
@@ -254,8 +254,19 @@ export default function TravelTechPage() {
         {/* Title + positioning */}
         <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ fontWeight: 700, fontSize: 'clamp(26px, 4vw, 44px)', lineHeight: 1.02, letterSpacing: '-0.02em', marginBottom: 18 }}>
-          Squall — predict the disruption<br /><span style={{ color: SQ, textShadow: '0 0 26px rgba(255,112,67,0.4)' }}>before</span> the airline does.
+          SQUALL.IROPS — predict the disruption<br /><span style={{ color: SQ, textShadow: '0 0 26px rgba(255,112,67,0.4)' }}>before</span> the airline does.
         </motion.h2>
+
+        {/* Money headline */}
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap', marginBottom: 22, padding: '16px 20px', border: `1px solid rgba(255,112,67,0.3)`, borderLeft: `3px solid ${SQ}`, background: 'rgba(255,112,67,0.05)', borderRadius: 4 }}>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 'clamp(26px,4vw,40px)', fontWeight: 700, color: SQ, lineHeight: 1 }}>~$13K</span>
+          <span style={{ fontSize: 13.5, color: 'var(--txt-dim)', lineHeight: 1.6, maxWidth: '54ch' }}>
+            estimated value per at-risk flight — disruption cost avoided by acting early, plus a new
+            ancillary revenue stream from a purchasable protection fee (modelled on Air Canada&rsquo;s &ldquo;On My Way&rdquo;).
+            Across a network, that compounds across every departure.
+          </span>
+        </motion.div>
         <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ fontSize: 15, color: 'var(--txt-dim)', marginBottom: 14, maxWidth: '68ch', lineHeight: 1.7 }}>
           Where AirWave models revenue under pressure, Squall models <strong style={{ color: 'var(--txt)' }}>operations</strong> under pressure.
@@ -322,9 +333,9 @@ export default function TravelTechPage() {
         {/* CTAs */}
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
           style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <a href={process.env.NEXT_PUBLIC_SQUALL_URL || 'https://squall.s-ashwath.com'} target="_blank" rel="noopener noreferrer"
+          <a href={process.env.NEXT_PUBLIC_SQUALL_URL || 'https://irops.s-ashwath.com'} target="_blank" rel="noopener noreferrer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: SQ, color: '#0a0b0d', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 3, textDecoration: 'none' }}>
-            ◈ Launch Squall ↗
+            ◈ Launch SQUALL.IROPS ↗
           </a>
           <a href="https://github.com/Ashwath-VS/squall" target="_blank" rel="noopener noreferrer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '12px 24px', background: 'transparent', color: SQ, border: `1px solid rgba(255,112,67,0.35)`, fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: 3, textDecoration: 'none' }}>
