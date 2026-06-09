@@ -238,7 +238,7 @@ export default function ScenariosPage() {
           </h1>
 
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.52)', maxWidth: 520, lineHeight: 1.68, marginBottom: 36 }}>
-            Four-layer pipeline: live RSS news triggers, market-seeded BFS cascade calibrated against 23 historical shocks, and a Gemini brief grounded in today&apos;s real events. Institutional-depth analysis — no Bloomberg terminal required.
+            Four-layer pipeline: live RSS news triggers, market-seeded BFS cascade calibrated against 23 historical shocks, and an AI brief grounded in today&apos;s real events via live search. Institutional-depth analysis — no Bloomberg terminal required.
           </p>
 
           {/* Animated pipeline pills */}

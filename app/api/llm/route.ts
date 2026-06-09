@@ -18,7 +18,7 @@ const PERSONA_PROMPTS: Record<string, string> = {
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-    return NextResponse.json({ error: 'GEMINI_API_KEY not configured — add it in Netlify environment variables' }, { status: 503 });
+    return NextResponse.json({ error: 'GEMINI_API_KEY not configured' }, { status: 503 });
   }
 
   const body = await req.json();
