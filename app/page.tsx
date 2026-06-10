@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useScrambleText } from '@/hooks/useScrambleText';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -189,9 +189,9 @@ const domains = [
   {
     href: '/traveltech',
     title: 'Travel-Tech',
-    tag: '◐ AGENT LIVE',
+    tag: '◐ 2 AGENTS LIVE',
     color: '#00acc1',
-    desc: 'AI fare scenario intelligence. 8 market agents, 26 route pairs, live signal scoring.',
+    desc: 'Two live systems — AirWave (fare scenario intelligence, 8 market agents) and SQUALL.IROPS (live airline-disruption nowcasting).',
     num: 'DOMAIN_04',
     live: true,
     grid: { col: '2 / 3', row: '2 / 3' },
@@ -230,8 +230,18 @@ const agentCards = [
     icon: '◎',
   },
   {
-    href: '/scenarios',
+    href: 'https://irops.s-ashwath.com',
     slot: 'SLOT_03',
+    title: 'SQUALL.IROPS Disruption Agent',
+    desc: 'Enter a route. Squall predicts airline disruption risk from live weather, news and air-traffic, scores every real flight, then drafts proactive passenger rebooking messages — with the dollar case for acting early.',
+    cta: 'Launch app',
+    color: '#ff7043',
+    domain: 'DOMAIN_04',
+    icon: '◈',
+  },
+  {
+    href: '/scenarios',
+    slot: 'SLOT_04',
     title: 'Macro Cascade Simulator',
     desc: 'Pick a macro shock, get a full sector cascade and an AI brief tailored to your role.',
     cta: 'Run simulation',
@@ -241,7 +251,7 @@ const agentCards = [
   },
   {
     href: '/insurance',
-    slot: 'SLOT_04',
+    slot: 'SLOT_05',
     title: 'Claims Triage Agent',
     desc: 'Enter FNOL details — policy type, incident, claim amount, filing delay, and claims history. Get a structured triage brief with fraud risk score and adjuster recommendation.',
     cta: 'Try the agent',
@@ -272,6 +282,79 @@ function SectionDivider({ label }: { label: string }) {
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', transformOrigin: 'left' }}
       />
+    </motion.div>
+  );
+}
+
+// ── Travel-Tech card with animated "2 live projects" dropdown ──
+function TravelTechBentoCard({ d, gridStyle, minH, delay }: {
+  d: typeof domains[number]; gridStyle: React.CSSProperties; minH: number; delay: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const color = d.color;
+  const projects = [
+    { name: 'AirWave', sub: 'Fare Scenario Intelligence', href: '/traveltech', external: false, c: '#00acc1' },
+    { name: 'SQUALL.IROPS', sub: 'Live Disruption Nowcast', href: 'https://irops.s-ashwath.com', external: true, c: '#ff7043' },
+  ];
+  return (
+    <motion.div style={{ ...gridStyle, position: 'relative', zIndex: open ? 30 : 1 }}
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}>
+      <motion.div whileHover={{ y: -4, boxShadow: `0 24px 60px ${color}18` }}
+        transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+        style={{ display: 'flex', flexDirection: 'column', height: '100%', background: `${color}08`, border: `1px solid ${color}25`, borderRadius: 16, padding: 3 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: minH, padding: '28px 28px 24px', background: 'var(--card-bg)', borderRadius: 13, overflow: 'hidden', position: 'relative', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)' }}>
+          <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 70% 55% at 0% 0%, ${color}0d, transparent)`, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 32px 32px 0', borderColor: `transparent ${color}40 transparent transparent` }} />
+          <div style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', color }}>
+                <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2.5, repeat: Infinity }}
+                  style={{ width: 6, height: 6, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}`, display: 'inline-block' }} />
+                {d.tag}
+              </div>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--txt-faint)', letterSpacing: '0.1em' }}>{d.num}</span>
+            </div>
+            <h3 style={{ fontSize: 'clamp(20px,2.5vw,26px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{d.title}</h3>
+            <p style={{ fontSize: 13, color: 'var(--txt-dim)', lineHeight: 1.65, maxWidth: '36ch' }}>{d.desc}</p>
+          </div>
+
+          {/* Animated dropdown toggle */}
+          <button onClick={() => setOpen(o => !o)}
+            style={{ marginTop: 20, alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 9, background: open ? `${color}1c` : `${color}10`, border: `1px solid ${color}38`, borderRadius: 9999, padding: '7px 15px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color, transition: 'background 0.2s' }}>
+            <motion.span animate={{ y: [0, -1.5, 0] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ display: 'inline-block', fontSize: 12 }}>⧉</motion.span>
+            2 LIVE PROJECTS
+            <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }} style={{ display: 'inline-block' }}>▾</motion.span>
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Popover with the two projects */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 8, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{ position: 'absolute', left: 0, right: 0, top: '100%', zIndex: 40, background: 'var(--card-bg)', border: `1px solid ${color}30`, borderRadius: 12, padding: 6, boxShadow: '0 24px 60px rgba(0,0,0,0.5)' }}>
+            {projects.map((p, i) => (
+              <motion.a key={p.name} href={p.href}
+                target={p.external ? '_blank' : undefined} rel={p.external ? 'noopener noreferrer' : undefined}
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.04 + i * 0.06 }}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 9, textDecoration: 'none', color: 'inherit' }}
+                onMouseEnter={e => (e.currentTarget.style.background = `${p.c}12`)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
+                  style={{ width: 7, height: 7, borderRadius: '50%', background: p.c, boxShadow: `0 0 8px ${p.c}`, flexShrink: 0, display: 'inline-block' }} />
+                <span style={{ flex: 1 }}>
+                  <span style={{ display: 'block', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--txt)' }}>{p.name}</span>
+                  <span style={{ display: 'block', fontSize: 11, color: 'var(--txt-faint)' }}>{p.sub}</span>
+                </span>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: p.c, fontWeight: 600 }}>{p.external ? 'Launch ↗' : 'Open →'}</span>
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
@@ -336,7 +419,7 @@ export default function Home() {
             >
               18 years leading enterprise technology programmes. Rather than directing the work, I build and validate it{' '}
               <strong style={{ color: 'var(--txt)', fontWeight: 600 }}>with my own hands.</strong>
-              {' '}Five domains. Eight AI systems. All built solo.
+              {' '}Five domains. Nine AI systems. All built solo.
             </motion.p>
 
             {/* Stats */}
@@ -347,7 +430,7 @@ export default function Home() {
             >
               {[
                 { value: 5,  suffix: '',   label: 'Domains' },
-                { value: 8,  suffix: '',   label: 'AI Systems' },
+                { value: 9,  suffix: '',   label: 'AI Systems' },
                 { value: 18, suffix: 'yr', label: 'Enterprise' },
               ].map((s, i) => (
                 <div key={s.label} style={{
@@ -447,6 +530,11 @@ export default function Home() {
             const ctaLabel = d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →';
             const descMaxW = isWide ? '60ch' : '36ch';
 
+            // Travel-Tech gets the animated 2-projects dropdown
+            if (d.num === 'DOMAIN_04') {
+              return <TravelTechBentoCard key={d.href} d={d} gridStyle={gridStyle as React.CSSProperties} minH={minH} delay={i * 0.07} />;
+            }
+
             return (
               <motion.div key={d.href} style={gridStyle}
                 initial={{ opacity: 0, y: 20 }}
@@ -533,6 +621,8 @@ export default function Home() {
             >
               {/* Double-Bezel agent card */}
               <motion.a href={a.href}
+                target={a.href.startsWith('http') ? '_blank' : undefined}
+                rel={a.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 whileHover={{ y: -5, boxShadow: `0 20px 50px ${a.color}18` }}
                 transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                 style={{
