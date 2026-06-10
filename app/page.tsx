@@ -320,12 +320,17 @@ function TravelTechBentoCard({ d, gridStyle, minH, delay }: {
           </div>
 
           {/* Animated dropdown toggle */}
-          <button onClick={() => setOpen(o => !o)}
-            style={{ marginTop: 20, alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 9, background: open ? `${color}1c` : `${color}10`, border: `1px solid ${color}38`, borderRadius: 9999, padding: '7px 15px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color, transition: 'background 0.2s' }}>
-            <motion.span animate={{ y: [0, -1.5, 0] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ display: 'inline-block', fontSize: 12 }}>⧉</motion.span>
+          <motion.button onClick={() => setOpen(o => !o)}
+            animate={open ? {} : { boxShadow: [`0 0 0 0 ${color}00`, `0 0 0 4px ${color}1a`, `0 0 0 0 ${color}00`] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            style={{ marginTop: 18, alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 10, background: open ? color : `${color}1a`, border: `1px solid ${color}`, borderRadius: 9999, padding: '9px 18px', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: open ? '#07090c' : color, transition: 'background 0.2s, color 0.2s' }}>
+            <motion.span animate={{ y: [0, -2, 0] }} transition={{ duration: 1.4, repeat: Infinity }} style={{ display: 'inline-block', fontSize: 13 }}>⧉</motion.span>
             2 LIVE PROJECTS
-            <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.3 }} style={{ display: 'inline-block' }}>▾</motion.span>
-          </button>
+            <motion.span
+              animate={open ? { rotate: 180 } : { rotate: 0, y: [0, 3, 0] }}
+              transition={open ? { duration: 0.3 } : { y: { duration: 1.2, repeat: Infinity }, rotate: { duration: 0.3 } }}
+              style={{ display: 'inline-block', fontSize: 13 }}>▾</motion.span>
+          </motion.button>
         </div>
       </motion.div>
 
@@ -526,7 +531,7 @@ export default function Home() {
           {domains.map((d, i) => {
             const gridStyle = isMobile ? {} : { gridColumn: d.grid.col, gridRow: d.grid.row };
             const isWide = !isMobile && d.grid.col === '1 / 4'; // full-width card (Insurance)
-            const minH = d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : 200;
+            const minH = d.num === 'DOMAIN_01' ? (isMobile ? 220 : 260) : d.num === 'DOMAIN_05' ? (isMobile ? 220 : 300) : d.num === 'DOMAIN_04' ? (isMobile ? 215 : 235) : 200;
             const ctaLabel = d.num === 'DOMAIN_05' ? 'Run simulation →' : d.num === 'DOMAIN_01' ? 'View full build →' : 'Try agent →';
             const descMaxW = isWide ? '60ch' : '36ch';
 
