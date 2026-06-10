@@ -175,7 +175,7 @@ export default function EcommercePage() {
           variants={fadeUp}
           style={{ color: 'var(--txt-dim)', maxWidth: '60ch', marginBottom: 40 }}
         >
-          Every role a marketplace normally hires a person for — here's the same list, done solo. None from courses; each learned because the build wouldn't ship without it.
+          A marketplace normally spreads this work across a whole company — a different specialist for every box below. I did all of them myself. None of it came from a course; each skill was picked up on the spot, because the build simply wouldn't ship without it. Here are the 17+ hats, grouped by function.
         </motion.p>
 
         <motion.div
@@ -255,7 +255,7 @@ export default function EcommercePage() {
           variants={fadeUp}
           style={{ color: 'var(--txt-dim)', maxWidth: '58ch', marginBottom: 16 }}
         >
-          The list is easy to write. Here's the proof — seven systems behind it, each built and validated.
+          A list of roles is easy to claim — so here's the proof. Seven working systems sit behind it, each one built, deployed, and validated in production. What each does, and the stack it runs on:
         </motion.p>
 
         <motion.div
@@ -364,7 +364,7 @@ export default function EcommercePage() {
           variants={fadeUp}
           style={{ color: 'var(--txt-dim)', maxWidth: '58ch', marginBottom: 16 }}
         >
-          High-level system architecture — frontend to infrastructure, end to end.
+          How the whole thing fits together — six layers, from what the buyer sees in their browser all the way down to the servers and outside services it runs on. Every layer below was designed, built, and wired by one person.
         </motion.p>
 
         <motion.div
@@ -493,6 +493,7 @@ export default function EcommercePage() {
             <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--txt-dim)', flexWrap: 'wrap' }}>
               <a href="mailto:rambotechnologies@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>EMAIL</a>
               <a href="https://www.linkedin.com/in/s-ashwathv" style={{ color: 'inherit', textDecoration: 'none' }}>LINKEDIN</a>
+              <a href="https://github.com/Ashwath-VS" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>GITHUB</a>
               <Link href="/docs" style={{ color: 'inherit', textDecoration: 'none' }}>DOCS</Link>
               <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>ALL DOMAINS</Link>
             </div>

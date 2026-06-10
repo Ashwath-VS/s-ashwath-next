@@ -65,6 +65,7 @@ const domains = [
         frontend: 'Vue 3 (Composition API) · Vite · reactive multi-step simulation UI · A/B comparison view · PDF export',
         backend: 'Flask · Python · Gemini 2.5 Flash · deterministic P&L cascade engine · rate limiter (5 req/60s) · Duffel NDC · OpenSky · Yahoo Finance · SerpAPI · News RSS · AGPL-3.0',
         why: 'Fares come from rate-limited, key-protected third-party APIs and the 8-agent simulation is compute-heavy — so it needs a real server to hold credentials, cache responses, and rate-limit. The P&L cascade is plain deterministic Python (not an LLM) so the maths stays auditable; the model only writes narrative. Vue + Vite was chosen for a fast, reactive UI to drive the multi-step "pick route → stack shocks → compare" flow without a heavy framework.',
+        repo: 'https://github.com/Ashwath-VS/airwave',
       },
       {
         name: 'SQUALL.IROPS · Airline Disruption Intelligence Engine',
@@ -72,6 +73,7 @@ const domains = [
         frontend: 'React 18 · Vite · TypeScript · typed ops-dashboard UI · count-up + staged-load animations · Methodology drawer',
         backend: 'FastAPI (async) · Python · gunicorn + uvicorn workers · nginx · Gemini 2.5 Flash · Open-Meteo · OpenSky · SerpAPI Flights + News · airportsdata (28k+ airports)',
         why: 'Every request fans out to four live APIs at both airports, so the backend is async (FastAPI + asyncio.gather) — it fetches them concurrently, making total latency the slowest single call rather than the sum of all four. I deliberately chose a different stack from AirWave (FastAPI vs Flask, React vs Vue) for two reasons: async genuinely fits a live multi-source fan-out and streaming, and it demonstrates range across stacks. The risk score is a deterministic cascade in plain Python so it is fully auditable; the LLM only drafts the passenger messages.',
+        repo: 'https://github.com/Ashwath-VS/squall',
       },
     ],
     metrics: [{ v: '2', l: 'Live systems (fare + IROPS)' }, { v: '11', l: 'Reasoning agents total' }, { v: '9', l: 'Live data sources' }, { v: '3-day', l: 'IROPS nowcast horizon' }],
@@ -246,6 +248,12 @@ export default function DocsPage() {
                 <div style={{ padding: '10px 18px', borderBottom: `1px solid ${d.color}14`, display: 'flex', alignItems: 'center', gap: 10, background: `${d.color}06` }}>
                   <span style={{ width: 6, height: 6, borderRadius: '50%', background: d.color, boxShadow: `0 0 6px ${d.color}`, flexShrink: 0, display: 'inline-block' }} />
                   <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: d.color }}>{agent.name.toUpperCase()}</span>
+                  {(agent as { repo?: string }).repo && (
+                    <a href={(agent as { repo?: string }).repo} target="_blank" rel="noopener noreferrer"
+                      style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', color: d.color, border: `1px solid ${d.color}40`, padding: '3px 10px', borderRadius: 3, textDecoration: 'none', flexShrink: 0 }}>
+                      GITHUB ↗
+                    </a>
+                  )}
                 </div>
                 <div style={{ padding: '16px 18px' }}>
                   <p style={{ fontSize: 14, color: 'var(--txt-dim)', lineHeight: 1.65, marginBottom: 14 }}>{agent.desc}</p>
@@ -338,6 +346,7 @@ export default function DocsPage() {
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
             <a href="mailto:rambotechnologies@gmail.com">EMAIL</a>
             <a href="https://www.linkedin.com/in/s-ashwathv" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+            <a href="https://github.com/Ashwath-VS" target="_blank" rel="noopener noreferrer">GITHUB</a>
             <Link href="/">ALL DOMAINS</Link>
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6 }}>
