@@ -54,15 +54,20 @@ const domains = [
     status: 'LIVE',
     statusColor: '#00e676',
     href: '/traveltech',
-    problem: 'Revenue management software on the airline side costs millions. A passenger booking LHR→JFK has no tools to model what a fuel spike, route disruption, or geopolitical event will do to fares over the following week. AirWave inverts this: pull live fares, run a deterministic P&L cascade model, deploy 8 independent market agents each with a fixed behavioral profile and fuel hedge position, then weight their votes by market share into a consensus fare prediction with a confidence band. Open-source under AGPL-3.0.',
+    problem: 'Revenue management software on the airline side costs millions. A passenger booking LHR→JFK has no tools to model what a fuel spike, route disruption, or geopolitical event will do to fares over the following week. AirWave inverts this: pull live fares, run a deterministic P&L cascade model, deploy 8 independent market agents each with a fixed behavioral profile and fuel hedge position, then weight their votes by market share into a consensus fare prediction with a confidence band. A second system, SQUALL.IROPS, applies the same philosophy to operations: it predicts airline irregular-operations (IROPS) disruption risk before a flight is officially cancelled and drafts proactive passenger outreach — turning a reactive, siloed scramble into an early, coordinated response. Together: AirWave models revenue under pressure, Squall models operations under pressure.',
     agents: [
       {
         name: 'AirWave · Fare Scenario Intelligence Engine',
         desc: '8 market agents (LCC Revenue Manager, Legacy Network Carrier, ULCC Revenue Manager, Premium Boutique, Enterprise Travel Manager, Price-Elastic Consumer, Online Travel Agency, Miles Optimizer) each receive live fare data, a cascaded P&L shock output, and their own behavioral profile. Each produces an independent fare vote and confidence score. Votes are market-share-weighted (Legacy 42%, LCC 28%, ULCC 12%, Premium 7%) into a consensus predicted fare with a ±band. Stack multiple shock triggers for compounded scenarios. A/B comparison mode for two concurrent runs. Rate-limited Flask API (5 req/60s). Simulation history in localStorage. PDF export. Open-source on GitHub.',
         stack: 'Vue 3 Composition API · Flask · Python · Gemini 2.5 Flash · Duffel NDC · OpenSky · Yahoo Finance · SerpAPI · News RSS · AGPL-3.0',
       },
+      {
+        name: 'SQUALL.IROPS · Airline Disruption Intelligence Engine',
+        desc: 'The operations counterpart to AirWave. Enter an origin–destination pair; the Predictor fans out concurrently to live weather (Open-Meteo), disruption news (SerpAPI Google News), and air-traffic density (OpenSky) at both endpoints, then runs a deterministic risk cascade — each signal normalised 0–100, weight-blended (Weather 50% · News 30% · Traffic 20%) and renormalised over whatever is live, so it works from the busiest hub to a Tier-3 regional field. Real flights on the route (SerpAPI Google Flights) inherit the route risk plus a departure-window overlay. The Communicator then builds synthetic passenger personas grounded in the real flight and uses Gemini to draft tailored, proactive rebooking messages. A transparent business-case panel quantifies disruption cost avoided plus an Air-Canada-"On My Way"-style protection-fee revenue stream. Predictions are capped to a credible 3-day nowcast horizon. Honestly scoped: live where measurable, synthetic only for passenger identities — declared openly.',
+        stack: 'React · Vite · TypeScript · FastAPI (async) · Python · Gemini 2.5 Flash · Open-Meteo · OpenSky · SerpAPI Flights + News · airportsdata · nginx · gunicorn/uvicorn',
+      },
     ],
-    metrics: [{ v: '8', l: 'Independent market agents' }, { v: '7', l: 'Shock triggers modelled' }, { v: '5', l: 'Live data sources' }, { v: '26', l: 'Tests passing' }],
+    metrics: [{ v: '2', l: 'Live systems (fare + IROPS)' }, { v: '11', l: 'Reasoning agents total' }, { v: '9', l: 'Live data sources' }, { v: '3-day', l: 'IROPS nowcast horizon' }],
   },
   {
     id: 'DOMAIN_05',
@@ -111,7 +116,7 @@ const platformStack = [
   { layer: 'Market Data', detail: 'Yahoo Finance API · open.exchangerate-api.com', note: '5-min cache on /api/market — VIX, WTI, S&P 500, USD/EUR, GOLD, 10Y UST. VIX drives cascade multiplier in real time.' },
   { layer: 'News Feed', detail: 'BBC World · BBC Business · NYT World · NYT Business RSS', note: '15-min cache on /api/triggers — keyword-matched to 6 shock categories, signal strength + live headline per trigger' },
   { layer: 'Custom Systems', detail: 'BFS Cascade Engine · Scramble text hook · Custom cursor · Fare analysis engine · SME credit scoring · Insurance claims triage scoring', note: 'All built from scratch — no third-party AI wrappers for domain logic' },
-  { layer: 'Hosting', detail: 'Fly.io · GitHub', note: 'Two always-on services: s-ashwath.com (Next.js) · airwave.s-ashwath.com (Flask + Vue). Singapore region. Env vars managed as Fly.io secrets.' },
+  { layer: 'Hosting', detail: 'Fly.io · GitHub', note: 'Three always-on services: s-ashwath.com (Next.js) · airwave.s-ashwath.com (Flask + Vue) · irops.s-ashwath.com (FastAPI + React). Singapore region. Env vars managed as Fly.io secrets.' },
 ];
 
 // ── Component ───────────────────────────────────────────────────────────────
@@ -309,7 +314,7 @@ export default function DocsPage() {
             <Link href="/">ALL DOMAINS</Link>
           </div>
           <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--txt-faint)', width: '100%', marginTop: 6 }}>
-            // Technical Documentation · S. Ashwath · Operator-Builder · 5 Domains · 13 Agents
+            // Technical Documentation · S. Ashwath · Operator-Builder · 5 Domains · 14 Agents
           </div>
         </div>
       </footer>
