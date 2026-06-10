@@ -355,6 +355,7 @@ export default function TravelTechPage() {
           <div style={{ display: 'flex', gap: 22, fontFamily: 'var(--mono)', fontSize: 11.5, letterSpacing: '0.06em', color: 'var(--txt-dim)' }}>
             <a href="mailto:rambotechnologies@gmail.com">EMAIL</a>
             <a href="https://www.linkedin.com/in/s-ashwathv" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+            <a href="https://github.com/Ashwath-VS" target="_blank" rel="noopener noreferrer">GITHUB</a>
             <Link href="/docs">DOCS</Link>
             <Link href="/experience">EXPERIENCE</Link>
             <Link href="/">ALL DOMAINS</Link>
